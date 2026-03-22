@@ -1,0 +1,9 @@
+export { default as IconWrapper } from './IconWrapper.vue';
+export { default as IconChevronDown } from './IconChevronDown.vue';
+export { default as IconChevronUp } from './IconChevronUp.vue';
+export { default as IconCross } from './IconCross.vue';
+export { default as IconExpandVertically } from './IconExpandVertically.vue';
+export { default as IconSearch } from './IconSearch.vue';
+export { default as IconPerson } from './IconPerson.vue';
+export { default as IconStar } from './IconStar.vue';
+export { default as IconStarFilled } from './IconStarFilled.vue';

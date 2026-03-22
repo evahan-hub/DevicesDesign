@@ -1,0 +1,518 @@
+<template>
+  <div
+    class="flex flex-col"
+    :style="{
+      width: '248px',
+      height: '100vh',
+      minHeight: '100vh',
+      backgroundColor: 'var(--b-color-background-inverse-primary)',
+      flexShrink: 0,
+    }"
+  >
+    <!-- Header -->
+    <div
+      ref="headerRef"
+      class="flex items-center justify-between cursor-pointer"
+      :style="{
+        padding: 'var(--b-spacer-040)',
+        margin: 'var(--b-spacer-040)',
+        borderRadius: 'var(--b-border-radius-m)',
+        backgroundColor: isHeaderHovered
+          ? 'var(--b-color-background-inverse-secondary)'
+          : 'transparent',
+        transition: 'background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
+      }"
+      @mouseenter="isHeaderHovered = true"
+      @mouseleave="isHeaderHovered = false"
+    >
+      <div class="flex items-center" :style="{ gap: 'var(--b-spacer-060)' }">
+        <div
+          :style="{
+            width: 'var(--b-spacer-100)',
+            height: 'var(--b-spacer-100)',
+            backgroundColor: 'var(--b-color-decorative-green)',
+            borderRadius: 'var(--b-border-radius-m)',
+          }"
+        />
+        <span
+          :style="{
+            fontFamily: 'var(--b-text-body-font-family)',
+            fontSize: 'var(--b-text-body-font-size)',
+            fontWeight: 'var(--b-text-body-stronger-font-weight)',
+            lineHeight: 'var(--b-text-body-line-height)',
+            color: 'var(--b-color-label-inverse-primary)',
+          }"
+        >
+          Dominos Pizza Finance Team
+        </span>
+      </div>
+      <icon-expand-vertically
+        :size="16"
+        :color="isHeaderHovered
+          ? 'var(--b-color-label-inverse-primary)'
+          : 'var(--b-color-label-inverse-secondary)'"
+      />
+    </div>
+
+    <!-- Scrollable content: Favorites + Pages -->
+    <div
+      class="flex-1 overflow-y-auto flex flex-col"
+      :style="{
+        paddingLeft: 'var(--b-spacer-070)',
+        paddingRight: 'var(--b-spacer-070)',
+        paddingTop: 'var(--b-spacer-090)',
+        paddingBottom: 'var(--b-spacer-070)',
+      }"
+    >
+      <!-- Favorites Section -->
+      <div :style="{ marginBottom: 'var(--b-spacer-090)' }">
+        <h3 :style="sectionHeadingStyle">
+          Favorites ({{ favorites.length }})
+        </h3>
+        <div
+          v-if="favorites.length === 0"
+          class="text-center"
+          :style="{
+            backgroundColor: 'var(--b-color-background-always-dark-secondary)',
+            borderRadius: 'var(--b-border-radius-m)',
+            padding: 'var(--b-spacer-090)',
+          }"
+        >
+          <div class="flex justify-center" :style="{ marginBottom: 'var(--b-spacer-040)' }">
+            <div :style="{ width: 'var(--b-spacer-080)', height: 'var(--b-spacer-080)', '--fill-0': 'var(--b-color-label-inverse-secondary)' }">
+              <icon-star />
+            </div>
+          </div>
+          <p :style="{ ...bodyStrongStyle, color: 'var(--b-color-label-inverse-primary)', marginBottom: 'var(--b-spacer-020)' }">
+            No favorites yet
+          </p>
+          <p :style="{ ...captionStyle, color: 'var(--b-color-label-inverse-secondary)' }">
+            Click on the star on the right side of a menu item to add as a favorite.
+          </p>
+        </div>
+        <div v-else class="flex flex-col" :style="{ gap: 'var(--b-spacer-010, 4px)' }">
+          <div
+            v-for="fav in favorites"
+            :key="fav"
+            class="flex items-center justify-between cursor-pointer"
+            :style="{
+              height: 'var(--b-spacer-100)',
+              paddingLeft: 'var(--b-spacer-060)',
+              paddingRight: 'var(--b-spacer-060)',
+              borderRadius: 'var(--b-border-radius-m)',
+              color: hoveredFavorite === fav ? 'var(--b-color-label-inverse-primary)' : 'var(--b-color-label-inverse-secondary)',
+              backgroundColor: hoveredFavorite === fav ? 'var(--b-color-background-inverse-secondary)' : 'transparent',
+              transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
+            }"
+            @mouseenter="hoveredFavorite = fav"
+            @mouseleave="hoveredFavorite = null"
+            @click="setActiveItem(fav)"
+          >
+            <div class="flex items-center" :style="{ gap: 'var(--b-spacer-080, 16px)', flex: 1, minWidth: 0, overflow: 'hidden' }">
+              <div :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, '--fill-0': 'var(--b-color-label-inverse-secondary)' }">
+                <icon-star-filled />
+              </div>
+              <span :style="textStyle">{{ fav }}</span>
+            </div>
+            <div
+              v-if="hoveredFavorite === fav"
+              class="cursor-pointer"
+              :style="{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }"
+              @click.stop="toggleFavorite(fav)"
+            >
+              <icon-cross :size="16" color="var(--b-color-label-inverse-secondary)" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pages Section -->
+      <div>
+        <h3 :style="sectionHeadingStyle">Pages</h3>
+        <nav class="flex flex-col" :style="{ gap: 'var(--b-spacer-010, 4px)' }">
+          <div v-for="item in navItems" :key="item.label">
+            <!-- Nav item row -->
+            <div
+              class="flex items-center justify-between cursor-pointer"
+              :style="{
+                height: 'var(--b-spacer-100)',
+                paddingLeft: 'var(--b-spacer-060)',
+                paddingRight: 'var(--b-spacer-060)',
+                borderRadius: 'var(--b-border-radius-m)',
+                backgroundColor: getItemBg(item),
+                color: getItemColor(item),
+                transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
+              }"
+              @click="handleItemClick(item)"
+              @mouseenter="hoveredItem = item.label"
+              @mouseleave="hoveredItem = null"
+            >
+              <div class="flex items-center" :style="{ gap: 'var(--b-spacer-080, 16px)', minWidth: 0, overflow: 'hidden' }">
+                <div :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', color: 'inherit', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+                  <component :is="item.icon" :size="16" color="currentColor" />
+                </div>
+                <span :style="textStyle">{{ item.label }}</span>
+              </div>
+              <div v-if="item.children && item.children.length > 0" class="flex items-center" :style="{ gap: 'var(--b-spacer-010, 4px)' }">
+                <template v-if="hoveredItem === item.label || expandedItem === item.label">
+                  <icon-chevron-up v-if="expandedItem === item.label" :size="16" color="var(--b-color-label-inverse-secondary)" />
+                  <icon-chevron-down v-else :size="16" color="var(--b-color-label-inverse-secondary)" />
+                </template>
+              </div>
+              <div
+                v-else-if="(isFavorited(item.label) || hoveredItem === item.label)"
+                class="cursor-pointer"
+                :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
+                @click.stop="toggleFavorite(item.label)"
+              >
+                <icon-star-filled v-if="isFavorited(item.label)" />
+                <icon-star v-else />
+              </div>
+            </div>
+
+            <!-- Children items (expandable) -->
+            <transition name="expand">
+              <div v-if="expandedItem === item.label && item.children" class="overflow-hidden">
+                <div class="flex flex-col" :style="{ marginTop: 'var(--b-spacer-010, 4px)', gap: 'var(--b-spacer-010, 4px)' }">
+                  <div
+                    v-for="child in item.children"
+                    :key="child.label"
+                    class="flex items-center justify-between cursor-pointer"
+                    :style="{
+                      height: 'var(--b-spacer-100)',
+                      paddingRight: 'var(--b-spacer-060)',
+                      paddingLeft: 'var(--b-spacer-120)',
+                      borderRadius: 'var(--b-border-radius-m)',
+                      color: activeItem === child.label || hoveredChildItem === child.label
+                        ? 'var(--b-color-label-inverse-primary)'
+                        : 'var(--b-color-label-inverse-secondary)',
+                      backgroundColor: activeItem === child.label
+                        ? 'var(--b-color-background-inverse-secondary)'
+                        : hoveredChildItem === child.label
+                        ? 'var(--b-color-background-always-dark-primary-hover)'
+                        : 'transparent',
+                      transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
+                    }"
+                    @mouseenter="hoveredChildItem = child.label"
+                    @mouseleave="hoveredChildItem = null"
+                    @click="navigateToChild(child)"
+                  >
+                    <div
+                      v-if="isFavorited(child.label) || hoveredChildItem === child.label"
+                      class="cursor-pointer"
+                      :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
+                      @click.stop="toggleFavorite(child.label)"
+                    >
+                      <icon-star-filled v-if="isFavorited(child.label)" />
+                      <icon-star v-else />
+                    </div>
+                    <span :style="{ ...bodyStyle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }">
+                      {{ child.label }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Language Selector -->
+    <div :style="{ padding: 'var(--b-spacer-040)' }">
+      <button
+        class="flex items-center justify-between w-full"
+        :style="{
+          paddingLeft: 'var(--b-spacer-060)',
+          paddingRight: 'var(--b-spacer-060)',
+          paddingTop: 'var(--b-spacer-020)',
+          paddingBottom: 'var(--b-spacer-020)',
+          borderRadius: 'var(--b-border-radius-m)',
+          backgroundColor: isLangHovered ? 'var(--b-color-background-always-dark-primary-hover)' : 'transparent',
+          transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
+          border: 'none',
+          cursor: 'pointer',
+        }"
+        @mouseenter="isLangHovered = true"
+        @mouseleave="isLangHovered = false"
+      >
+        <span :style="{ ...bodyStyle, color: isLangHovered ? 'var(--b-color-label-inverse-primary)' : 'var(--b-color-label-inverse-secondary)' }">
+          English (en-US)
+        </span>
+        <icon-chevron-down
+          :size="16"
+          :color="isLangHovered ? 'var(--b-color-label-always-light)' : 'var(--b-color-label-inverse-secondary)'"
+        />
+      </button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import IconChevronDown from './icons/IconChevronDown.vue';
+import IconChevronUp from './icons/IconChevronUp.vue';
+import IconCross from './icons/IconCross.vue';
+import IconExpandVertically from './icons/IconExpandVertically.vue';
+import IconStar from './icons/IconStar.vue';
+import IconStarFilled from './icons/IconStarFilled.vue';
+import IconHome from './icons/IconHome.vue';
+import IconGrid from './icons/IconGrid.vue';
+import IconUsers from './icons/IconUsers.vue';
+import IconDiamond from './icons/IconDiamond.vue';
+import IconShield from './icons/IconShield.vue';
+import IconHandshake from './icons/IconHandshake.vue';
+import IconWallet from './icons/IconWallet.vue';
+import IconBarChart from './icons/IconBarChart.vue';
+import IconFileText from './icons/IconFileText.vue';
+import IconStore from './icons/IconStore.vue';
+import IconLink from './icons/IconLink.vue';
+import IconCode from './icons/IconCode.vue';
+import IconHeart from './icons/IconHeart.vue';
+import IconSettings from './icons/IconSettings.vue';
+
+interface NavChild {
+  label: string;
+  route?: string;
+}
+
+interface NavItem {
+  icon: string;
+  label: string;
+  route?: string;
+  children?: NavChild[];
+}
+
+export default Vue.extend({
+  name: 'SideNavigation',
+  components: {
+    IconChevronDown,
+    IconChevronUp,
+    IconCross,
+    IconExpandVertically,
+    IconStar,
+    IconStarFilled,
+    IconHome,
+    IconGrid,
+    IconUsers,
+    IconDiamond,
+    IconShield,
+    IconHandshake,
+    IconWallet,
+    IconBarChart,
+    IconFileText,
+    IconStore,
+    IconLink,
+    IconCode,
+    IconHeart,
+    IconSettings,
+  },
+  data() {
+    return {
+      activeItem: 'Home' as string,
+      expandedItem: null as string | null,
+      hoveredItem: null as string | null,
+      hoveredChildItem: null as string | null,
+      hoveredFavorite: null as string | null,
+      favorites: [] as string[],
+      isHeaderHovered: false,
+      isLangHovered: false,
+      navItems: [
+        { icon: 'icon-home', label: 'Home' },
+        { icon: 'icon-grid', label: 'Transactions', children: [
+          { label: 'Payments' }, { label: 'Offers' }, { label: 'Payouts' },
+        ]},
+        { icon: 'icon-users', label: 'Accounts & balances', children: [
+          { label: 'Account holders' }, { label: 'Score' },
+        ]},
+        { icon: 'icon-diamond', label: 'Performance' },
+        { icon: 'icon-shield', label: 'Revenue & risk', children: [
+          { label: 'Uplift overview' }, { label: 'Recommendations' }, { label: 'Case management' },
+          { label: 'Disputes' }, { label: 'Dynamic 3D Secure' }, { label: 'Experiments' },
+          { label: 'Risk fields' }, { label: 'Risk lists' }, { label: 'Risk profiles' },
+          { label: 'Risk profile details' }, { label: 'Settings' },
+        ]},
+        { icon: 'icon-handshake', label: 'Partner', children: [
+          { label: 'Overview' }, { label: 'Referrals' }, { label: 'Commissions' }, { label: 'Merchant access' },
+        ]},
+        { icon: 'icon-wallet', label: 'Finance', children: [
+          { label: 'Finance Workspace', route: '/finance' },
+          { label: 'Balances overview' }, { label: 'Company balances overview' },
+          { label: 'MPL' }, { label: 'Invoices' }, { label: 'Sales to payouts' },
+          { label: 'Payout accounts' }, { label: 'Payout model' }, { label: 'Reporting manager' },
+        ]},
+        { icon: 'icon-bar-chart', label: 'Insights', children: [
+          { label: 'Checkout' }, { label: 'Payment lifecycle' }, { label: 'Risk & dispute management' },
+        ]},
+        { icon: 'icon-file-text', label: 'Reports', route: '/reports', children: [
+          { label: 'Report+ Dashboard', route: '/reports' },
+          { label: 'Insights', route: '/reports/insights' },
+        ]},
+        { icon: 'icon-store', label: 'In-person payments', children: [
+          { label: 'Orders and returns' }, { label: 'Stores' }, { label: 'Terminals' },
+          { label: 'Tap to pay & card reader' }, { label: 'Terminal settings' },
+          { label: 'Android' }, { label: 'Terminal software' }, { label: 'Themes' },
+        ]},
+        { icon: 'icon-link', label: 'Pay by Link', children: [
+          { label: 'Payment links' }, { label: 'Themes' }, { label: 'Settings' },
+        ]},
+        { icon: 'icon-code', label: 'Developers', children: [
+          { label: 'Integration guide' }, { label: 'Dashboard' }, { label: 'API credentials' },
+          { label: 'API URLs' }, { label: 'Additional data' }, { label: 'API logs' },
+          { label: 'Webhooks' }, { label: 'Event logs' }, { label: 'OAuth apps' },
+          { label: 'OAuth authorizations' }, { label: 'Go-live checklist' }, { label: 'OPI configurations' },
+        ]},
+        { icon: 'icon-heart', label: 'Giving', children: [
+          { label: 'Campaigns' }, { label: 'Nonprofit library' },
+        ]},
+        { icon: 'icon-settings', label: 'Settings' },
+      ] as NavItem[],
+    };
+  },
+  computed: {
+    sectionHeadingStyle(): Record<string, string> {
+      return {
+        fontSize: '10px',
+        fontFamily: 'var(--b-text-caption-font-family)',
+        fontWeight: 'var(--b-text-body-strongest-font-weight)',
+        color: 'var(--b-color-label-inverse-secondary)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        marginBottom: 'var(--b-spacer-060)',
+        lineHeight: 'var(--b-text-caption-line-height)',
+      };
+    },
+    bodyStyle(): Record<string, string> {
+      return {
+        fontFamily: 'var(--b-text-body-font-family)',
+        fontSize: 'var(--b-text-body-font-size)',
+        fontWeight: 'var(--b-text-body-font-weight)',
+        lineHeight: 'var(--b-text-body-line-height)',
+      };
+    },
+    bodyStrongStyle(): Record<string, string> {
+      return {
+        fontFamily: 'var(--b-text-body-font-family)',
+        fontSize: 'var(--b-text-body-font-size)',
+        fontWeight: 'var(--b-text-body-stronger-font-weight)',
+        lineHeight: 'var(--b-text-body-line-height)',
+      };
+    },
+    captionStyle(): Record<string, string> {
+      return {
+        fontFamily: 'var(--b-text-caption-font-family)',
+        fontSize: 'var(--b-text-caption-font-size)',
+        fontWeight: 'var(--b-text-caption-font-weight)',
+        lineHeight: 'var(--b-text-caption-wide-line-height)',
+      };
+    },
+    textStyle(): Record<string, string> {
+      return {
+        fontFamily: 'var(--b-text-body-font-family, \'Adyen UI\', -apple-system, BlinkMacSystemFont, \'Segoe UI\', \'Roboto\', sans-serif)',
+        fontSize: 'var(--b-text-body-font-size, 14px)',
+        fontWeight: 'var(--b-text-body-font-weight, 400)',
+        lineHeight: 'var(--b-text-body-line-height, 20px)',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      };
+    },
+  },
+  watch: {
+    '$route': {
+      handler() { this.syncFromRoute(); },
+      immediate: false,
+    },
+  },
+  created() {
+    this.syncFromRoute();
+  },
+  methods: {
+    syncFromRoute() {
+      const path = this.$route?.path;
+      if (!path) return;
+      for (const item of this.navItems) {
+        if (item.children) {
+          for (const child of item.children) {
+            if (child.route && path === child.route) {
+              this.activeItem = child.label;
+              this.expandedItem = item.label;
+              return;
+            }
+          }
+        }
+        if (item.route && path === item.route && !item.children) {
+          this.activeItem = item.label;
+          this.expandedItem = null;
+          return;
+        }
+      }
+    },
+    handleItemClick(item: NavItem) {
+      if (item.label === 'Home') {
+        this.activeItem = item.label;
+        this.expandedItem = null;
+      } else if (item.children && item.children.length > 0) {
+        if (this.expandedItem === item.label) {
+          this.expandedItem = null;
+        } else {
+          this.expandedItem = item.label;
+          this.activeItem = item.label;
+        }
+      } else {
+        this.activeItem = item.label;
+        if (item.route) {
+          this.$router.push(item.route).catch(() => {});
+        }
+      }
+    },
+    navigateToChild(child: NavChild) {
+      this.activeItem = child.label;
+      if (child.route) {
+        this.$router.push(child.route).catch(() => {});
+      }
+    },
+    setActiveItem(label: string) {
+      this.activeItem = label;
+    },
+    toggleFavorite(itemName: string) {
+      const idx = this.favorites.indexOf(itemName);
+      if (idx >= 0) {
+        this.favorites.splice(idx, 1);
+      } else {
+        this.favorites.push(itemName);
+      }
+    },
+    isFavorited(itemName: string): boolean {
+      return this.favorites.includes(itemName);
+    },
+    getItemBg(item: NavItem): string {
+      const isActive = this.activeItem === item.label;
+      const isHovered = this.hoveredItem === item.label;
+      if (isActive) return 'var(--b-color-background-inverse-secondary)';
+      if (isHovered) return 'var(--b-color-background-always-dark-primary-hover)';
+      return 'transparent';
+    },
+    getItemColor(item: NavItem): string {
+      const isActive = this.activeItem === item.label;
+      const isHovered = this.hoveredItem === item.label;
+      if (isActive || isHovered) return 'var(--b-color-label-inverse-primary)';
+      return 'var(--b-color-label-inverse-secondary)';
+    },
+  },
+});
+</script>
+
+<style scoped>
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.2s ease-in-out;
+  max-height: 1000px;
+  opacity: 1;
+}
+.expand-enter,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+</style>

@@ -1,0 +1,402 @@
+/**
+ * Bento Design System Tokens
+ * Auto-generated from design system guidelines
+ * DO NOT EDIT MANUALLY - All values must match the token reference
+ */
+
+:root {
+  /* ========================================
+     COLOR TOKENS - Semantic Aliases
+     ======================================== */
+
+  /* Background Colors */
+  --b-color-background-primary: #FFFFFF;
+  --b-color-background-primary-hover: #F4F5F6;
+  --b-color-background-primary-active: #ECEDEF;
+  --b-color-background-secondary: #F4F5F6;
+  --b-color-background-secondary-hover: #ECEDEF;
+  --b-color-background-secondary-active: #E2E5E7;
+  --b-color-background-tertiary: #ECEDEF;
+  --b-color-background-tertiary-hover: #E2E5E7;
+  --b-color-background-tertiary-active: #DADDDF;
+  --b-color-background-quaternary: #C0C5CA;
+  --b-color-background-quaternary-hover: #B7BDC2;
+  --b-color-background-quaternary-active: #AEB5BA;
+  --b-color-background-modal: #FFFFFF;
+  --b-color-background-modal-hover: #F4F5F6;
+  --b-color-background-modal-active: #ECEDEF;
+  --b-color-background-disabled: #ECEDEF;
+  --b-color-background-selected: #E3EFFB;
+  --b-color-background-selected-hover: #D4E6F9;
+  --b-color-background-selected-active: #C8DFF7;
+  --b-color-background-spotlight: #FFE379;
+  --b-color-background-critical-weak: #FFF3EF;
+  --b-color-background-critical-strong: #DC3801;
+  --b-color-background-critical-strong-hover: #C13101;
+  --b-color-background-critical-strong-active: #751E00;
+  --b-color-background-warning-weak: #FFF4E5;
+  --b-color-background-warning-weak-hover: #FFECD0;
+  --b-color-background-warning-weak-active: #FFE0B3;
+  --b-color-background-warning-strong: #D77F00;
+  --b-color-background-success-weak: #E4FAEF;
+  --b-color-background-success-strong: #008845;
+  --b-color-background-highlight-weak: #F0F6FD;
+  --b-color-background-highlight-strong: #0F75DC;
+  --b-color-background-inverse-primary: #001222;
+  --b-color-background-inverse-primary-hover: #5C6874;
+  --b-color-background-inverse-primary-active: #6C7782;
+  --b-color-background-inverse-secondary: #1A2B3B;
+  --b-color-background-inverse-secondary-hover: #273746;
+  --b-color-background-inverse-secondary-active: #364553;
+  --b-color-background-inverse-disabled: #273746;
+  --b-color-background-inverse-critical-weak: #5C1800;
+  --b-color-background-inverse-critical-strong: #FF9A78;
+  --b-color-background-inverse-critical-strong-hover: #FFBDA6;
+  --b-color-background-inverse-critical-strong-active: #FFDED3;
+  --b-color-background-always-light: #FFFFFF;
+  --b-color-background-always-light-hover: #F4F5F6;
+  --b-color-background-always-light-active: #ECEDEF;
+  --b-color-background-always-light-disabled: #ECEDEF;
+  --b-color-background-always-light-selected: #E3EFFB;
+  --b-color-background-always-dark: #001222;
+  --b-color-background-always-dark-hover: #5C6874;
+  --b-color-background-always-dark-active: #8C959D;
+  --b-color-background-always-dark-disabled: #ECEDEF;
+  --b-color-background-always-dark-selected: #00305F;
+  --b-color-background-always-dark-primary: #001222;
+  --b-color-background-always-dark-primary-hover: #132434;
+  --b-color-background-always-dark-primary-active: #213140;
+  --b-color-background-always-dark-primary-disabled: #ECEDEF;
+  --b-color-background-always-dark-primary-selected: #00305F;
+  --b-color-background-always-dark-secondary: #213140;
+  --b-color-background-always-dark-secondary-hover: #364553;
+  --b-color-background-always-dark-secondary-active: #455460;
+  --b-color-background-always-dark-secondary-disabled: #ECEDEF;
+  --b-color-background-always-dark-secondary-selected: #00305F;
+  --b-color-background-always-dark-tertiary: #2F3E4D;
+  --b-color-background-always-dark-tertiary-hover: #3D4C5A;
+  --b-color-background-always-dark-tertiary-active: #455460;
+  --b-color-background-always-dark-tertiary-disabled: #ECEDEF;
+  --b-color-background-always-dark-tertiary-selected: #00305F;
+
+  /* Label Colors */
+  --b-color-label-primary: #001222;
+  --b-color-label-primary-hover: #5C6874;
+  --b-color-label-primary-active: #6C7782;
+  --b-color-label-secondary: #5C6874;
+  --b-color-label-tertiary: #8C959D;
+  --b-color-label-disabled: #8C959D;
+  --b-color-label-critical: #DC3801;
+  --b-color-label-critical-hover: #C13101;
+  --b-color-label-critical-active: #751E00;
+  --b-color-label-warning: #AB6600;
+  --b-color-label-highlight: #0F75DC;
+  --b-color-label-success: #008845;
+  --b-color-label-on-color: #FFFFFF;
+  --b-color-label-inverse-primary: #FFFFFF;
+  --b-color-label-inverse-primary-hover: #F4F5F6;
+  --b-color-label-inverse-primary-active: #ECEDEF;
+  --b-color-label-inverse-secondary: #9DA5AC;
+  --b-color-label-inverse-disabled: #737E88;
+  --b-color-label-inverse-critical: #FF9A78;
+  --b-color-label-inverse-critical-hover: #FFBDA6;
+  --b-color-label-inverse-critical-active: #FFDED3;
+  --b-color-label-on-background-critical-weak: #C13101;
+  --b-color-label-on-background-warning-weak: #955900;
+  --b-color-label-on-background-success-weak: #00773C;
+  --b-color-label-on-background-highlight-weak: #0065C9;
+  --b-color-label-always-light: #FFFFFF;
+  --b-color-label-always-light-primary: #ECEDEF;
+  --b-color-label-always-light-primary-hover: #C8CCD0;
+  --b-color-label-always-light-primary-active: #959DA5;
+  --b-color-label-always-light-secondary: #A6ADB3;
+  --b-color-label-always-light-secondary-hover: #959DA5;
+  --b-color-label-always-light-secondary-active: #737E88;
+  --b-color-label-always-light-tertiary: #848D96;
+  --b-color-label-always-light-tertiary-hover: #737E88;
+  --b-color-label-always-light-tertiary-active: #54616D;
+  --b-color-label-always-dark: #001222;
+
+  /* Link Colors */
+  --b-color-link-primary: #0065C9;
+  --b-color-link-primary-hover: #0F75DC;
+  --b-color-link-primary-active: #0F75DC;
+  --b-color-link-primary-disabled: #8C959D;
+  --b-color-link-primary-visited: #540884;
+  --b-color-link-primary-visited-hover: #710AB3;
+  --b-color-link-primary-visited-active: #710AB3;
+  --b-color-link-quiet: #001222;
+  --b-color-link-quiet-hover: #5C6874;
+  --b-color-link-quiet-active: #5C6874;
+  --b-color-link-quiet-disabled: #8C959D;
+
+  /* Outline Colors */
+  --b-color-outline-primary: #DADDDF;
+  --b-color-outline-primary-hover: #C8CCD0;
+  --b-color-outline-primary-active: #001222;
+  --b-color-outline-secondary: #C8CCD0;
+  --b-color-outline-secondary-hover: #B7BDC2;
+  --b-color-outline-secondary-active: #001222;
+  --b-color-outline-tertiary: #8C959D;
+  --b-color-outline-tertiary-hover: #6C7782;
+  --b-color-outline-tertiary-active: #001222;
+  --b-color-outline-disabled: #DADDDF;
+  --b-color-outline-selected: #001222;
+  --b-color-outline-critical: #DC3801;
+  --b-color-outline-critical-hover: #C13101;
+  --b-color-outline-critical-active: #751E00;
+  --b-color-outline-success: #008845;
+  --b-color-outline-success-hover: #00773C;
+  --b-color-outline-success-active: #004724;
+  --b-color-outline-inverse-primary: #2F3E4D;
+  --b-color-outline-inverse-primary-hover: #6C7782;
+  --b-color-outline-inverse-primary-active: #9DA5AC;
+  --b-color-outline-inverse-disabled: #455460;
+  --b-color-outline-inverse-critical: #FF9A78;
+  --b-color-outline-inverse-critical-hover: #FFBDA6;
+  --b-color-outline-inverse-critical-active: #FFDED3;
+
+  /* Separator Colors */
+  --b-color-separator-primary: #DADDDF;
+  --b-color-separator-secondary: #C8CCD0;
+  --b-color-separator-inverse-primary: #2F3E4D;
+  --b-color-separator-inverse-secondary: #5C6874;
+
+  /* Decorative Colors */
+  --b-color-decorative-green: #00D16A;
+  --b-color-decorative-blue: #006BD7;
+  --b-color-decorative-yellow: #F9C500;
+  --b-color-decorative-orange: #F99300;
+  --b-color-decorative-red: #F73F01;
+  --b-color-decorative-grey: #848D96;
+
+  /* Support Colors */
+  --b-color-support-overlay: #001222;
+  --b-color-support-shadow: #001222;
+
+  /* ========================================
+     SPACING TOKENS
+     ======================================== */
+
+  --b-spacer-000: 0px;
+  --b-spacer-010: 2px;
+  --b-spacer-020: 4px;
+  --b-spacer-030: 6px;
+  --b-spacer-040: 8px;
+  --b-spacer-050: 10px;
+  --b-spacer-060: 12px;
+  --b-spacer-070: 16px;
+  --b-spacer-080: 20px;
+  --b-spacer-090: 24px;
+  --b-spacer-100: 32px;
+  --b-spacer-110: 40px;
+  --b-spacer-120: 48px;
+  --b-spacer-130: 56px;
+  --b-spacer-140: 64px;
+
+  /* ========================================
+     BORDER TOKENS
+     ======================================== */
+
+  /* Border Radius */
+  --b-border-radius-xs: 2px;
+  --b-border-radius-s: 4px;
+  --b-border-radius-m: 8px;
+  --b-border-radius-l: 12px;
+  --b-border-radius-xl: 24px;
+
+  /* Border Width */
+  --b-border-width-s: 1px;
+  --b-border-width-m: 2px;
+  --b-border-width-l: 3px;
+  --b-border-width-attention: 1.5px;
+
+  /* ========================================
+     SHADOW TOKENS
+     ======================================== */
+
+  --b-shadow-low: 0px 2px 4px rgba(0, 18, 34, 0.04), 0px 1px 2px rgba(0, 18, 34, 0.02);
+  --b-shadow-medium: 0px 6px 12px rgba(0, 18, 34, 0.08), 0px 2px 4px rgba(0, 18, 34, 0.04);
+  --b-shadow-high: 0px 18px 36px rgba(0, 18, 34, 0.12), 0px 4px 8px rgba(0, 18, 34, 0.06);
+  --b-shadow-low-border: 0px 2px 4px rgba(0, 18, 34, 0.04), 0px 1px 2px rgba(0, 18, 34, 0.02), 0px 0px 0px 1px rgba(218, 221, 223, 1);
+  --b-shadow-medium-border: 0px 6px 12px rgba(0, 18, 34, 0.08), 0px 2px 4px rgba(0, 18, 34, 0.04), 0px 0px 0px 1px rgba(218, 221, 223, 1);
+  --b-shadow-high-border: 0px 18px 36px rgba(0, 18, 34, 0.12), 0px 4px 8px rgba(0, 18, 34, 0.06), 0px 0px 0px 1px rgba(218, 221, 223, 1);
+
+  /* ========================================
+     TYPOGRAPHY TOKENS
+     ======================================== */
+
+  /* Heading S (20px) */
+  --b-text-heading-s-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-heading-s-font-size: 20px;
+  --b-text-heading-s-font-weight: 600;
+  --b-text-heading-s-line-height: 30px;
+  --b-text-heading-s-letter-spacing: 0;
+
+  /* Heading M (24px) */
+  --b-text-heading-m-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-heading-m-font-size: 24px;
+  --b-text-heading-m-font-weight: 600;
+  --b-text-heading-m-line-height: 34px;
+  --b-text-heading-m-letter-spacing: 0;
+
+  /* Heading L (28px) */
+  --b-text-heading-l-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-heading-l-font-size: 28px;
+  --b-text-heading-l-font-weight: 600;
+  --b-text-heading-l-line-height: 38px;
+  --b-text-heading-l-letter-spacing: 0;
+
+  /* Caption (12px) */
+  --b-text-caption-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-caption-font-size: 12px;
+  --b-text-caption-font-weight: 400;
+  --b-text-caption-line-height: 18px;
+  --b-text-caption-letter-spacing: 0;
+  --b-text-caption-wide-line-height: 20px;
+  --b-text-caption-stronger-font-weight: 500;
+  --b-text-caption-stronger-wide-font-weight: 500;
+  --b-text-caption-stronger-wide-line-height: 20px;
+
+  /* Body (14px) */
+  --b-text-body-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-body-font-size: 14px;
+  --b-text-body-font-weight: 400;
+  --b-text-body-line-height: 20px;
+  --b-text-body-letter-spacing: 0;
+  --b-text-body-wide-line-height: 24px;
+  --b-text-body-stronger-font-weight: 500;
+  --b-text-body-stronger-wide-font-weight: 500;
+  --b-text-body-stronger-wide-line-height: 24px;
+  --b-text-body-strongest-font-weight: 600;
+  --b-text-body-strongest-wide-font-weight: 600;
+  --b-text-body-strongest-wide-line-height: 24px;
+
+  /* Subtitle (16px) */
+  --b-text-subtitle-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-subtitle-font-size: 16px;
+  --b-text-subtitle-font-weight: 500;
+  --b-text-subtitle-line-height: 26px;
+  --b-text-subtitle-letter-spacing: 0;
+  --b-text-subtitle-stronger-font-weight: 600;
+
+  /* Title (16px) */
+  --b-text-title-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-title-font-size: 16px;
+  --b-text-title-font-weight: 600;
+  --b-text-title-line-height: 26px;
+  --b-text-title-letter-spacing: 0;
+  --b-text-title-mobile-font-size: 16px;
+  --b-text-title-mobile-line-height: 26px;
+
+  /* Title M (20px) */
+  --b-text-title-m-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-title-m-font-size: 20px;
+  --b-text-title-m-font-weight: 600;
+  --b-text-title-m-line-height: 30px;
+  --b-text-title-m-letter-spacing: 0;
+  --b-text-title-m-mobile-font-size: 18px;
+  --b-text-title-m-mobile-line-height: 28px;
+
+  /* Title L (24px) */
+  --b-text-title-l-font-family: 'Open Sans', 'Adyen Variable', Roboto, Oxygen, 'Helvetica Neue', Arial, sans-serif;
+  --b-text-title-l-font-size: 24px;
+  --b-text-title-l-font-weight: 600;
+  --b-text-title-l-line-height: 34px;
+  --b-text-title-l-letter-spacing: 0;
+  --b-text-title-l-mobile-font-size: 20px;
+  --b-text-title-l-mobile-line-height: 30px;
+
+  /* Global Text Default */
+  --b-text-font-variant-numeric: normal;
+
+  /* ========================================
+     RICH TEXT TOKENS
+     ======================================== */
+
+  --b-text-rich-text-heading-margin: 32px 0 10px 0;
+  --b-text-rich-text-heading-font-weight: 700;
+  --b-text-rich-text-paragraph-margin: 0 0 8px 0;
+  --b-text-rich-text-list-padding-left: 20px;
+  --b-text-rich-text-list-margin: 0 0 4px 0;
+  --b-text-rich-text-code-background-color: var(--b-color-background-secondary);
+  --b-text-rich-text-code-font-family: 'Adyen Mono', 'Roboto Mono', 'Oxygen Mono', 'IBM Plex Mono', 'Courier New', monospace;
+  --b-text-rich-text-code-font-weight: 500;
+  --b-text-rich-text-pre-margin: 16px 0 16px 0;
+  --b-text-rich-text-pre-padding: 10px 16px;
+  --b-text-rich-text-pre-line-height: 24px;
+  --b-text-rich-text-mark-background-color: var(--b-color-background-highlight-weak);
+  --b-text-rich-text-blockquote-font-weight: 500;
+  --b-text-rich-text-blockquote-margin: 16px 0 16px 16px;
+  --b-text-rich-text-table-border: 1px solid var(--b-color-outline-primary);
+  --b-text-rich-text-table-line-height: 20px;
+  --b-text-rich-text-table-margin: 16px 0 16px 0;
+  --b-text-rich-text-table-padding: 10px 16px;
+  --b-text-rich-text-table-header-font-weight: 700;
+  --b-text-rich-text-table-caption-line-height: 20px;
+  --b-text-rich-text-table-caption-margin: 0 0 6px 0;
+  --b-text-rich-text-caption-paragraph-margin: 0 0 6px 0;
+  --b-text-rich-text-caption-list-padding-left: 16px;
+  --b-text-rich-text-caption-list-margin: 0 0 2px 0;
+  --b-text-rich-text-caption-blockquote-margin: 12px 0 12px 16px;
+  --b-text-rich-text-caption-pre-line-height: 20px;
+  --b-text-rich-text-caption-table-padding: 8px 12px;
+
+  /* ========================================
+     ANIMATION / MOTION TOKENS
+     ======================================== */
+
+  --b-animation-easing-standard: cubic-bezier(0.2, 0, 0.4, 0.9);
+  --b-animation-easing-enter: cubic-bezier(0.12, 0.6, 0.4, 0.95);
+  --b-animation-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --b-animation-easing-linear: linear;
+  --b-animation-duration-fast: 100ms;
+  --b-animation-duration-moderate: 150ms;
+  --b-animation-duration-slow: 250ms;
+
+  /* ========================================
+     BREAKPOINT TOKENS
+     ======================================== */
+
+  --b-media-query-xs-min: 0px;
+  --b-media-query-xs-max: 375px;
+  --b-media-query-s-min: 376px;
+  --b-media-query-s-max: 499px;
+  --b-media-query-m-min: 500px;
+  --b-media-query-m-max: 767px;
+  --b-media-query-l-min: 768px;
+  --b-media-query-l-max: 1279px;
+  --b-media-query-xl-min: 1280px;
+  --b-media-query-xl-max: 1535px;
+  --b-media-query-xxl: 1536px;
+
+  /* ========================================
+     Z-INDEX TOKENS
+     ======================================== */
+
+  --b-z-index-global-screen: auto;
+  --b-z-index-global-elevated: 5;
+  --b-z-index-global-navigation: 10;
+  --b-z-index-global-instant-interaction: 15;
+  --b-z-index-local-tier-1: 1;
+  --b-z-index-local-tier-2: 2;
+  --b-z-index-local-tier-3: 3;
+  --b-z-index-local-tier-4: 4;
+
+  /* ========================================
+     FOCUS RING TOKENS
+     ======================================== */
+
+  --b-focus-ring-color: rgba(15, 117, 220, 0.8);
+  --b-focus-ring-spacer: 1px;
+  --b-focus-ring-outline: 3px;
+
+  /* ========================================
+     GRADIENT TOKENS
+     ======================================== */
+
+  --b-gradient-data-grid-hover: linear-gradient(270deg, var(--b-color-background-primary-hover) 0%, rgba(247, 247, 248, .82) 53.34%, rgba(247, 247, 248, .75) 61.73%, rgba(247, 247, 248, .11) 99.25%, rgba(247, 247, 248, 0) 100%);
+  --b-gradient-data-grid-zebra-hover: linear-gradient(270deg, var(--b-color-background-secondary-hover) 0%, rgba(236, 237, 239, .82) 53.34%, rgba(236, 237, 239, .75) 61.73%, rgba(236, 237, 239, .11) 99.25%, rgba(236, 237, 239, 0) 100%);
+  --b-gradient-data-grid-selected-hover: linear-gradient(270deg, var(--b-color-background-selected-hover) 0%, rgba(212, 230, 249, .82) 53.34%, rgba(212, 230, 249, .75) 61.73%, rgba(212, 230, 249, .11) 99.25%, rgba(212, 230, 249, 0) 100%);
+  --b-gradient-data-grid-highlighted-hover: linear-gradient(270deg, var(--b-color-background-warning-weak-hover) 0%, rgba(255, 236, 208, .82) 53.34%, rgba(255, 236, 208, .75) 61.73%, rgba(255, 236, 208, .11) 99.25%, rgba(255, 236, 208, 0) 100%);
+}

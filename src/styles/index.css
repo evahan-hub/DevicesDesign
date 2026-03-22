@@ -1,0 +1,281 @@
+@import './fonts.css';
+@import './bento-tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './header.css';
+@import './content.css';
+@import './sidebar.css';
+@import './responsive.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--b-text-body-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+}
+
+/* Ensure Adyen/Bento font inherits into elements that browsers reset */
+input, textarea, select, button, table, th, td {
+  font-family: inherit;
+}
+
+/*
+  PAGE VIEWPORT CONTAINER
+  Applied to the constrained inner div in RootLayout so that all descendant
+  container queries react to the *simulated* screen width, not the browser viewport.
+*/
+.page-viewport-container {
+  container-type: inline-size;
+  container-name: page-viewport;
+}
+
+/*
+  CONTENT AREA - Responsive padding using Bento spacer tokens
+  Uses @container instead of @media so the control-panel viewport simulator works.
+  Breakpoints mirror the Bento media-query token definitions:
+    xs  : 0px - 375px    (--b-media-query-xs-max)
+    s+m : 376px - 767px  (combined; one band)
+    l   : 768px - 1279px (--b-media-query-l-min/max)
+    xl  : 1280px - 1535px (--b-media-query-xl-min/max)
+    xxl : 1536px+         (--b-media-query-xxl)
+*/
+
+/* xs: 0px-375px — padding 16px */
+.content-area {
+  flex: 1;
+  min-height: 100%;
+  padding-block-start: var(--b-spacer-070);
+  padding-inline: var(--b-spacer-070);
+}
+
+/* s + m: 376px-767px — padding 24px */
+@container page-viewport (min-width: 376px) {
+  .content-area {
+    padding-block-start: var(--b-spacer-090);
+    padding-inline: var(--b-spacer-090);
+  }
+}
+
+/* l: 768px-1279px — padding 32px */
+@container page-viewport (min-width: 768px) {
+  .content-area {
+    padding-block-start: var(--b-spacer-100);
+    padding-inline: var(--b-spacer-100);
+  }
+}
+
+/* xl: 1280px-1535px — padding 40px */
+@container page-viewport (min-width: 1280px) {
+  .content-area {
+    padding-block-start: var(--b-spacer-110);
+    padding-inline: var(--b-spacer-110);
+  }
+}
+
+/* xxl: 1536px+ — padding-block 40px, padding-inline 64px */
+@container page-viewport (min-width: 1536px) {
+  .content-area {
+    padding-block-start: var(--b-spacer-110);
+    padding-inline: var(--b-spacer-140);
+  }
+}
+
+/*
+  PAGE GRID — 12-column grid layout
+  Column gap by breakpoint:
+    0–374px   (xs)      : 12px  → --b-spacer-060
+    375–767px (s + m)   : 16px  → --b-spacer-070
+    768px+    (l → xxl) : 24px  → --b-spacer-090
+*/
+
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: var(--b-spacer-060); /* 12px — 0–374px */
+  width: 100%;
+}
+
+@container page-viewport (min-width: 375px) {
+  .page-grid {
+    column-gap: var(--b-spacer-070); /* 16px — 375px–767px */
+  }
+}
+
+@container page-viewport (min-width: 768px) {
+  .page-grid {
+    column-gap: var(--b-spacer-090); /* 24px — 768px+ */
+  }
+}
+
+/* ========================================================================
+   BENTO BUTTON CLASSES
+   Mirrors @adyen/bento-vue2 button.scss — BEM with b- prefix.
+   Variants: primary, secondary, tertiary, tertiary-with-background
+   Modifiers: --condensed, --icon-only, --inverse, --disabled
+   ======================================================================== */
+
+.b-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  appearance: none;
+  border: none;
+  border-radius: var(--b-border-radius-m);
+  box-shadow: inset 0 0 0 var(--b-border-width-s) transparent;
+  cursor: pointer;
+  padding: var(--b-spacer-040) var(--b-spacer-060);
+  text-decoration: none;
+  transition: var(--b-animation-duration-fast) var(--b-animation-easing-linear);
+  transition-property: color, background-color, box-shadow, border-color;
+  user-select: none;
+  font-family: var(--b-text-body-font-family);
+  font-size: var(--b-text-body-font-size);
+  font-weight: var(--b-text-body-stronger-font-weight);
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.b-button:focus-visible {
+  outline: var(--b-border-width-m) solid var(--b-color-outline-focus);
+  outline-offset: var(--b-border-width-s);
+}
+
+/* PRIMARY */
+.b-button--primary {
+  background-color: var(--b-color-background-inverse-primary);
+  color: var(--b-color-label-inverse-primary);
+}
+.b-button--primary:hover {
+  background-color: var(--b-color-background-inverse-primary-hover);
+}
+.b-button--primary:active {
+  background-color: var(--b-color-background-inverse-primary-active);
+}
+
+/* SECONDARY */
+.b-button--secondary {
+  background-color: var(--b-color-background-primary);
+  border: var(--b-border-width-s) solid var(--b-color-outline-secondary);
+  color: var(--b-color-label-primary);
+  padding: calc(var(--b-spacer-040) - var(--b-border-width-s)) calc(var(--b-spacer-060) - var(--b-border-width-s));
+}
+.b-button--secondary:hover {
+  background-color: var(--b-color-background-primary-hover);
+  color: var(--b-color-label-primary-hover);
+}
+.b-button--secondary:active {
+  background-color: var(--b-color-background-primary-active);
+}
+
+/* TERTIARY */
+.b-button--tertiary {
+  background-color: transparent;
+  color: var(--b-color-label-primary);
+  padding: 0;
+  text-decoration: underline;
+}
+.b-button--tertiary:hover {
+  color: var(--b-color-label-primary-hover);
+  text-decoration: none;
+}
+.b-button--tertiary:active {
+  color: var(--b-color-label-primary-active);
+  text-decoration: none;
+}
+
+/* TERTIARY WITH BACKGROUND */
+.b-button--tertiary-with-background {
+  background-color: transparent;
+  color: var(--b-color-label-primary);
+}
+.b-button--tertiary-with-background:hover {
+  background-color: var(--b-color-background-primary-hover);
+  color: var(--b-color-label-primary-hover);
+}
+.b-button--tertiary-with-background:active {
+  background-color: var(--b-color-background-primary-active);
+}
+
+/* CRITICAL VARIANTS */
+.b-button--primary-critical {
+  background-color: var(--b-color-background-critical-strong);
+  color: var(--b-color-label-inverse-primary);
+}
+.b-button--primary-critical:hover {
+  background-color: var(--b-color-background-critical-strong-hover);
+}
+.b-button--secondary-critical {
+  background-color: var(--b-color-background-primary);
+  border: var(--b-border-width-s) solid var(--b-color-outline-critical);
+  color: var(--b-color-label-critical);
+  padding: calc(var(--b-spacer-040) - var(--b-border-width-s)) calc(var(--b-spacer-060) - var(--b-border-width-s));
+}
+.b-button--secondary-critical:hover {
+  background-color: var(--b-color-background-critical-weak);
+  border-color: var(--b-color-outline-critical-hover);
+  color: var(--b-color-label-critical-hover);
+}
+
+/* CONDENSED */
+.b-button--condensed {
+  padding: var(--b-spacer-020) var(--b-spacer-050);
+}
+.b-button--condensed.b-button--secondary,
+.b-button--condensed.b-button--secondary-critical {
+  padding: calc(var(--b-spacer-020) - var(--b-border-width-s)) calc(var(--b-spacer-050) - var(--b-border-width-s));
+}
+
+/* ICON ONLY */
+.b-button--icon-only {
+  padding: var(--b-spacer-050);
+}
+.b-button--icon-only.b-button--condensed {
+  padding: var(--b-spacer-030);
+}
+.b-button--icon-only.b-button--condensed.b-button--secondary {
+  padding: calc(var(--b-spacer-030) - var(--b-border-width-s));
+}
+
+/* DISABLED */
+.b-button--disabled,
+.b-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.b-button--disabled.b-button--primary,
+.b-button:disabled.b-button--primary {
+  background-color: var(--b-color-background-disabled);
+  color: var(--b-color-label-disabled);
+}
+.b-button--disabled.b-button--secondary,
+.b-button:disabled.b-button--secondary {
+  background-color: var(--b-color-background-primary);
+  border-color: var(--b-color-outline-disabled);
+  color: var(--b-color-label-disabled);
+}
+
+/* INVERSE (for dark backgrounds) */
+.b-button--inverse.b-button--primary {
+  background-color: var(--b-color-background-primary);
+  color: var(--b-color-label-primary);
+}
+.b-button--inverse.b-button--primary:hover {
+  background-color: var(--b-color-background-primary-hover);
+}
+.b-button--inverse.b-button--secondary {
+  background-color: var(--b-color-background-inverse-primary);
+  border-color: var(--b-color-outline-inverse-primary);
+  color: var(--b-color-label-inverse-primary);
+}
+.b-button--inverse.b-button--secondary:hover {
+  background-color: var(--b-color-background-inverse-primary-hover);
+  border-color: var(--b-color-outline-inverse-primary-hover);
+}
