@@ -1,0 +1,156 @@
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: normal;
+    font-weight: 100 400;
+    src: url('./Adyen-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: italic;
+    font-weight: 100 400;
+    src: url('./Adyen-Regular-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Adyen-Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: italic;
+    font-weight: 400;
+    src: url('./Adyen-Medium-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: normal;
+    font-weight: 500 900;
+    src: url('./Adyen-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Variable';
+    font-style: italic;
+    font-weight: 500 900;
+    src: url('./Adyen-Bold-Oblique.woff2') format('woff2');
+}
+
+/* Adyen Mono */
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: normal;
+    font-weight: 100 400;
+    src: url('./Adyen-Mono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: italic;
+    font-weight: 100 400;
+    src: url('./Adyen-Mono-Regular-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Adyen-Mono-Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: italic;
+    font-weight: 400;
+    src: url('./Adyen-Mono-Medium-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: normal;
+    font-weight: 500 900;
+    src: url('./Adyen-Mono-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen Mono';
+    font-style: italic;
+    font-weight: 500 900;
+    src: url('./Adyen-Mono-Bold-Oblique.woff2') format('woff2');
+}
+
+/* Adyen UI */
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: normal;
+    font-weight: 100 400;
+    src: url('./Adyen-UI-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: italic;
+    font-weight: 100 400;
+    src: url('./Adyen-UI-Regular-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Adyen-UI-Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: italic;
+    font-weight: 400;
+    src: url('./Adyen-UI-Medium-Oblique.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: normal;
+    font-weight: 500 900;
+    src: url('./Adyen-UI-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Adyen UI';
+    font-style: italic;
+    font-weight: 500 900;
+    src: url('./Adyen-UI-Bold-Oblique.woff2') format('woff2');
+}
+
+/*
+The code is required because:
+- The playwright webkit browser does not support variable fonts so we must explictly declare all the fonts
+- Font faces do not support changing font-family based on font-size we need to manually set the font family for all typography
+  with 14px font-size or less to Adyen UI font family.
+*/
+body {
+    --b-text-caption-font-family: 'Adyen UI', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    --b-text-body-font-family: 'Adyen UI', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+}
