@@ -1,15 +1,12 @@
 <template>
-  <div class="invoices-page">
+  <div class="page">
     <div class="page-header">
       <div class="header-content">
         <div class="header-title">
           <h1>Invoices</h1>
         </div>
         <div class="header-actions">
-          <bento-button 
-            label="Download list" 
-            variant="primary"
-          />
+          <bento-button variant="primary" >Download List</bento-button>
         </div>
       </div>
     </div>
@@ -21,15 +18,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { 
-  BentoButton
-} from '@adyen/bento-vue2';
 
 export default Vue.extend({
   name: 'InvoicesPage',
-  components: {
-    BentoButton
-  },
   data() {
     return {};
   },
@@ -43,6 +34,7 @@ export default Vue.extend({
 
 .page-header {
   margin-bottom: var(--b-spacer-090);
+  width: 100%;
 }
 
 .header-content {
@@ -50,7 +42,7 @@ export default Vue.extend({
   align-items: center;
   justify-content: space-between;
   position: relative;
-  width: 100%;
+  width: auto;
 }
 
 .header-title {
@@ -59,18 +51,20 @@ export default Vue.extend({
   font-family: var(--b-text-heading-font-family);
   font-weight: var(--b-text-heading-font-weight);
   justify-content: center;
-  line-height: 0;
+  line-height: var(--b-text-heading-line-height);
   position: relative;
   flex-shrink: 0;
   font-size: var(--b-text-heading-l-font-size);
-  width: 1096px;
+  width: auto;
+  height: 100%;
 }
 
 .header-title h1 {
-  font-family: var(--b-text-heading-font-family);
-  font-weight: var(--b-text-heading-font-weight);
-  font-size: var(--b-text-heading-l-font-size);
-  line-height: var(--b-text-heading-line-height);
+  font-family: var(--b-text-title-l-font-family);
+  font-weight: var(--b-text-title-l-font-weight);
+  font-size: var(--b-text-title-l-font-size);
+  line-height: var(--b-text-title-l-line-height);
+  letter-spacing: var(--b-text-title-l-letter-spacing);
   color: var(--b-color-label-primary);
   margin: 0;
 }

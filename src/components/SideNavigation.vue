@@ -1,19 +1,24 @@
 <template>
   <div
-    class="flex flex-col"
     :style="{
       width: '248px',
       height: '100vh',
-      minHeight: '100vh',
+      maxHeight: '100vh',
       backgroundColor: 'var(--b-color-background-inverse-primary)',
       flexShrink: 0,
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
     }"
   >
     <!-- Header -->
     <div
       ref="headerRef"
-      class="flex items-center justify-between cursor-pointer"
       :style="{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        cursor: 'pointer',
         padding: 'var(--b-spacer-040)',
         margin: 'var(--b-spacer-040)',
         borderRadius: 'var(--b-border-radius-m)',
@@ -25,7 +30,7 @@
       @mouseenter="isHeaderHovered = true"
       @mouseleave="isHeaderHovered = false"
     >
-      <div class="flex items-center" :style="{ gap: 'var(--b-spacer-060)' }">
+      <div :style="{ display: 'flex', alignItems: 'center', gap: 'var(--b-spacer-060)' }">
         <div
           :style="{
             width: 'var(--b-spacer-100)',
@@ -56,12 +61,17 @@
 
     <!-- Scrollable content: Favorites + Pages -->
     <div
-      class="flex-1 overflow-y-auto flex flex-col"
       :style="{
+        flex: '1',
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
         paddingLeft: 'var(--b-spacer-070)',
         paddingRight: 'var(--b-spacer-070)',
         paddingTop: 'var(--b-spacer-090)',
         paddingBottom: 'var(--b-spacer-070)',
+        minHeight: '0',
+        height: 'auto',
       }"
     >
       <!-- Favorites Section -->
@@ -71,14 +81,14 @@
         </h3>
         <div
           v-if="favorites.length === 0"
-          class="text-center"
           :style="{
+            textAlign: 'center',
             backgroundColor: 'var(--b-color-background-always-dark-secondary)',
             borderRadius: 'var(--b-border-radius-m)',
             padding: 'var(--b-spacer-090)',
           }"
         >
-          <div class="flex" :style="{ marginBottom: 'var(--b-spacer-040)', justifyContent: 'center' }">
+          <div :style="{ display: 'flex', marginBottom: 'var(--b-spacer-040)', justifyContent: 'center' }">
             <div :style="{ width: 'var(--b-spacer-080)', height: 'var(--b-spacer-080)', '--fill-0': 'var(--b-color-label-inverse-secondary)' }">
               <icon-star />
             </div>
@@ -90,12 +100,14 @@
             Click on the star on the right side of a menu item to add as a favorite.
           </p>
         </div>
-        <div v-else class="flex flex-col" :style="{ gap: 'var(--b-spacer-010, 4px)' }">
+        <div v-else :style="{ display: 'flex', flexDirection: 'column', gap: 'var(--b-spacer-010, 4px)' }">
           <div
             v-for="fav in favorites"
             :key="fav"
-            class="flex items-center cursor-pointer"
             :style="{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
               height: 'var(--b-spacer-100)',
               paddingLeft: 'var(--b-spacer-060)',
               paddingRight: 'var(--b-spacer-060)',
@@ -109,7 +121,7 @@
             @mouseleave="hoveredFavorite = null"
             @click="setActiveItem(fav)"
           >
-            <div class="flex items-center" :style="{ gap: 'var(--b-spacer-080, 16px)', flex: 1, minWidth: 0, overflow: 'hidden' }">
+            <div :style="{ display: 'flex', alignItems: 'center', gap: 'var(--b-spacer-080, 16px)', flex: 1, minWidth: 0, overflow: 'hidden' }">
               <div :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, '--fill-0': 'var(--b-color-label-inverse-secondary)' }">
                 <icon-star-filled />
               </div>
@@ -117,8 +129,7 @@
             </div>
             <div
               v-if="hoveredFavorite === fav"
-              class="cursor-pointer"
-              :style="{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: 'var(--b-spacer-040)' }"
+              :style="{ cursor: 'pointer', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: 'var(--b-spacer-040)' }"
               @click.stop="toggleFavorite(fav)"
             >
               <icon-cross :size="16" color="var(--b-color-label-inverse-secondary)" />
@@ -136,26 +147,37 @@
             <div
               class="flex items-center cursor-pointer"
               :style="{
-                height: 'var(--b-spacer-100)',
-                paddingLeft: 'var(--b-spacer-060)',
-                paddingRight: 'var(--b-spacer-060)',
-                borderRadius: 'var(--b-border-radius-m)',
-                backgroundColor: getItemBg(item),
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 20px',
                 color: getItemColor(item),
-                justifyContent: 'space-between',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+                backgroundColor: getItemBg(item),
                 transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
               }"
               @click="handleItemClick(item)"
               @mouseenter="hoveredItem = item.label"
               @mouseleave="hoveredItem = null"
             >
-              <div class="flex items-center" :style="{ gap: 'var(--b-spacer-080, 16px)', minWidth: 0, overflow: 'hidden' }">
-                <div :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', color: 'inherit', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
-                  <component :is="item.icon" :size="16" color="currentColor" />
-                </div>
-                <span :style="textStyle">{{ item.label }}</span>
+              <div :style="{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }">
+                <component :is="item.icon" :size="16" color="currentColor" />
               </div>
-              <div v-if="item.children && item.children.length > 0" class="flex items-center" :style="{ gap: 'var(--b-spacer-010, 4px)' }">
+              <span :style="{
+                fontFamily: 'var(--b-text-body-font-family)',
+                fontSize: 'var(--b-text-body-font-size)',
+                fontWeight: 'var(--b-text-body-font-weight)',
+                lineHeight: 'var(--b-text-body-line-height)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                flex: '1'
+              }">{{ item.label }}</span>
+              
+              <!-- Badge or other elements can go here -->
+              <div v-if="item.children && item.children.length > 0" :style="{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }">
                 <template v-if="hoveredItem === item.label || expandedItem === item.label">
                   <icon-chevron-up v-if="expandedItem === item.label" :size="16" color="var(--b-color-label-inverse-secondary)" />
                   <icon-chevron-down v-else :size="16" color="var(--b-color-label-inverse-secondary)" />
@@ -163,27 +185,28 @@
               </div>
               <div
                 v-else-if="(isFavorited(item.label) || hoveredItem === item.label)"
-                class="cursor-pointer"
-                :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
+                :style="{ cursor: 'pointer', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }"
                 @click.stop="toggleFavorite(item.label)"
               >
-                <icon-star-filled v-if="isFavorited(item.label)" />
-                <icon-star v-else />
+                <icon-star-filled v-if="isFavorited(item.label)" :size="16" />
+                <icon-star v-else :size="16" />
               </div>
             </div>
 
             <!-- Children items (expandable) -->
             <transition name="expand">
-              <div v-if="expandedItem === item.label && item.children" class="overflow-hidden">
-                <div class="flex flex-col" :style="{ marginTop: 'var(--b-spacer-010, 4px)', gap: 'var(--b-spacer-010, 4px)' }">
+              <div v-if="expandedItem === item.label && item.children" :style="{ overflow: 'hidden' }">
+                <div :style="{ display: 'flex', flexDirection: 'column', marginTop: 'var(--b-spacer-010, 4px)', gap: 'var(--b-spacer-010, 4px)' }">
                   <div
                     v-for="child in item.children"
                     :key="child.label"
-                    class="flex items-center justify-between cursor-pointer"
                     :style="{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
                       height: 'var(--b-spacer-100)',
                       paddingRight: 'var(--b-spacer-060)',
-                      justifyContent: 'space-between',
                       paddingLeft: 'var(--b-spacer-120)',
                       borderRadius: 'var(--b-border-radius-m)',
                       color: activeItem === child.label || hoveredChildItem === child.label
@@ -205,8 +228,7 @@
                     </span>
                     <div
                       v-if="isFavorited(child.label) || hoveredChildItem === child.label"
-                      class="cursor-pointer"
-                      :style="{ width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
+                      :style="{ cursor: 'pointer', width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
                       @click.stop="toggleFavorite(child.label)"
                     >
                       <icon-star-filled v-if="isFavorited(child.label)" />
@@ -441,13 +463,14 @@ export default Vue.extend({
     },
     textStyle(): Record<string, string> {
       return {
-        fontFamily: 'var(--b-text-body-font-family, \'Adyen UI\', -apple-system, BlinkMacSystemFont, \'Segoe UI\', \'Roboto\', sans-serif)',
-        fontSize: 'var(--b-text-body-font-size, 14px)',
-        fontWeight: 'var(--b-text-body-font-weight, 400)',
-        lineHeight: 'var(--b-text-body-line-height, 20px)',
+        fontFamily: 'var(--b-text-body-font-family)',
+        fontSize: 'var(--b-text-body-font-size)',
+        fontWeight: 'var(--b-text-body-font-weight)',
+        lineHeight: 'var(--b-text-body-line-height)',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        flex: '1',
       };
     },
   },

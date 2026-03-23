@@ -25,8 +25,8 @@
       <!-- Bento Button Demo Section -->
       <div class="demo-section">
         <h3>Bento Components Demo</h3>
-        <bento-button label="Button primary" variant="primary" @click="handleClick" />
-        <bento-button label="Button secondary" variant="secondary" @click="handleClick" />
+        <bento-button variant="primary" @click="handleClick">Primary Button</bento-button>
+        <bento-button variant="secondary" @click="handleClick">Secondary Button</bento-button>
       </div>
     </div>
     

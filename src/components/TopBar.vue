@@ -1,7 +1,7 @@
 <template>
   <div :style="{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: 'var(--b-color-background-primary)' }">
     <!-- Bar content -->
-    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, padding: '12px var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
+    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, padding: '6px var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
       <!-- Search -->
       <div :style="{ position: 'relative', width: '240px', height: '36px', borderRadius: 'var(--b-border-radius-m)', border: '1px solid var(--b-color-outline-tertiary)', backgroundColor: 'var(--b-color-background-primary)', flexShrink: 0 }">
         <svg :style="{ position: 'absolute', left: '12px', top: '10px' }" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -14,19 +14,17 @@
           :style="{
             position: 'absolute',
             left: '40px',
-            top: '8px',
+            top: '50%',
+            transform: 'translateY(-50%)',
             fontFamily: 'var(--b-text-body-font-family)',
             fontSize: 'var(--b-text-body-font-size)',
             lineHeight: '20px',
-            color: searchQuery ? 'var(--b-color-label-primary)' : 'var(--b-color-label-secondary)',
             backgroundColor: 'transparent',
             border: 'none',
             outline: 'none',
             width: '180px'
           }"
           @input="handleSearchInput"
-          @focus="isSearchFocused = true"
-          @blur="isSearchFocused = false"
         />
         
         <!-- Clear button (shows when there's text) -->
