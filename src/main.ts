@@ -10,13 +10,29 @@ Vue.use(VueRouter);
 
 // Import and configure Bento design system
 import BentoVue from '@adyen/bento-vue2';
-Vue.use(BentoVue);
+Vue.use(BentoVue, {
+  theme: {},
+  withDesignTokensCSSInjection: false
+});
 
 // Register commonly used Bento components globally
-import { BentoButton } from '@adyen/bento-vue2';
+import { 
+  BentoButton,
+  BentoTab,
+  BentoTabs,
+  BentoTypography,
+  BentoLoadingIndicator,
+  BentoAlert
+} from '@adyen/bento-vue2';
 import BentoTitle from '@adyen/bento-vue2';
+
 Vue.component('BentoButton', BentoButton);
 Vue.component('BentoTitle', BentoTitle);
+Vue.component('BentoTab', BentoTab);
+Vue.component('BentoTabs', BentoTabs);
+Vue.component('BentoTypography', BentoTypography);
+Vue.component('BentoLoadingIndicator', BentoLoadingIndicator);
+Vue.component('BentoAlert', BentoAlert);
 
 new Vue({
   router,
