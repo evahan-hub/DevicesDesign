@@ -1,32 +1,25 @@
 <template>
-  <div class="home-page">
+  <div class="balances-overview-page">
     <div class="page-header">
-      <h1>Home</h1>
-      <p>Welcome to the PX Prototype application</p>
+      <h1>Balances Overview</h1>
+      <p>View and manage account balances and financial overview</p>
     </div>
     
     <!-- Default Overview Content -->
     <div v-if="!$slots.details" class="content-section">
       <div class="info-card">
-        <h3>Getting Started</h3>
-        <p>Explore the features and capabilities of the application</p>
+        <h3>Account Balances</h3>
+        <p>View current account balances and status</p>
       </div>
       
       <div class="info-card">
-        <h3>Quick Actions</h3>
-        <p>Access frequently used features and tools</p>
+        <h3>Balance History</h3>
+        <p>Track balance changes and transactions</p>
       </div>
       
       <div class="info-card">
-        <h3>Recent Activity</h3>
-        <p>View recent updates and activities</p>
-      </div>
-      
-      <!-- Bento Button Demo Section -->
-      <div class="demo-section">
-        <h3>Bento Components Demo</h3>
-        <bento-button label="Button primary" variant="primary" @click="handleClick" />
-        <bento-button label="Button secondary" variant="secondary" @click="handleClick" />
+        <h3>Balance Analytics</h3>
+        <p>Analyze balance trends and patterns</p>
       </div>
     </div>
     
@@ -39,26 +32,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { BentoButton } from '@adyen/bento-vue2';
 
 export default Vue.extend({
-  name: 'HomePage',
-  components: {
-    BentoButton,
-  },
-  data() {
-    return {};
-  },
-  methods: {
-    handleClick() {
-      console.log('Bento button clicked!');
-    },
-  },
+  name: 'BalancesOverviewPage',
 });
 </script>
 
 <style scoped>
-.home-page {
+.balances-overview-page {
   padding: var(--b-spacer-090);
 }
 
@@ -81,29 +62,30 @@ export default Vue.extend({
 }
 
 .content-section {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--b-spacer-090);
 }
 
-.demo-section {
+.info-card {
   padding: var(--b-spacer-090);
   background-color: var(--b-color-background-secondary);
   border-radius: var(--b-border-radius-m);
   border: 1px solid var(--b-color-outline-secondary);
 }
 
-.demo-section h3 {
+.info-card h3 {
   font-family: var(--b-text-body-font-family);
   font-size: var(--b-text-body-font-size);
   font-weight: var(--b-text-body-stronger-font-weight);
   color: var(--b-color-label-primary);
-  margin-bottom: var(--b-spacer-060);
+  margin-bottom: var(--b-spacer-040);
 }
 
-.demo-section .bento-button {
-  margin-right: var(--b-spacer-060);
-  margin-bottom: var(--b-spacer-060);
+.info-card p {
+  font-family: var(--b-text-body-font-family);
+  font-size: var(--b-text-body-font-size);
+  color: var(--b-color-label-secondary);
 }
 
 .details-view {

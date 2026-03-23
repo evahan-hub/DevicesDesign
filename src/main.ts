@@ -6,11 +6,11 @@ import './styles/index.css';
 import './assets/fonts/fonts.css';
 import '@adyen/bento-vue2/styles/bento.css';
 
-// Import and configure Bento design system (our working solution)
-import install from '@adyen/bento-vue2';
-
 Vue.use(VueRouter);
-Vue.use(install);
+
+// Import and configure Bento design system
+import BentoVue from '@adyen/bento-vue2';
+Vue.use(BentoVue);
 
 new Vue({
   router,

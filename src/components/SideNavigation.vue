@@ -78,7 +78,7 @@
             padding: 'var(--b-spacer-090)',
           }"
         >
-          <div class="flex justify-center" :style="{ marginBottom: 'var(--b-spacer-040)' }">
+          <div class="flex" :style="{ marginBottom: 'var(--b-spacer-040)', justifyContent: 'center' }">
             <div :style="{ width: 'var(--b-spacer-080)', height: 'var(--b-spacer-080)', '--fill-0': 'var(--b-color-label-inverse-secondary)' }">
               <icon-star />
             </div>
@@ -94,12 +94,13 @@
           <div
             v-for="fav in favorites"
             :key="fav"
-            class="flex items-center justify-between cursor-pointer"
+            class="flex items-center cursor-pointer"
             :style="{
               height: 'var(--b-spacer-100)',
               paddingLeft: 'var(--b-spacer-060)',
               paddingRight: 'var(--b-spacer-060)',
               borderRadius: 'var(--b-border-radius-m)',
+              justifyContent: 'space-between',
               color: hoveredFavorite === fav ? 'var(--b-color-label-inverse-primary)' : 'var(--b-color-label-inverse-secondary)',
               backgroundColor: hoveredFavorite === fav ? 'var(--b-color-background-inverse-secondary)' : 'transparent',
               transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
@@ -117,7 +118,7 @@
             <div
               v-if="hoveredFavorite === fav"
               class="cursor-pointer"
-              :style="{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }"
+              :style="{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: 'var(--b-spacer-040)' }"
               @click.stop="toggleFavorite(fav)"
             >
               <icon-cross :size="16" color="var(--b-color-label-inverse-secondary)" />
@@ -133,7 +134,7 @@
           <div v-for="item in navItems" :key="item.label">
             <!-- Nav item row -->
             <div
-              class="flex items-center justify-between cursor-pointer"
+              class="flex items-center cursor-pointer"
               :style="{
                 height: 'var(--b-spacer-100)',
                 paddingLeft: 'var(--b-spacer-060)',
@@ -141,6 +142,7 @@
                 borderRadius: 'var(--b-border-radius-m)',
                 backgroundColor: getItemBg(item),
                 color: getItemColor(item),
+                justifyContent: 'space-between',
                 transition: 'color var(--b-animation-duration-moderate) var(--b-animation-easing-standard), background-color var(--b-animation-duration-moderate) var(--b-animation-easing-standard)',
               }"
               @click="handleItemClick(item)"
@@ -181,6 +183,7 @@
                     :style="{
                       height: 'var(--b-spacer-100)',
                       paddingRight: 'var(--b-spacer-060)',
+                      justifyContent: 'space-between',
                       paddingLeft: 'var(--b-spacer-120)',
                       borderRadius: 'var(--b-border-radius-m)',
                       color: activeItem === child.label || hoveredChildItem === child.label
@@ -197,6 +200,9 @@
                     @mouseleave="hoveredChildItem = null"
                     @click="navigateToChild(child)"
                   >
+                    <span :style="{ ...bodyStyle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }">
+                      {{ child.label }}
+                    </span>
                     <div
                       v-if="isFavorited(child.label) || hoveredChildItem === child.label"
                       class="cursor-pointer"
@@ -206,9 +212,6 @@
                       <icon-star-filled v-if="isFavorited(child.label)" />
                       <icon-star v-else />
                     </div>
-                    <span :style="{ ...bodyStyle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }">
-                      {{ child.label }}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -318,54 +321,84 @@ export default Vue.extend({
       isHeaderHovered: false,
       isLangHovered: false,
       navItems: [
-        { icon: 'icon-home', label: 'Home' },
+        { icon: 'icon-home', label: 'Home', route: '/home' },
         { icon: 'icon-grid', label: 'Transactions', children: [
-          { label: 'Payments' }, { label: 'Offers' }, { label: 'Payouts' },
+          { label: 'Payments', route: '/transactions/payments' }, 
+          { label: 'Offers', route: '/transactions/offers' }, 
+          { label: 'Payouts', route: '/transactions/payouts' },
         ]},
         { icon: 'icon-users', label: 'Accounts & balances', children: [
-          { label: 'Account holders' }, { label: 'Score' },
+          { label: 'Account holders', route: '/accounts/account-holders' }, 
+          { label: 'Score', route: '/accounts/score' },
         ]},
-        { icon: 'icon-diamond', label: 'Performance' },
+        { icon: 'icon-diamond', label: 'Performance', route: '/performance' },
         { icon: 'icon-shield', label: 'Revenue & risk', children: [
-          { label: 'Uplift overview' }, { label: 'Recommendations' }, { label: 'Case management' },
-          { label: 'Disputes' }, { label: 'Dynamic 3D Secure' }, { label: 'Experiments' },
-          { label: 'Risk fields' }, { label: 'Risk lists' }, { label: 'Risk profiles' },
-          { label: 'Risk profile details' }, { label: 'Settings' },
+          { label: 'Uplift overview', route: '/revenue-risk/uplift-overview' }, 
+          { label: 'Recommendations', route: '/revenue-risk/recommendations' }, 
+          { label: 'Case management', route: '/revenue-risk/case-management' },
+          { label: 'Disputes', route: '/revenue-risk/disputes' }, 
+          { label: 'Dynamic 3D Secure', route: '/revenue-risk/dynamic-3d-secure' }, 
+          { label: 'Experiments', route: '/revenue-risk/experiments' },
+          { label: 'Risk fields', route: '/revenue-risk/risk-fields' }, 
+          { label: 'Risk lists', route: '/revenue-risk/risk-lists' }, 
+          { label: 'Risk profiles', route: '/revenue-risk/risk-profiles' },
+          { label: 'Risk profile details', route: '/revenue-risk/risk-profile-details' }, 
+          { label: 'Settings', route: '/revenue-risk/settings' },
         ]},
         { icon: 'icon-handshake', label: 'Partner', children: [
-          { label: 'Overview' }, { label: 'Referrals' }, { label: 'Commissions' }, { label: 'Merchant access' },
+          { label: 'Overview', route: '/partner/overview' }, 
+          { label: 'Referrals', route: '/partner/referrals' }, 
+          { label: 'Commissions', route: '/partner/commissions' }, 
+          { label: 'Merchant access', route: '/partner/merchant-access' },
         ]},
         { icon: 'icon-wallet', label: 'Finance', children: [
           { label: 'Finance Workspace', route: '/finance' },
-          { label: 'Balances overview' }, { label: 'Company balances overview' },
-          { label: 'MPL' }, { label: 'Invoices' }, { label: 'Sales to payouts' },
-          { label: 'Payout accounts' }, { label: 'Payout model' }, { label: 'Reporting manager' },
+          { label: 'Balances overview', route: '/finance/balances-overview' }, 
+          { label: 'Company balances overview', route: '/finance/company-balances-overview' },
+          { label: 'MPL', route: '/finance/mpl' }, 
+          { label: 'Invoices', route: '/finance/invoices' }, 
+          { label: 'Sales to payouts', route: '/finance/sales-to-payouts' },
+          { label: 'Payout accounts', route: '/finance/payout-accounts' }, 
+          { label: 'Payout model', route: '/finance/payout-model' }, 
+          { label: 'Reporting manager', route: '/finance/reporting-manager' },
         ]},
         { icon: 'icon-bar-chart', label: 'Insights', children: [
-          { label: 'Checkout' }, { label: 'Payment lifecycle' }, { label: 'Risk & dispute management' },
+          { label: 'Checkout', route: '/insights/checkout' }, 
+          { label: 'Payment lifecycle', route: '/insights/payment-lifecycle' }, 
+          { label: 'Risk & dispute management', route: '/insights/risk-dispute-management' },
         ]},
         { icon: 'icon-file-text', label: 'Reports', route: '/reports', children: [
           { label: 'Report+ Dashboard', route: '/reports' },
           { label: 'Insights', route: '/reports/insights' },
         ]},
         { icon: 'icon-store', label: 'In-person payments', children: [
-          { label: 'Orders and returns' }, { label: 'Stores' }, { label: 'Terminals' },
-          { label: 'Tap to pay & card reader' }, { label: 'Terminal settings' },
-          { label: 'Android' }, { label: 'Terminal software' }, { label: 'Themes' },
+          { label: 'Orders and returns', route: '/in-person-payments/orders-returns' }, 
+          { label: 'Stores', route: '/in-person-payments/stores' }, 
+          { label: 'Terminals', route: '/in-person-payments/terminals' },
+          { label: 'Tap to pay & card reader', route: '/in-person-payments/tap-to-pay' }, 
+          { label: 'Terminal settings', route: '/in-person-payments/terminal-settings' },
+          { label: 'Android', route: '/in-person-payments/android' }, 
+          { label: 'Terminal software', route: '/in-person-payments/terminal-software' }, 
+          { label: 'Themes', route: '/in-person-payments/themes' },
         ]},
         { icon: 'icon-link', label: 'Pay by Link', children: [
-          { label: 'Payment links' }, { label: 'Themes' }, { label: 'Settings' },
+          { label: 'Payment links', route: '/pay-by-link/payment-links' }, 
+          { label: 'Themes' }, { label: 'Settings' },
         ]},
         { icon: 'icon-code', label: 'Developers', children: [
-          { label: 'Integration guide' }, { label: 'Dashboard' }, { label: 'API credentials' },
+          { label: 'Integration guide', route: '/developers/integration-guide' }, 
+          { label: 'Dashboard', route: '/developers/dashboard' }, 
+          { label: 'API credentials', route: '/developers/api-credentials' },
           { label: 'API URLs' }, { label: 'Additional data' }, { label: 'API logs' },
-          { label: 'Webhooks' }, { label: 'Event logs' }, { label: 'OAuth apps' },
+          { label: 'Webhooks', route: '/developers/webhooks' }, 
+          { label: 'Event logs' }, { label: 'OAuth apps' },
           { label: 'OAuth authorizations' }, { label: 'Go-live checklist' }, { label: 'OPI configurations' },
         ]},
         { icon: 'icon-heart', label: 'Giving', children: [
-          { label: 'Campaigns' }, { label: 'Nonprofit library' },
+          { label: 'Campaigns', route: '/giving/campaigns' }, 
+          { label: 'Nonprofit library' },
         ]},
-        { icon: 'icon-settings', label: 'Settings' },
+        { icon: 'icon-settings', label: 'Settings', route: '/settings' },
       ] as NavItem[],
     };
   },

@@ -1,13 +1,56 @@
 <template>
   <div :style="{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: 'var(--b-color-background-primary)' }">
     <!-- Bar content -->
-    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, padding: '0 var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
+    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, padding: '12px var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
       <!-- Search -->
       <div :style="{ position: 'relative', width: '240px', height: '36px', borderRadius: 'var(--b-border-radius-m)', border: '1px solid var(--b-color-outline-tertiary)', backgroundColor: 'var(--b-color-background-primary)', flexShrink: 0 }">
         <svg :style="{ position: 'absolute', left: '12px', top: '10px' }" width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9" stroke="var(--b-color-label-primary)" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span :style="{ position: 'absolute', left: '40px', top: '8px', fontFamily: 'var(--b-text-body-font-family)', fontSize: 'var(--b-text-body-font-size)', lineHeight: '20px', color: 'rgba(92,104,116,0.5)' }">Search</span>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search"
+          :style="{
+            position: 'absolute',
+            left: '40px',
+            top: '8px',
+            fontFamily: 'var(--b-text-body-font-family)',
+            fontSize: 'var(--b-text-body-font-size)',
+            lineHeight: '20px',
+            color: searchQuery ? 'var(--b-color-label-primary)' : 'var(--b-color-label-secondary)',
+            backgroundColor: 'transparent',
+            border: 'none',
+            outline: 'none',
+            width: '180px'
+          }"
+          @input="handleSearchInput"
+          @focus="isSearchFocused = true"
+          @blur="isSearchFocused = false"
+        />
+        
+        <!-- Clear button (shows when there's text) -->
+        <div
+          v-if="searchQuery"
+          :style="{
+            position: 'absolute',
+            right: '8px',
+            top: '8px',
+            width: '20px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            borderRadius: '50%',
+            backgroundColor: 'var(--b-color-background-secondary)'
+          }"
+          @click="clearSearch"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M9 3L3 9M3 3l6 6" stroke="var(--b-color-label-secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
       </div>
 
       <!-- Icon buttons -->
@@ -53,6 +96,12 @@ import Vue from 'vue';
 
 export default Vue.extend({
   name: 'TopBar',
+  data() {
+    return {
+      searchQuery: '',
+      isSearchFocused: false,
+    };
+  },
   computed: {
     iconBtnStyle(): Record<string, string> {
       return {
@@ -68,6 +117,16 @@ export default Vue.extend({
         cursor: 'pointer',
         transition: 'background-color 0.2s ease',
       };
+    },
+  },
+  methods: {
+    handleSearchInput(event: Event) {
+      const target = event.target as HTMLInputElement;
+      this.searchQuery = target.value;
+    },
+    clearSearch() {
+      this.searchQuery = '';
+      this.isSearchFocused = false;
     },
   },
 });
