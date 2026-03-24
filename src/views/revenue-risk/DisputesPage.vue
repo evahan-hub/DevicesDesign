@@ -1,569 +1,195 @@
 <template>
-  <div class="page">
-    <div class="page-header">
+  <div class="page page--locked">
+    <header class="page-header">
       <div class="header-content">
         <div class="header-title">
-          <h1>Dispute</h1>
+          <h1>Disputes</h1>
         </div>
       </div>
-    </div>
-    
-    <div class="content-section">
-      <!-- Tabs -->
-      <div :style="{ 
-        marginBottom: 'var(--b-spacer-090)', 
-        display: 'flex', 
-        gap: 'var(--b-spacer-040, 8px)', 
-        borderBottom: '1px solid var(--b-color-outline-primary, #e5e7eb)',
-        alignItems: 'flex-end'
-      }">
-        <button 
-          v-for="tab in tabs" 
-          :key="tab.id"
-          :style="{
-            padding: 'var(--b-spacer-040, 8px) var(--b-spacer-060, 12px)',
-            border: 'none',
-            backgroundColor: 'transparent',
-            borderBottom: activeTabId === tab.id ? '2px solid var(--b-color-outline-primary, #3b82f6)' : '2px solid transparent',
-            color: activeTabId === tab.id ? 'var(--b-color-label-primary, #111827)' : 'var(--b-color-label-secondary, #6b7280)',
-            fontFamily: 'var(--b-text-body-font-family)',
-            fontSize: 'var(--b-text-body-font-size)',
-            fontWeight: activeTabId === tab.id ? 'var(--b-text-body-stronger-font-weight)' : 'var(--b-text-body-font-weight)',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            marginBottom: '-1px',
-            outline: 'none',
-            borderRadius: '0'
-          }"
-          @click="activeTabId = tab.id"
+    </header>
+
+    <section class="content-section--flex">
+      <div class="tab-wrapper">
+        <bento-tabs
+          :active-tab-index="activeTabIndex"
+          @update:active-tab-index="setActiveTab"
         >
-          {{ tab.title }}
-        </button>
+          <bento-tab title="Chargebacks"><span></span></bento-tab>
+          <bento-tab title="Requests for information"><span></span></bento-tab>
+          <bento-tab title="Notification of fraud"><span></span></bento-tab>
+        </bento-tabs>
       </div>
 
-      <!-- Filter Bar -->
-      <div :style="{ marginBottom: 'var(--b-spacer-090)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--b-spacer-040, 8px)', backgroundColor: 'var(--b-color-background-secondary, #f9fafb)', borderRadius: 'var(--b-border-radius-m, 6px)', border: '1px solid var(--b-color-outline-secondary, #e5e7eb)' }">
-        <div :style="{ display: 'flex', alignItems: 'center', gap: 'var(--b-spacer-040, 8px)' }">
-          <span :style="{ fontFamily: 'var(--b-text-body-font-family)', fontSize: 'var(--b-text-body-font-size)', color: 'var(--b-color-label-secondary, #6b7280)' }">
-            Filter by:
-          </span>
-          <select :style="{
-            padding: 'var(--b-spacer-020, 4px) var(--b-spacer-040, 8px)',
-            border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-            borderRadius: 'var(--b-border-radius-s, 4px)',
-            backgroundColor: 'var(--b-color-background-primary, white)',
-            fontFamily: 'var(--b-text-body-font-family)',
-            fontSize: 'var(--b-text-body-font-size)'
-          }">
-            <option>All Status</option>
-            <option>Won</option>
-            <option>Lost</option>
-            <option>Open</option>
-          </select>
-        </div>
-      </div>
+      <bento-data-grid
+        class="disputes-grid"
+        :columns="columns"
+        :data="filteredAndSortedData"
+        :filters="filtersConfig"
+        :filter-values="filterValues"
+        :filter-search-term="searchTerm"
+        selectable
+        column-panel
+        allow-column-drag-and-drop
+        fit-content
+        :selection="selection"
+        :pagination="pagination"
+        @update:selection="selection = $event"
+        @update:columns="columns = $event"
+        @update:pagination="pagination = $event"
+        @update:filter-values="filterValues = $event"
+        @update:filter-search-term="searchTerm = $event"
+      >
+        <template #item-assignee="{ item }">
+          <bento-button variant="secondary" size="small" :condensed="true" class="no-wrap-btn">
+            Assign
+          </bento-button>
+        </template>
 
-      <!-- Data Grid -->
-      <div :style="{ 
-        backgroundColor: 'var(--b-color-background-primary, white)', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'flex-start', 
-        position: 'relative', 
-        width: '100%' 
-      }">
-        <!-- Header Row -->
-        <div :style="{
-          backgroundColor: 'var(--b-color-background-primary, white)',
-          borderBottom: '1px solid var(--b-color-outline-primary, #dbdee2)',
-          borderTop: '1px solid var(--b-color-outline-primary, #dbdee2)',
-          display: 'flex',
-          gap: 'var(--b-spacer-020, 4px)',
-          height: '36px',
-          alignItems: 'center',
-          overflow: 'hidden',
-          paddingLeft: 'var(--b-spacer-040, 8px)',
-          paddingRight: 'var(--b-spacer-020, 4px)',
-          paddingTop: 'var(--b-spacer-050, 10px)',
-          paddingBottom: 'var(--b-spacer-050, 10px)',
-          flexShrink: 0,
-          width: '100%'
-        }">
-          <input 
-            type="checkbox" 
-            :style="{
-              width: '16px',
-              height: '16px',
-              cursor: 'pointer',
-              accentColor: 'var(--b-color-outline-primary, #3b82f6)'
-            }"
-          />
-          <button 
-            :style="{
-              background: 'none',
-              border: 'none',
-              padding: '4px',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
+        <template #item-pspReference="{ item }">
+          <bento-link is-not-routing to="#" :title="item.pspReference">
+            {{ item.pspReference }}
+          </bento-link>
+        </template>
 
-        <!-- Data Rows -->
-        <div v-for="item in disputes" :key="item.id" :style="{
-          backgroundColor: item.id % 2 === 0 ? 'var(--b-color-background-primary-hover, #f7f7f8)' : 'var(--b-color-background-primary, white)',
-          borderBottom: '1px solid var(--b-color-outline-primary, #dbdee2)',
-          display: 'flex',
-          gap: 'var(--b-spacer-070, 0px)',
-          height: '48px',
-          alignItems: 'center',
-          overflow: 'hidden',
-          paddingLeft: 'var(--b-spacer-040, 8px)',
-          paddingRight: 'var(--b-spacer-090, 24px)',
-          paddingTop: 'var(--b-spacer-050, 10px)',
-          paddingBottom: 'var(--b-spacer-050, 10px)',
-          flexShrink: 0,
-          width: '100%'
-        }">
-          <!-- Checkbox Column -->
-          <div :style="{ display: 'flex', alignItems: 'center', width: '40px' }">
-            <input 
-              type="checkbox" 
-              :style="{
-                width: '16px',
-                height: '16px',
-                cursor: 'pointer',
-                accentColor: 'var(--b-color-outline-primary, #3b82f6)'
-              }"
-            />
-          </div>
-
-          <!-- Reference Column -->
-          <div :style="{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0px', 
-            height: '48px', 
-            alignItems: 'flex-start', 
-            justifyContent: 'center', 
-            overflow: 'hidden', 
-            paddingLeft: 'var(--b-spacer-070, 16px)', 
-            paddingRight: 'var(--b-spacer-070, 16px)', 
-            paddingTop: 'var(--b-spacer-050, 10px)', 
-            paddingBottom: 'var(--b-spacer-050, 10px)', 
-            flex: 1 
-          }">
-            <p :style="{
-              fontFamily: 'var(--b-text-body-font-family)',
-              fontWeight: 'var(--b-text-body-font-weight)',
-              fontSize: 'var(--b-text-body-font-size)',
-              lineHeight: 'var(--b-text-body-line-height)',
-              color: 'var(--b-color-label-primary, #00112c)',
-              margin: 0,
-              width: '100%'
-            }">{{ item.reference }}</p>
-          </div>
-
-          <!-- PSP Reference Column -->
-          <div :style="{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0px', 
-            height: '48px', 
-            alignItems: 'flex-start', 
-            justifyContent: 'center', 
-            overflow: 'hidden', 
-            paddingLeft: 'var(--b-spacer-070, 16px)', 
-            paddingRight: 'var(--b-spacer-070, 16px)', 
-            paddingTop: 'var(--b-spacer-050, 10px)', 
-            paddingBottom: 'var(--b-spacer-050, 10px)', 
-            flex: 1 
-          }">
-            <p :style="{
-              fontFamily: 'var(--b-text-body-font-family)',
-              fontWeight: 'var(--b-text-body-font-weight)',
-              fontSize: 'var(--b-text-body-font-size)',
-              lineHeight: 'var(--b-text-body-line-height)',
-              color: 'var(--b-color-label-primary, #00112c)',
-              margin: 0,
-              width: '100%'
-            }">{{ item.pspReference }}</p>
-          </div>
-
-          <!-- Amount Column -->
-          <div :style="{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0px', 
-            height: '48px', 
-            alignItems: 'flex-start', 
-            justifyContent: 'center', 
-            overflow: 'hidden', 
-            paddingLeft: 'var(--b-spacer-070, 16px)', 
-            paddingRight: 'var(--b-spacer-070, 16px)', 
-            paddingTop: 'var(--b-spacer-050, 10px)', 
-            paddingBottom: 'var(--b-spacer-050, 10px)', 
-            flex: 1 
-          }">
-            <p :style="{
-              fontFamily: 'var(--b-text-body-font-family)',
-              fontWeight: item.status === 'Won' ? 'var(--b-text-body-stronger-font-weight)' : 'var(--b-text-body-font-weight)',
-              fontSize: 'var(--b-text-body-font-size)',
-              lineHeight: 'var(--b-text-body-line-height)',
-              color: item.status === 'Won' ? 'var(--b-color-label-positive, #027a48)' : 'var(--b-color-label-primary, #00112c)',
-              margin: 0,
-              width: '100%'
-            }">{{ item.amount }}</p>
-          </div>
-
-          <!-- Status Column -->
-          <div :style="{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0px', 
-            height: '48px', 
-            alignItems: 'flex-start', 
-            justifyContent: 'center', 
-            overflow: 'hidden', 
-            paddingLeft: 'var(--b-spacer-070, 16px)', 
-            paddingRight: 'var(--b-spacer-070, 16px)', 
-            paddingTop: 'var(--b-spacer-050, 10px)', 
-            paddingBottom: 'var(--b-spacer-050, 10px)', 
-            flex: 1 
-          }">
-            <p :style="{
-              fontFamily: 'var(--b-text-body-font-family)',
-              fontWeight: 'var(--b-text-body-font-weight)',
-              fontSize: 'var(--b-text-body-font-size)',
-              lineHeight: 'var(--b-text-body-line-height)',
-              color: item.status === 'Won' ? 'var(--b-color-label-positive, #027a48)' : item.status === 'Lost' ? 'var(--b-color-label-critical, #d92d20)' : 'var(--b-color-label-secondary, #6b7280)',
-              margin: 0,
-              width: '100%'
-            }">{{ item.status }}</p>
-          </div>
-
-          <!-- Date Column -->
-          <div :style="{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0px', 
-            height: '48px', 
-            alignItems: 'flex-start', 
-            justifyContent: 'center', 
-            overflow: 'hidden', 
-            paddingLeft: 'var(--b-spacer-070, 16px)', 
-            paddingRight: 'var(--b-spacer-070, 16px)', 
-            paddingTop: 'var(--b-spacer-050, 10px)', 
-            paddingBottom: 'var(--b-spacer-050, 10px)', 
-            flex: 1 
-          }">
-            <p :style="{
-              fontFamily: 'var(--b-text-body-font-family)',
-              fontWeight: 'var(--b-text-body-font-weight)',
-              fontSize: 'var(--b-text-body-font-size)',
-              lineHeight: 'var(--b-text-body-line-height)',
-              color: 'var(--b-color-label-primary, #00112c)',
-              margin: 0,
-              width: '100%'
-            }">{{ item.date }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pagination -->
-      <div :style="{ marginTop: 'var(--b-spacer-090)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }">
-        <div :style="{ 
-          fontFamily: 'var(--b-text-body-font-family)', 
-          fontSize: 'var(--b-text-body-font-size)', 
-          color: 'var(--b-color-label-secondary, #6b7280)' 
-        }">
-          Showing 10 of 100 items
-        </div>
-        
-        <div :style="{ display: 'flex', alignItems: 'center', gap: 'var(--b-spacer-040, 8px)' }">
-          <!-- Page Dropdown -->
-          <select :style="{
-            padding: 'var(--b-spacer-020, 4px) var(--b-spacer-040, 8px)',
-            border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-            borderRadius: 'var(--b-border-radius-s, 4px)',
-            backgroundColor: 'var(--b-color-background-primary, white)',
-            fontFamily: 'var(--b-text-body-font-family)',
-            fontSize: 'var(--b-text-body-font-size)',
-            cursor: 'pointer'
-          }">
-            <option value="10">10</option>
-            <option value="20" selected>20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          
-          <span :style="{ 
-            fontFamily: 'var(--b-text-body-font-family)', 
-            fontSize: 'var(--b-text-body-font-size)', 
-            color: 'var(--b-color-label-secondary, #6b7280)' 
-          }">of 10</span>
-          
-          <!-- Navigation Buttons -->
-          <button 
-            :style="{
-              background: 'none',
-              border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-              padding: '6px 8px',
-              cursor: 'not-allowed',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: '0.5'
-            }"
-            disabled
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          
-          <button 
-            :style="{
-              background: 'none',
-              border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-              padding: '6px 8px',
-              cursor: 'not-allowed',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: '0.5'
-            }"
-            disabled
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 10L4 6h8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          
-          <button 
-            :style="{
-              background: 'none',
-              border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-              padding: '6px 8px',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-                          }"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 10l4-4-4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          
-          <button 
-            :style="{
-              background: 'none',
-              border: '1px solid var(--b-color-outline-secondary, #e5e7eb)',
-              padding: '6px 8px',
-              cursor: 'pointer',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-                          }"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 10l4-4-4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
+        </bento-data-grid>
+    </section>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import {
+  BentoButton,
+  BentoDataGrid,
+  BentoTab,
+  BentoTabs,
+  BentoLink,
+  BentoColumnOverflow,
+  BentoFilterItemType
+} from '@adyen/bento-vue2';
+import type { 
+  BentoColumn, 
+  BentoDatagridSelection,
+  BentoFilterBarModel,
+  BentoFilterValues
+} from '@adyen/bento-vue2';
 
 export default Vue.extend({
   name: 'DisputesPage',
+  components: {
+    BentoButton,
+    BentoDataGrid,
+    BentoTab,
+    BentoTabs,
+    BentoLink
+  },
   data() {
     return {
-      activeTabId: 'allDisputesTab',
-      tabs: [
-        { id: 'allDisputesTab', title: 'All disputes' },
-        { id: 'openDisputesTab', title: 'Open disputes' },
-        { id: 'closedDisputesTab', title: 'Closed disputes' }
-      ],
-      disputes: [
+      activeTabIndex: 0,
+      selection: [] as BentoDatagridSelection,
+      
+      pagination: {
+        page: 1,
+        size: 20,
+        totalCount: 16,
+        pageSizes: [10, 20, 50, 100]
+      },
+
+      searchTerm: '',
+      filterValues: [] as BentoFilterValues,
+      filtersConfig: [
         {
-          id: 1,
-          reference: 'DSP-2024-001',
-          pspReference: 'PSP-REF-12345',
-          amount: '€1,250.00',
-          status: 'Won',
-          date: 'Jul 20, 2025, 03:45:51'
+          field: 'reason',
+          label: 'Dispute Reason',
+          value: null,
+          type: BentoFilterItemType.INPUT,
         },
         {
-          id: 2,
-          reference: 'DSP-2024-002',
-          pspReference: 'PSP-REF-12346',
-          amount: '€850.00',
-          status: 'Lost',
-          date: 'Sep 22, 2025, 16:55:05'
-        },
-        {
-          id: 3,
-          reference: 'DSP-2024-003',
-          pspReference: 'PSP-REF-12347',
-          amount: '€2,100.00',
-          status: 'Open',
-          date: 'Nov 11, 2025, 13:13:13'
-        },
-        {
-          id: 4,
-          reference: 'DSP-2024-004',
-          pspReference: 'PSP-REF-12348',
-          amount: '€950.00',
-          status: 'Won',
-          date: 'Jan 15, 2025, 10:20:30'
-        },
-        {
-          id: 5,
-          reference: 'DSP-2024-005',
-          pspReference: 'PSP-REF-12349',
-          amount: '€1,800.00',
-          status: 'Lost',
-          date: 'Feb 28, 2025, 14:40:15'
-        },
-        {
-          id: 6,
-          reference: 'DSP-2024-006',
-          pspReference: 'PSP-REF-12350',
-          amount: '€3,200.00',
-          status: 'Open',
-          date: 'Mar 10, 2025, 09:15:33'
-        },
-        {
-          id: 7,
-          reference: 'DSP-2024-007',
-          pspReference: 'PSP-REF-12351',
-          amount: '€1,800.00',
-          status: 'Won',
-          date: 'Mar 10, 2025, 09:15:33'
-        },
-        {
-          id: 8,
-          reference: 'DSP-2024-008',
-          pspReference: 'PSP-REF-12352',
-          amount: '€650.00',
-          status: 'Open',
-          date: 'Apr 05, 2025, 16:45:27'
-        },
-        {
-          id: 9,
-          reference: 'DSP-2024-009',
-          pspReference: 'PSP-REF-12353',
-          amount: '€2,500.00',
-          status: 'Won',
-          date: 'May 12, 2025, 11:30:44'
-        },
-        {
-          id: 10,
-          reference: 'DSP-2024-010',
-          pspReference: 'PSP-REF-12354',
-          amount: '€1,100.00',
-          status: 'Lost',
-          date: 'Jun 18, 2025, 08:20:11'
+          field: 'lastEvent',
+          label: 'Last Event',
+          value: undefined,
+          options: {
+            listboxItems: [
+              { value: 'Chargeback', name: 'Chargeback' },
+              { value: 'DisputeOpenedWithChargeback', name: 'DisputeOpenedWithChargeback' },
+              { value: 'DisputeExpired', name: 'DisputeExpired' }
+            ],
+            variant: 'name'
+          },
+          type: BentoFilterItemType.SELECT,
         }
+      ] as BentoFilterBarModel,
+
+      /* This columns array tells Bento exactly what to render.
+        The 'overflow: BentoColumnOverflow.ELLIPSIS' is what truncates the text safely! 
+      */
+      columns: [
+        { field: 'assignee', label: 'Assignee', width: 120 },
+        { field: 'pspReference', label: 'Dispute PSP reference', minWidth: 200, overflow: BentoColumnOverflow.ELLIPSIS },
+        { field: 'reason', label: 'Dispute reason', minWidth: 260, overflow: BentoColumnOverflow.ELLIPSIS },
+        { field: 'lastEvent', label: 'Last event', minWidth: 260, overflow: BentoColumnOverflow.ELLIPSIS },
+        { field: 'date', label: 'Dispute date', minWidth: 180, overflow: BentoColumnOverflow.ELLIPSIS }
+      ] as BentoColumn[],
+      
+      disputes: [
+        { id: '1', assignee: null, pspReference: 'KDN8FPRT3BGT9Y7C', reason: 'R01 Insufficient Funds', lastEvent: 'Chargeback', date: 'Feb 14, 2025, 08:15' },
+        { id: '2', assignee: null, pspReference: 'VXZ2LMNQ5JHW6R4P', reason: 'AC01:IncorrectAccountNumber', lastEvent: 'DisputeOpenedWithChargeback', date: 'Mar 22, 2025, 12:30' },
+        { id: '3', assignee: null, pspReference: 'S4G7CKB9Z1DFM3V', reason: 'No Instruction', lastEvent: 'Chargeback', date: 'Apr 01, 2025, 09:00' },
+        { id: '4', assignee: null, pspReference: 'T8YHJN5R2WEXQ6A9', reason: 'Improper Effective Entry Date', lastEvent: 'Chargeback', date: 'May 30, 2025, 17:45' },
+        { id: '5', assignee: null, pspReference: 'P6M3C7V1L9KDF2Z8', reason: 'Account not found', lastEvent: 'DisputeExpired', date: 'Jun 06, 2025, 21:05' },
+        { id: '6', assignee: null, pspReference: 'B5N4W7S8G9R2T1Q', reason: 'Not Sufficient Funds (Debit Only)', lastEvent: 'Chargeback', date: 'Jul 04, 2025, 10:10' },
+        { id: '7', assignee: null, pspReference: 'F3H2J6K1L5P9M7N8', reason: 'MS03:NotSpecifiedReasonAgentGenerated', lastEvent: 'DisputeOpenedWithChargeback', date: 'Aug 19, 2025, 14:22' },
+        { id: '8', assignee: null, pspReference: 'ZXC7VBNM4LKJHG2F', reason: 'R01 Insufficient Funds', lastEvent: 'Chargeback', date: 'Sep 05, 2025, 11:11' },
+        { id: '9', assignee: null, pspReference: 'QWERT9YUI1OPASDF', reason: 'No Instruction', lastEvent: 'Chargeback', date: 'Oct 31, 2025, 23:59' },
+        { id: '10', assignee: null, pspReference: 'G5HJK3L4M2NBVCX', reason: 'Account not found', lastEvent: 'DisputeExpired', date: 'Nov 27, 2025, 06:45' },
+        { id: '11', assignee: null, pspReference: 'R4T6Y8U1I3O5P7A9', reason: 'AC01:IncorrectAccountNumber', lastEvent: 'Chargeback', date: 'Dec 25, 2025, 07:00' },
+        { id: '12', assignee: null, pspReference: 'S2D4F6G8H1J3K5L7', reason: 'Not Sufficient Funds (Debit Only)', lastEvent: 'DisputeOpenedWithChargeback', date: 'Jan 15, 2025, 18:00' },
+        { id: '13', assignee: null, pspReference: 'X1C3V5B7N9M2L4K6', reason: 'MS03:NotSpecifiedReasonAgentGenerated', lastEvent: 'Chargeback', date: 'Jul 20, 2025, 03:45' },
+        { id: '14', assignee: null, pspReference: 'A8S7D6F5G4H3J2K1', reason: 'Improper Effective Entry Date', lastEvent: 'DisputeExpired', date: 'Sep 22, 2025, 16:55' },
+        { id: '15', assignee: null, pspReference: 'POIU9YTRE6WQAS2D', reason: 'R01 Insufficient Funds', lastEvent: 'DisputeOpenedWithChargeback', date: 'Nov 11, 2025, 13:13' },
+        { id: '16', assignee: null, pspReference: 'MNB4VCX5ZLKJHG3F', reason: 'No Instruction', lastEvent: 'Chargeback', date: 'Dec 31, 2025, 23:00' }
       ]
     };
+  },
+  computed: {
+    filteredAndSortedData(): any[] {
+      return this.disputes.filter(item => {
+        const foundFilteredItem = this.filterValues.length > 0
+          ? this.filterValues.every((filter: any) => {
+              if (!filter.value) return true;
+              return String(item[filter.field as keyof typeof item])
+                .toLowerCase()
+                .includes(String(filter.value).toLowerCase());
+            })
+          : true;
+          
+        const foundSearchFilteredItem = this.searchTerm
+          ? String(item.pspReference).toLowerCase().includes(this.searchTerm.toLowerCase())
+          : true;
+
+        return foundFilteredItem && foundSearchFilteredItem;
+      });
+    }
+  },
+  methods: {
+    setActiveTab(index: number) {
+      this.activeTabIndex = index;
+    }
   }
 });
 </script>
 
 <style scoped>
-.page {
-  padding: var(--b-spacer-090);
-}
-
-.page-header {
-  margin-bottom: var(--b-spacer-090);
-  width: 100%;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  width: auto;
-}
-
-.header-title {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--b-text-title-l-font-family);
-  font-weight: var(--b-text-title-l-font-weight);
-  justify-content: center;
-  line-height: var(--b-text-title-l-line-height);
-  position: relative;
-  flex-shrink: 0;
-  font-size: var(--b-text-title-l-font-size);
-  width: auto;
-  height: 100%;
-}
-
-.header-title h1 {
-  font-family: var(--b-text-title-l-font-family);
-  font-weight: var(--b-text-title-l-font-weight);
-  font-size: var(--b-text-title-l-font-size);
-  line-height: var(--b-text-title-l-line-height);
-  letter-spacing: var(--b-text-title-l-letter-spacing);
-  color: var(--b-color-label-primary);
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--b-spacer-040);
-  align-items: center;
-  justify-content: flex-end;
-  padding: var(--b-spacer-000);
-  position: relative;
+.tab-wrapper {
   flex-shrink: 0;
 }
 
-.content-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--b-spacer-090);
+.disputes-grid {
+  flex: 1;
+  min-height: 0;
 }
 
-.info-card {
-  padding: var(--b-spacer-090);
-  background-color: var(--b-color-background-secondary);
-  border-radius: var(--b-border-radius-m);
-  border: 1px solid var(--b-color-outline-secondary);
-}
-
-.info-card h3 {
-  font-family: var(--b-text-body-font-family);
-  font-size: var(--b-text-body-font-size);
-  font-weight: var(--b-text-body-stronger-font-weight);
-  color: var(--b-color-label-primary);
-  margin-bottom: var(--b-spacer-040);
-}
-
-.info-card p {
-  font-family: var(--b-text-body-font-family);
-  font-size: var(--b-text-body-font-size);
-  color: var(--b-color-label-secondary);
+.no-wrap-btn {
+  white-space: nowrap;
 }
 </style>

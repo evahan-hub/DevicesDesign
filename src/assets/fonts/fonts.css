@@ -151,6 +151,6 @@ The code is required because:
   with 14px font-size or less to Adyen UI font family.
 */
 body {
-    --b-text-caption-font-family: 'Adyen UI', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
-    --b-text-body-font-family: 'Adyen UI', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    --b-text-caption-font-family: 'Adyen Variable', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    --b-text-body-font-family: 'Adyen Variable', 'Roboto', 'Oxygen', 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
 }

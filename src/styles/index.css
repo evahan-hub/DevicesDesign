@@ -53,6 +53,8 @@ input, textarea, select, button, table, th, td {
   min-height: 100%;
   padding-block-start: var(--b-spacer-070);
   padding-inline: var(--b-spacer-070);
+    padding-bottom : 14px;
+
 }
 
 /* s + m: 376px-767px — padding 24px */
@@ -68,6 +70,8 @@ input, textarea, select, button, table, th, td {
   .content-area {
     padding-block-start: var(--b-spacer-100);
     padding-inline: var(--b-spacer-100);
+      padding-bottom : 14px;
+
   }
 }
 
@@ -76,6 +80,8 @@ input, textarea, select, button, table, th, td {
   .content-area {
     padding-block-start: var(--b-spacer-110);
     padding-inline: var(--b-spacer-110);
+      padding-bottom : 14px;
+
   }
 }
 
@@ -84,6 +90,8 @@ input, textarea, select, button, table, th, td {
   .content-area {
     padding-block-start: var(--b-spacer-110);
     padding-inline: var(--b-spacer-140);
+      padding-bottom : 14px;
+
   }
 }
 

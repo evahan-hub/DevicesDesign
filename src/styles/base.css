@@ -7,7 +7,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--b-text-body-font-family, 'Adyen UI', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif);
+  font-family: var(--b-text-body-font-family, 'Adyen Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif);
   font-size: var(--b-text-body-font-size, 14px);
   line-height: var(--b-text-body-line-height, 20px);
   color: var(--b-color-label-primary, #111827);
@@ -91,8 +91,12 @@ a {
   text-decoration: none;
 }
 
-/* Input base */
-input, textarea, select {
+/* src/styles/base.css */
+
+/* Ignore checkboxes, radios, AND any Bento component inputs */
+input:not([type="checkbox"]):not([type="radio"]):not([class*="b-"]), 
+textarea:not([class*="b-"]), 
+select:not([class*="b-"]) {
   font-family: inherit;
   font-size: inherit;
   border: 1px solid var(--b-color-outline-secondary, #e5e7eb);
@@ -102,7 +106,9 @@ input, textarea, select {
   color: var(--b-color-label-primary, #111827);
 }
 
-input:focus, textarea:focus, select:focus {
+input:not([type="checkbox"]):not([type="radio"]):not([class*="b-"]):focus, 
+textarea:not([class*="b-"]):focus, 
+select:not([class*="b-"]):focus {
   outline: none;
   border-color: var(--b-color-outline-primary, #3b82f6);
   box-shadow: 0 0 0 1px var(--b-color-outline-primary, #3b82f6);
