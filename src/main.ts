@@ -21,8 +21,12 @@ import {
   BentoTab,
   BentoTabs,
   BentoTypography,
-  BentoDataGrid
+  BentoDataGrid,
+  BentoHeader,
+  BentoSummaryGridItemText
 } from '@adyen/bento-vue2';
+
+import BentoIcon from '@adyen/bento-vue2';
 
 Vue.use(BentoVue);
 
@@ -31,6 +35,10 @@ Vue.component('BentoTab', BentoTab);
 Vue.component('BentoTabs', BentoTabs);
 Vue.component('BentoTypography', BentoTypography);
 Vue.component('BentoDataGrid', BentoDataGrid);
+Vue.component('BentoHeader', BentoHeader);
+Vue.component('BentoSummaryGridItemText', BentoSummaryGridItemText);
+Vue.component('BentoIcon', BentoIcon);
+
 
 const i18n = new VueI18n({
   locale: 'en-US',

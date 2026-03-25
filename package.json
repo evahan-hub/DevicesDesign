@@ -10,8 +10,8 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@adyen/bento-design-tokens": "^1.87.1",
-    "@adyen/bento-vue2": "^1.86.0",
+    "@adyen/bento-design-tokens": "1.84.1",
+    "@adyen/bento-vue2": "1.84.1",
     "@adyen/bento-vue3": "^1.87.2-rc.0",
     "@adyen/lume": "^1.12.1",
     "@adyen/lume-vue3": "^1.12.1",
@@ -24,6 +24,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@adyen/bento-stylelint": "^1.11.3",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue2": "^2.3.4",
     "@vue/runtime-dom": "^3.5.29",

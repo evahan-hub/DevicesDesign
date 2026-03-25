@@ -9,6 +9,7 @@ const SettingsPage = () => import('./views/SettingsPage.vue');
 
 // Transaction sub-tabs
 const PaymentsPage = () => import('./views/PaymentsPage.vue');
+const PaymentDetailsPage = () => import('./views/PaymentDetailsPage.vue'); // ADD THIS
 const OffersPage = () => import('./views/OffersPage.vue');
 const PayoutsPage = () => import('./views/PayoutsPage.vue');
 
@@ -91,6 +92,7 @@ export const router = new VueRouter({
         
         // Transactions sub-tabs
         { path: 'transactions/payments', component: PaymentsPage, name: 'payments' },
+        { path: 'transactions/payments/:id', component: PaymentDetailsPage, name: 'payment-details' }, // ADD THIS
         { path: 'transactions/offers', component: OffersPage, name: 'offers' },
         { path: 'transactions/payouts', component: PayoutsPage, name: 'payouts' },
         

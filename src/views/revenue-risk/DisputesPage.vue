@@ -1,58 +1,46 @@
 <template>
   <div class="page page--locked">
-    <header class="page-header">
-      <div class="header-content">
-        <div class="header-title">
-          <h1>Disputes</h1>
-        </div>
-      </div>
-    </header>
-
-    <section class="content-section--flex">
-      <div class="tab-wrapper">
-        <bento-tabs
-          :active-tab-index="activeTabIndex"
-          @update:active-tab-index="setActiveTab"
+    <bento-data-grid-template 
+      class="content-section--flex" 
+      :header="headerConfig" 
+      :tabs="tabsConfig" 
+      sticky-tabs
+    >
+      <template v-for="(tab, index) in tabsConfig.tabs" v-slot:[getTabSlotName(index)]>
+        <bento-data-grid
+          :key="index"
+          class="disputes-grid"
+          :columns="columns"
+          :data="getTabData(index)"
+          :filters="filtersConfig"
+          :filter-values="filterValues"
+          :filter-search-term="searchTerm"
+          selectable
+          column-panel
+          allow-column-drag-and-drop
+          fit-content
+          :selection="selection"
+          :pagination="pagination"
+          @update:selection="selection = $event"
+          @update:columns="columns = $event"
+          @update:pagination="pagination = $event"
+          @update:filter-values="filterValues = $event"
+          @update:filter-search-term="searchTerm = $event"
         >
-          <bento-tab title="Chargebacks"><span></span></bento-tab>
-          <bento-tab title="Requests for information"><span></span></bento-tab>
-          <bento-tab title="Notification of fraud"><span></span></bento-tab>
-        </bento-tabs>
-      </div>
+          <template #item-assignee="{ item }">
+            <bento-button variant="secondary" size="small" :condensed="true" class="no-wrap-btn">
+              Assign
+            </bento-button>
+          </template>
 
-      <bento-data-grid
-        class="disputes-grid"
-        :columns="columns"
-        :data="filteredAndSortedData"
-        :filters="filtersConfig"
-        :filter-values="filterValues"
-        :filter-search-term="searchTerm"
-        selectable
-        column-panel
-        allow-column-drag-and-drop
-        fit-content
-        :selection="selection"
-        :pagination="pagination"
-        @update:selection="selection = $event"
-        @update:columns="columns = $event"
-        @update:pagination="pagination = $event"
-        @update:filter-values="filterValues = $event"
-        @update:filter-search-term="searchTerm = $event"
-      >
-        <template #item-assignee="{ item }">
-          <bento-button variant="secondary" size="small" :condensed="true" class="no-wrap-btn">
-            Assign
-          </bento-button>
-        </template>
-
-        <template #item-pspReference="{ item }">
-          <bento-link is-not-routing to="#" :title="item.pspReference">
-            {{ item.pspReference }}
-          </bento-link>
-        </template>
-
+          <template #item-pspReference="{ item }">
+            <bento-link is-not-routing to="#" :title="item.pspReference">
+              {{ item.pspReference }}
+            </bento-link>
+          </template>
         </bento-data-grid>
-    </section>
+      </template>
+    </bento-data-grid-template>
   </div>
 </template>
 
@@ -61,8 +49,7 @@ import Vue from 'vue';
 import {
   BentoButton,
   BentoDataGrid,
-  BentoTab,
-  BentoTabs,
+  BentoDataGridTemplate,
   BentoLink,
   BentoColumnOverflow,
   BentoFilterItemType
@@ -79,13 +66,23 @@ export default Vue.extend({
   components: {
     BentoButton,
     BentoDataGrid,
-    BentoTab,
-    BentoTabs,
+    BentoDataGridTemplate,
     BentoLink
   },
   data() {
     return {
-      activeTabIndex: 0,
+      headerConfig: {
+        title: 'Disputes'
+      },
+      
+      tabsConfig: {
+        tabs: [
+          { title: 'Chargebacks' },
+          { title: 'Requests for information' },
+          { title: 'Notification of fraud' }
+        ]
+      },
+
       selection: [] as BentoDatagridSelection,
       
       pagination: {
@@ -120,9 +117,6 @@ export default Vue.extend({
         }
       ] as BentoFilterBarModel,
 
-      /* This columns array tells Bento exactly what to render.
-        The 'overflow: BentoColumnOverflow.ELLIPSIS' is what truncates the text safely! 
-      */
       columns: [
         { field: 'assignee', label: 'Assignee', width: 120 },
         { field: 'pspReference', label: 'Dispute PSP reference', minWidth: 200, overflow: BentoColumnOverflow.ELLIPSIS },
@@ -172,18 +166,25 @@ export default Vue.extend({
     }
   },
   methods: {
-    setActiveTab(index: number) {
-      this.activeTabIndex = index;
+    // FIX: Method to safely generate dynamic slot names for Vue 2 compiler
+    getTabSlotName(index: number) {
+      return `tab-${index + 1}`;
+    },
+
+    getTabData(index: number) {
+      const data = this.filteredAndSortedData;
+      
+      if (index === 0) return data.filter((d: any) => d.lastEvent === 'Chargeback');
+      if (index === 1) return data.filter((d: any) => d.lastEvent === 'DisputeOpenedWithChargeback');
+      if (index === 2) return data.filter((d: any) => d.lastEvent === 'DisputeExpired');
+      
+      return data;
     }
   }
 });
 </script>
 
 <style scoped>
-.tab-wrapper {
-  flex-shrink: 0;
-}
-
 .disputes-grid {
   flex: 1;
   min-height: 0;
