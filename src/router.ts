@@ -75,6 +75,7 @@ const InPersonThemesPage = () => import('./views/in-person-payments/ThemesPage.v
 
 // Reports sub-tabs
 const ReportsPage = () => import('./views/ReportsPage.vue');
+const ReportDetailsStub = () => import('./views/ReportDetailsStub.vue');
 
 export const router = new VueRouter({
   mode: 'history',
@@ -159,6 +160,7 @@ export const router = new VueRouter({
         
         // Reports sub-tabs
         { path: 'reports', component: ReportsPage, name: 'reports' },
+        { path: 'reports/:reportCode', component: ReportDetailsStub, name: 'report-details' },
       ],
     },
   ],

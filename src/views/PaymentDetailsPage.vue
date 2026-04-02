@@ -67,7 +67,7 @@
               </bento-summary-grid-item-custom>
             </template>
             <template #cell-1-3>
-              <bento-summary-grid-item-amount title="Authorized amount" :label="220.00" currency="EUR" />
+              <bento-summary-grid-item-amount title="Authorized amount" label="220.00" currency="EUR" />
             </template>
             <template #cell-1-4>
               <bento-summary-grid-item-text title="Date" label="Dec 28, 2020, 10:26:53 GMT+2" />
@@ -107,13 +107,13 @@
         <template #content>
           <bento-summary-grid>
             <template #cell-1-1>
-              <bento-summary-grid-item-amount title="Adjusted amount" :label="220.00" currency="EUR" />
+              <bento-summary-grid-item-amount title="Adjusted amount" label="220.00" currency="EUR" />
             </template>
             <template #cell-1-2>
-              <bento-summary-grid-item-amount title="Surcharge amount" :label="17.57" currency="EUR" />
+              <bento-summary-grid-item-amount title="Surcharge amount" label="17.57" currency="EUR" />
             </template>
             <template #cell-1-3>
-              <bento-summary-grid-item-amount title="Tipping amount" :label="5.35" currency="EUR" />
+              <bento-summary-grid-item-amount title="Tipping amount" label="5.35" currency="EUR" />
             </template>
           </bento-summary-grid>
         </template>
@@ -261,7 +261,7 @@
                         <label class="radio-item"><input type="radio" name="fraud" /> Trust</label>
                         <label class="radio-item"><input type="radio" name="fraud" /> Remove from list</label>
                       </div>
-                      <bento-button variant="dark">Apply</bento-button>
+                      <bento-button variant="primary">Apply</bento-button>
                     </div>
 
                     <div class="mt-6">

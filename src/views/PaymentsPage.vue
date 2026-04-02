@@ -1,6 +1,6 @@
 <template>
-  <div class="page page--locked">
-    <bento-header title="Payments" />
+  <div class="page page--locked page--data-grid">
+    <bento-header title="Payments" :actions="headerActions" />
 
     <section class="content-section--flex">
       <bento-data-grid
@@ -151,6 +151,20 @@ export default Vue.extend({
   },
   data() {
     return {
+      headerActions: [
+        {
+          title: 'Export',
+          variant: 'secondary' as 'secondary',
+          event: () => {}
+        },
+        {
+          title: 'More actions',
+          variant: 'secondary' as 'secondary',
+          iconOnly: true,
+          icon: OptionsVerticalIcon,
+          event: () => {}
+        }
+      ],
 
       selection: [] as BentoDatagridSelection,
       
@@ -164,7 +178,8 @@ export default Vue.extend({
       searchTerm: '',
       filterValues: [] as BentoFilterValues,
       searchConfig: {
-        placeholder: 'Search PSP reference or Merchant reference'
+        placeholder: 'Search PSP reference or Merchant reference',
+        inputFieldAriaLabel: 'Search PSP reference or Merchant reference'
       },
       
       filtersConfig: [
@@ -174,12 +189,11 @@ export default Vue.extend({
           value: null,
           options: {
             listboxItems: [
-              { value: 'today', name: 'Today' },
-              { value: 'yesterday', name: 'Yesterday' },
-              { value: 'last7days', name: 'Last 7 days' },
-              { value: 'thisMonth', name: 'This month' }
-            ],
-            variant: 'name'
+              { value: 'today', label: 'Today' },
+              { value: 'yesterday', label: 'Yesterday' },
+              { value: 'last7days', label: 'Last 7 days' },
+              { value: 'thisMonth', label: 'This month' }
+            ]
           },
           type: BentoFilterItemType.SELECT,
         },
@@ -189,12 +203,11 @@ export default Vue.extend({
           value: null,
           options: {
             listboxItems: [
-              { value: 'Authorised', name: 'Authorised' },
-              { value: 'Settled', name: 'Settled' },
-              { value: 'Refused', name: 'Refused' },
-              { value: 'SentForSettle', name: 'SentForSettle' }
-            ],
-            variant: 'name'
+              { value: 'Authorised', label: 'Authorised' },
+              { value: 'Settled', label: 'Settled' },
+              { value: 'Refused', label: 'Refused' },
+              { value: 'SentForSettle', label: 'SentForSettle' }
+            ]
           },
           type: BentoFilterItemType.SELECT,
         },
@@ -204,13 +217,12 @@ export default Vue.extend({
           value: null,
           options: {
             listboxItems: [
-              { value: 'Visa', name: 'Visa' },
-              { value: 'Mastercard', name: 'Mastercard' },
-              { value: 'iDEAL', name: 'iDEAL' },
-              { value: 'PayPal', name: 'PayPal' },
-              { value: 'Amex', name: 'Amex' }
-            ],
-            variant: 'name'
+              { value: 'Visa', label: 'Visa' },
+              { value: 'Mastercard', label: 'Mastercard' },
+              { value: 'iDEAL', label: 'iDEAL' },
+              { value: 'PayPal', label: 'PayPal' },
+              { value: 'Amex', label: 'Amex' }
+            ]
           },
           type: BentoFilterItemType.SELECT,
         }
@@ -279,7 +291,7 @@ export default Vue.extend({
         case 'SentForSettle':
           return BentoStatusVariant.YELLOW;
         default:
-          return BentoStatusVariant.NEUTRAL;
+          return BentoStatusVariant.GREY;
       }
     }
   }
@@ -287,10 +299,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-bento-header {
-  margin-bottom: var(--b-spacer-070);
-}
-
 .status-cell {
   display: flex;
   align-items: center;

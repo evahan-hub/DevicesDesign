@@ -56,7 +56,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { 
-  BentoButton, 
   BentoButtonVariant 
 } from '@adyen/bento-vue2';
 

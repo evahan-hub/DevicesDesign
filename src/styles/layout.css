@@ -21,6 +21,7 @@
 /* Modifier for pages containing fit-content Data Grids */
 .page--locked {
   overflow: hidden; /* Locks the page so the grid can scroll internally */
+  min-height: 0;
 }
 
 .page-header {
@@ -85,6 +86,97 @@
   flex: 1;
   min-height: 0; /* Crucial: Allows nested tables to spawn internal scrollbars */
   min-width: 0;
+}
+
+/* Reusable page mode for bento-data-grid-template pages */
+.page--data-grid-template {
+  padding-inline: 0;
+  padding-bottom: 0;
+  height: 100%;
+}
+
+.page--data-grid-template > .content-section--flex {
+  flex: 1;
+  min-height: 0;
+  margin-inline: calc(var(--content-area-padding-inline, var(--b-spacer-090)) * -1) !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-data-grid-template__header {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-header__wrapper,
+.page--data-grid-template > .content-section--flex .b-fixed-scroller,
+.page--data-grid-template > .content-section--flex .b-data-grid__filters {
+  padding-left: var(--b-spacer-090) !important;
+  padding-right: var(--b-spacer-090) !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-tabs__tab-list-wrapper {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-data-grid-columns:first-child,
+.page--data-grid-template > .content-section--flex .b-data-grid-row-container__cells:first-child {
+  padding-left: 0 !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-data-grid-columns:last-child,
+.page--data-grid-template > .content-section--flex .b-data-grid-row-container__cells:last-child {
+  padding-right: 0 !important;
+}
+
+.page--data-grid-template > .content-section--flex .b-inspector__page,
+.page--data-grid-template > .content-section--flex .b-tabs,
+.page--data-grid-template > .content-section--flex .b-tab,
+.page--data-grid-template > .content-section--flex .b-data-grid,
+.page--data-grid-template > .content-section--flex .b-data-grid__wrapper,
+.page--data-grid-template > .content-section--flex .b-data-grid__body {
+  height: 100%;
+  min-height: 0;
+}
+
+/* Reusable page mode for pages with page-header + bento-data-grid */
+.page--data-grid {
+  padding-inline: 0;
+  padding-bottom: 0;
+  height: 100%;
+}
+
+.page--data-grid > .b-header {
+  margin-bottom: var(--b-spacer-070);
+  padding-left: var(--b-spacer-090);
+  padding-right: var(--b-spacer-090);
+}
+
+.page--data-grid > .content-section--flex {
+  flex: 1;
+  min-height: 0;
+  margin-inline: calc(var(--content-area-padding-inline, var(--b-spacer-090)) * -1) !important;
+}
+
+.page--data-grid > .content-section--flex .b-data-grid__filters {
+  padding-left: var(--b-spacer-090) !important;
+  padding-right: var(--b-spacer-090) !important;
+}
+
+.page--data-grid > .content-section--flex .b-data-grid-columns:first-child,
+.page--data-grid > .content-section--flex .b-data-grid-row-container__cells:first-child {
+  padding-left: 0 !important;
+}
+
+.page--data-grid > .content-section--flex .b-data-grid-columns:last-child,
+.page--data-grid > .content-section--flex .b-data-grid-row-container__cells:last-child {
+  padding-right: 0 !important;
+}
+
+.page--data-grid > .content-section--flex .b-data-grid,
+.page--data-grid > .content-section--flex .b-data-grid__wrapper,
+.page--data-grid > .content-section--flex .b-data-grid__body {
+  height: 100%;
+  min-height: 0;
 }
 
 /* --- Keep the rest of your file from .info-card downwards unchanged --- */

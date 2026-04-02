@@ -4,7 +4,7 @@
       type="checkbox"
       class="bento-checkbox__input"
       :checked="modelValue"
-      @change="$emit('update:modelValue', $event.target.checked)"
+      @change="onChange"
       v-bind="$attrs"
     />
     <span class="bento-checkbox__checkmark"></span>
@@ -26,6 +26,12 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
+  methods: {
+    onChange(event: Event) {
+      const target = event.target as HTMLInputElement | null;
+      this.$emit('update:modelValue', Boolean(target?.checked));
+    },
+  },
 });
 </script>
 

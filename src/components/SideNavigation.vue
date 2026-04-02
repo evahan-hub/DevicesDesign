@@ -389,10 +389,7 @@ export default Vue.extend({
           { label: 'Payment lifecycle', route: '/insights/payment-lifecycle' }, 
           { label: 'Risk & dispute management', route: '/insights/risk-dispute-management' },
         ]},
-        { icon: 'icon-file-text', label: 'Reports', route: '/reports', children: [
-          { label: 'Report+ Dashboard', route: '/reports' },
-          { label: 'Insights', route: '/reports/insights' },
-        ]},
+        { icon: 'icon-file-text', label: 'Reports', route: '/reports' },
         { icon: 'icon-store', label: 'In-person payments', children: [
           { label: 'Orders and returns', route: '/in-person-payments/orders-returns' }, 
           { label: 'Stores', route: '/in-person-payments/stores' }, 

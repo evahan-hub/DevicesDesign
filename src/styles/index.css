@@ -1,4 +1,3 @@
-@import './fonts.css';
 @import './bento-tokens.css';
 @import './base.css';
 @import './layout.css';
@@ -51,8 +50,9 @@ input, textarea, select, button, table, th, td {
 .content-area {
   flex: 1;
   min-height: 100%;
+  --content-area-padding-inline: var(--b-spacer-070);
   padding-block-start: var(--b-spacer-070);
-  padding-inline: var(--b-spacer-070);
+  padding-inline: var(--content-area-padding-inline);
     padding-bottom : 14px;
 
 }
@@ -60,16 +60,18 @@ input, textarea, select, button, table, th, td {
 /* s + m: 376px-767px — padding 24px */
 @container page-viewport (min-width: 376px) {
   .content-area {
+    --content-area-padding-inline: var(--b-spacer-090);
     padding-block-start: var(--b-spacer-090);
-    padding-inline: var(--b-spacer-090);
+    padding-inline: var(--content-area-padding-inline);
   }
 }
 
 /* l: 768px-1279px — padding 32px */
 @container page-viewport (min-width: 768px) {
   .content-area {
+    --content-area-padding-inline: var(--b-spacer-100);
     padding-block-start: var(--b-spacer-100);
-    padding-inline: var(--b-spacer-100);
+    padding-inline: var(--content-area-padding-inline);
       padding-bottom : 14px;
 
   }
@@ -78,8 +80,9 @@ input, textarea, select, button, table, th, td {
 /* xl: 1280px-1535px — padding 40px */
 @container page-viewport (min-width: 1280px) {
   .content-area {
+    --content-area-padding-inline: var(--b-spacer-110);
     padding-block-start: var(--b-spacer-110);
-    padding-inline: var(--b-spacer-110);
+    padding-inline: var(--content-area-padding-inline);
       padding-bottom : 14px;
 
   }
@@ -88,8 +91,9 @@ input, textarea, select, button, table, th, td {
 /* xxl: 1536px+ — padding-block 40px, padding-inline 64px */
 @container page-viewport (min-width: 1536px) {
   .content-area {
+    --content-area-padding-inline: var(--b-spacer-140);
     padding-block-start: var(--b-spacer-110);
-    padding-inline: var(--b-spacer-140);
+    padding-inline: var(--content-area-padding-inline);
       padding-bottom : 14px;
 
   }

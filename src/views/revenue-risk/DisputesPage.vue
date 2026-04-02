@@ -1,17 +1,16 @@
 <template>
-  <div class="page page--locked">
+  <div class="page page--locked page--data-grid-template">
     <bento-data-grid-template 
       class="content-section--flex" 
       :header="headerConfig" 
       :tabs="tabsConfig" 
       sticky-tabs
     >
-      <template v-for="(tab, index) in tabsConfig.tabs" v-slot:[getTabSlotName(index)]>
+      <template v-for="index in tabsConfig.tabs.length" v-slot:[getTabSlotName(index-1)]>
         <bento-data-grid
           :key="index"
-          class="disputes-grid"
           :columns="columns"
-          :data="getTabData(index)"
+          :data="getTabData(index-1)"
           :filters="filtersConfig"
           :filter-values="filterValues"
           :filter-search-term="searchTerm"
@@ -27,7 +26,7 @@
           @update:filter-values="filterValues = $event"
           @update:filter-search-term="searchTerm = $event"
         >
-          <template #item-assignee="{ item }">
+          <template #item-assignee>
             <bento-button variant="secondary" size="small" :condensed="true" class="no-wrap-btn">
               Assign
             </bento-button>
@@ -185,11 +184,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.disputes-grid {
-  flex: 1;
-  min-height: 0;
-}
-
 .no-wrap-btn {
   white-space: nowrap;
 }
