@@ -1,0 +1,18 @@
+{
+  "customSyntax": "postcss-html",
+  "plugins": ["@adyen/bento-stylelint"],
+  "rules": {
+    "bento/no-component-tokens-allowed": true,
+    "bento/no-disallowed-css-variables": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.vue"],
+      "customSyntax": "postcss-html"
+    },
+    {
+      "files": ["**/*.css", "**/*.scss"],
+      "customSyntax": "postcss-scss"
+    }
+  ]
+}
