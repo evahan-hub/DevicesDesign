@@ -109,9 +109,9 @@ import {
     BentoToast, BentoAlert, BentoTabs, BentoTab,
 } from '@adyen/bento-vue2';
 import { useRoute, useRouter } from 'vue-router/composables';
-import { mockReports } from '../../data/reports';
-import type { MockReport } from '../../data/reports';
-import ReportDataGrid from '../../components/reports/ReportDataGrid.vue';
+import { mockReports } from '../../../data/reports';
+import type { MockReport } from '../../../data/reports';
+import ReportDataGrid from '../../../components/reports/ReportDataGrid.vue';
 import { CATEGORY_ORDER, REPORTS_ACTIVE_TAB_STORAGE_KEY, CATEGORY_NAMES, SUBCATEGORY_NAMES } from './reports-page.mock-data';
 
 interface Category { category: string; name: string; count: number; }

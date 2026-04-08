@@ -15,7 +15,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: './index.html'
+        main: './index.html',
+        balancePlatform: './balance-platform.html',
       }
     }
   }

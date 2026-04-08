@@ -372,11 +372,11 @@ import {
     BentoTab,
 } from '@adyen/bento-vue2';
 import { useRoute } from 'vue-router/composables';
-import { mockReports } from '../../data/reports';
-import type { MockReport } from '../../data/reports';
-import { getMockGeneratedReports, getMockReportRequests } from '../../data/mockGeneratedReports';
-import type { GeneratedReport, ReportRequest } from '../../data/mockGeneratedReports';
-import IparGenerateModal from '../../components/reports/IparGenerateModal.vue';
+import { mockReports } from '../../../data/reports';
+import type { MockReport } from '../../../data/reports';
+import { getMockGeneratedReports, getMockReportRequests } from '../../../data/mockGeneratedReports';
+import type { GeneratedReport, ReportRequest } from '../../../data/mockGeneratedReports';
+import IparGenerateModal from '../../../components/reports/IparGenerateModal.vue';
 import { WEEKDAYS, INPUT_TYPE_ORDER, SCHEDULE_EXCLUDED, ALL_COLUMNS, DEFAULT_ENABLED, PREVIEW_ROWS } from './report-details.mock-data';
 import type { ColItem } from './report-details.types';
 

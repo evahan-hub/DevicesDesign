@@ -1,8 +1,7 @@
 <template>
   <div class="root-layout">
-    <SideNavigation />
+    <SideNavigationBP />
     <div class="main-area">
-      <TopBar />
       <div class="content-area">
         <router-view />
       </div>
@@ -11,8 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import SideNavigation from '../components/SideNavigation.vue';
-import TopBar from '../components/TopBar.vue';
+import SideNavigationBP from '../../components/SideNavigationBP.vue';
 </script>
 
 <style scoped>

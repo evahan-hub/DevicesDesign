@@ -1,82 +1,82 @@
 import VueRouter from 'vue-router';
 
-const RootLayout = () => import('./views/RootLayout.vue');
+const RootLayout = () => import('./views/psp/RootLayout.vue');
 
 // Parent tabs
-const HomePage = () => import('./views/HomePage.vue');
-const PerformancePage = () => import('./views/PerformancePage.vue');
-const SettingsPage = () => import('./views/SettingsPage.vue');
+const HomePage = () => import('./views/psp/HomePage.vue');
+const PerformancePage = () => import('./views/psp/PerformancePage.vue');
+const SettingsPage = () => import('./views/psp/SettingsPage.vue');
 
 // Transaction sub-tabs
-const PaymentsPage = () => import('./views/payments/PaymentsPage.vue');
-const PaymentDetailsPage = () => import('./views/payments/PaymentDetailsPage.vue');
-const OffersPage = () => import('./views/OffersPage.vue');
-const PayoutsPage = () => import('./views/PayoutsPage.vue');
+const PaymentsPage = () => import('./views/psp/payments/PaymentsPage.vue');
+const PaymentDetailsPage = () => import('./views/psp/payments/PaymentDetailsPage.vue');
+const OffersPage = () => import('./views/psp/OffersPage.vue');
+const PayoutsPage = () => import('./views/psp/PayoutsPage.vue');
 
 // Accounts & balances sub-tabs
-const AccountHoldersPage = () => import('./views/AccountHoldersPage.vue');
-const ScorePage = () => import('./views/ScorePage.vue');
+const AccountHoldersPage = () => import('./views/psp/AccountHoldersPage.vue');
+const ScorePage = () => import('./views/psp/ScorePage.vue');
 
 // Revenue & risk sub-tabs
-const UpliftOverviewPage = () => import('./views/revenue-risk/UpliftOverviewPage.vue');
-const RecommendationsPage = () => import('./views/revenue-risk/RecommendationsPage.vue');
-//const CaseManagementPage = () => import('./views/revenue-risk/CaseManagementPage.vue');
-const DisputesPage = () => import('./views/revenue-risk/DisputesPage.vue');
-const Dynamic3DSecurePage = () => import('./views/revenue-risk/Dynamic3DSecurePage.vue');
-const ExperimentsPage = () => import('./views/revenue-risk/ExperimentsPage.vue');
-const RiskFieldsPage = () => import('./views/revenue-risk/RiskFieldsPage.vue');
-const RiskListsPage = () => import('./views/revenue-risk/RiskListsPage.vue');
-const RiskProfileDetailsPage = () => import('./views/revenue-risk/RiskProfileDetailsPage.vue');
-const RiskSettingsPage = () => import('./views/revenue-risk/SettingsPage.vue');
+const UpliftOverviewPage = () => import('./views/psp/revenue-risk/UpliftOverviewPage.vue');
+const RecommendationsPage = () => import('./views/psp/revenue-risk/RecommendationsPage.vue');
+//const CaseManagementPage = () => import('./views/psp/revenue-risk/CaseManagementPage.vue');
+const DisputesPage = () => import('./views/psp/revenue-risk/DisputesPage.vue');
+const Dynamic3DSecurePage = () => import('./views/psp/revenue-risk/Dynamic3DSecurePage.vue');
+const ExperimentsPage = () => import('./views/psp/revenue-risk/ExperimentsPage.vue');
+const RiskFieldsPage = () => import('./views/psp/revenue-risk/RiskFieldsPage.vue');
+const RiskListsPage = () => import('./views/psp/revenue-risk/RiskListsPage.vue');
+const RiskProfileDetailsPage = () => import('./views/psp/revenue-risk/RiskProfileDetailsPage.vue');
+const RiskSettingsPage = () => import('./views/psp/revenue-risk/SettingsPage.vue');
 
 // Partner sub-tabs
-const PartnerOverviewPage = () => import('./views/partner/OverviewPage.vue');
-const ReferralsPage = () => import('./views/partner/ReferralsPage.vue');
-//const CommissionsPage = () => import('./views/partner/CommissionsPage.vue');
-const MerchantAccessPage = () => import('./views/partner/MerchantAccessPage.vue');
+const PartnerOverviewPage = () => import('./views/psp/partner/OverviewPage.vue');
+const ReferralsPage = () => import('./views/psp/partner/ReferralsPage.vue');
+//const CommissionsPage = () => import('./views/psp/partner/CommissionsPage.vue');
+const MerchantAccessPage = () => import('./views/psp/partner/MerchantAccessPage.vue');
 
 // Insights sub-tabs
-const CheckoutPage = () => import('./views/insights/CheckoutPage.vue');
-const PaymentLifecyclePage = () => import('./views/insights/PaymentLifecyclePage.vue');
-//const RiskDisputeManagementPage = () => import('./views/insights/RiskDisputeManagementPage.vue');
+const CheckoutPage = () => import('./views/psp/insights/CheckoutPage.vue');
+const PaymentLifecyclePage = () => import('./views/psp/insights/PaymentLifecyclePage.vue');
+//const RiskDisputeManagementPage = () => import('./views/psp/insights/RiskDisputeManagementPage.vue');
 
 // Pay by Link sub-tabs
-const PaymentLinksPage = () => import('./views/pay-by-link/PaymentLinksPage.vue');
+const PaymentLinksPage = () => import('./views/psp/pay-by-link/PaymentLinksPage.vue');
 
 // Giving sub-tabs
-const CampaignsPage = () => import('./views/giving/CampaignsPage.vue');
+const CampaignsPage = () => import('./views/psp/giving/CampaignsPage.vue');
 
 // Finance sub-tabs
-const FinancePage = () => import('./views/FinancePage.vue');
-const BalancesOverviewPage = () => import('./views/finance/BalancesOverviewPage.vue');
-const CompanyBalancesOverviewPage = () => import('./views/finance/CompanyBalancesOverviewPage.vue');
-const MPLPage = () => import('./views/finance/MPLPage.vue');
-const InvoicesPage = () => import('./views/finance/invoices/InvoicesPage.vue');
-const InvoiceDetailPage = () => import('./views/finance/invoices/InvoiceDetailPage.vue');
-const SalesToPayoutsPage = () => import('./views/finance/SalesToPayoutsPage.vue');
-const PayoutAccountsPage = () => import('./views/finance/PayoutAccountsPage.vue');
-//const PayoutModelPage = () => import('./views/finance/PayoutModelPage.vue');
-const ReportingManagerPage = () => import('./views/finance/ReportingManagerPage.vue');
+const FinancePage = () => import('./views/psp/FinancePage.vue');
+const BalancesOverviewPage = () => import('./views/psp/finance/BalancesOverviewPage.vue');
+const CompanyBalancesOverviewPage = () => import('./views/psp/finance/CompanyBalancesOverviewPage.vue');
+const MPLPage = () => import('./views/psp/finance/MPLPage.vue');
+const InvoicesPage = () => import('./views/psp/finance/invoices/InvoicesPage.vue');
+const InvoiceDetailPage = () => import('./views/psp/finance/invoices/InvoiceDetailPage.vue');
+const SalesToPayoutsPage = () => import('./views/psp/finance/SalesToPayoutsPage.vue');
+const PayoutAccountsPage = () => import('./views/psp/finance/PayoutAccountsPage.vue');
+//const PayoutModelPage = () => import('./views/psp/finance/PayoutModelPage.vue');
+const ReportingManagerPage = () => import('./views/psp/finance/ReportingManagerPage.vue');
 
 // Developers sub-tabs
-const IntegrationGuidePage = () => import('./views/developers/IntegrationGuidePage.vue');
-const DeveloperDashboardPage = () => import('./views/developers/DashboardPage.vue');
-const ApiCredentialsPage = () => import('./views/developers/ApiCredentialsPage.vue');
-const WebhooksPage = () => import('./views/developers/WebhooksPage.vue');
+const IntegrationGuidePage = () => import('./views/psp/developers/IntegrationGuidePage.vue');
+const DeveloperDashboardPage = () => import('./views/psp/developers/DashboardPage.vue');
+const ApiCredentialsPage = () => import('./views/psp/developers/ApiCredentialsPage.vue');
+const WebhooksPage = () => import('./views/psp/developers/WebhooksPage.vue');
 
 // In-person payments sub-tabs
-const OrdersReturnsPage = () => import('./views/in-person-payments/OrdersReturnsPage.vue');
-const StoresPage = () => import('./views/in-person-payments/StoresPage.vue');
-const TerminalsPage = () => import('./views/in-person-payments/TerminalsPage.vue');
-const TapToPayPage = () => import('./views/in-person-payments/TapToPayPage.vue');
-const TerminalSettingsPage = () => import('./views/in-person-payments/TerminalSettingsPage.vue');
-const AndroidPage = () => import('./views/in-person-payments/AndroidPage.vue');
-const TerminalSoftwarePage = () => import('./views/in-person-payments/TerminalSoftwarePage.vue');
-const InPersonThemesPage = () => import('./views/in-person-payments/ThemesPage.vue');
+const OrdersReturnsPage = () => import('./views/psp/in-person-payments/OrdersReturnsPage.vue');
+const StoresPage = () => import('./views/psp/in-person-payments/StoresPage.vue');
+const TerminalsPage = () => import('./views/psp/in-person-payments/TerminalsPage.vue');
+const TapToPayPage = () => import('./views/psp/in-person-payments/TapToPayPage.vue');
+const TerminalSettingsPage = () => import('./views/psp/in-person-payments/TerminalSettingsPage.vue');
+const AndroidPage = () => import('./views/psp/in-person-payments/AndroidPage.vue');
+const TerminalSoftwarePage = () => import('./views/psp/in-person-payments/TerminalSoftwarePage.vue');
+const InPersonThemesPage = () => import('./views/psp/in-person-payments/ThemesPage.vue');
 
 // Reports sub-tabs
-const ReportsPage = () => import('./views/reports/ReportsPage.vue');
-const ReportDetailsStub = () => import('./views/reports/ReportDetailsStub.vue');
+const ReportsPage = () => import('./views/psp/reports/ReportsPage.vue');
+const ReportDetailsStub = () => import('./views/psp/reports/ReportDetailsStub.vue');
 
 export const router = new VueRouter({
   mode: 'history',
