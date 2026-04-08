@@ -8,9 +8,21 @@ Use this file as the primary mapping source when implementing Figma designs in t
 3. If Code Connect is missing/unclear, set status to `needs-user-input` and ask the user what to connect before implementation.
 4. After implementation, update status and notes.
 
+## Verified Token Names (from production `/adyen-main/ui`)
+Use `--b-text-*` for typography, NOT `--b-font-size-*` (those are internal Bento component tokens, not available in consuming projects):
+| Token | Value | Use for |
+|---|---|---|
+| `--b-text-caption-font-size` | 12px | caption / table headers / small labels |
+| `--b-text-body-font-size` | 14px | body text / metadata |
+| `--b-text-title-font-size` | 16px | standard section titles |
+| `--b-text-title-m-font-size` | 20px | medium titles / KPI values |
+| `--b-text-title-l-font-size` | 24px | large/page titles |
+| `--b-text-title-m-font-weight` | — | bold weight for medium titles |
+| `--b-text-title-m-line-height` | — | line height for medium titles |
+
 > **Figma file:** Code Connect is not configured on the Unified Reconciliation file (`mUzE5gY8UjkOKd1ygS973K`). Figma component names follow the `b-{name}` convention. Node IDs are only populated when a specific screen usage has been validated.
 
-> **Imports:** All components come from `@adyen/bento-vue2` (v1.84.1) and are globally registered via `Vue.use(BentoVue)` in `src/main.ts` — **no per-component import needed in templates**. The "Explicit Import" column only lists what needs a manual `import { … } from '@adyen/bento-vue2'` (types, enums, composables). Do **not** use `@adyen/bento-vue3`.
+> **Imports:** All components come from `@adyen/bento-vue2` (v1.84.1). Use `<script lang="ts" setup>` — imported components are automatically registered in the template, no `components: {}` needed. Pattern: `import { BentoButton } from '@adyen/bento-vue2'` then use `<bento-button>` directly. `Vue.use(BentoVue)` global registration is unreliable. Do **not** use `@adyen/bento-vue3`.
 
 ---
 
@@ -24,6 +36,8 @@ Use this file as the primary mapping source when implementing Figma designs in t
 | Global | N/A | — | `b-secondary-nav` | `BentoSecondaryNav` | — | `<bento-secondary-nav :items="navItems" />` | `ready` | Sub-navigation within a section. |
 | Global | N/A | — | `b-layout` / `b-layout-row` | `BentoLayout` + `BentoLayoutRow` | — | `<bento-layout size="full-width"><bento-layout-row columns-layout="6-6">…</bento-layout-row></bento-layout>` | `ready` | `size`: `"full-width"`, `"wide"`, `"narrow"`. `columns-layout` splits columns e.g. `"6-6"`, `"4-8"`, `"3-9"`. |
 | Global | N/A | — | `b-tabs` / `b-tab` | `BentoTabs` + `BentoTab` | — | `<bento-tabs><bento-tab title="Tab 1">…</bento-tab></bento-tabs>` | `ready` | Tab container + individual tabs. Use `:active-tab` for controlled mode. |
+| Global | N/A | — | `b-card` | `BentoCard` | `BentoCardBackground`, `BentoCardTitleSize` | `<bento-card><template #default>Title</template><template #description>Subtitle</template><template #content>…</template></bento-card>` | `ready` | Container for grouped content. Variants: `expandable`, `clickable`. Use `:actions` for card-level buttons. Background: `primary` (white, default), `secondary` (grey). |
+| Global | N/A | — | `b-structured-list` + `b-structured-list-item` | `BentoStructuredList` + `BentoStructuredListItem` | — | `<bento-structured-list layout="33-66"><bento-structured-list-item label="Status"><bento-status variant="green">Active</bento-status></bento-structured-list-item></bento-structured-list>` | `ready` | Label/value pairs display. `layout` prop: `25-75`, `33-66` (default), `42-58`, `50-50`. Item `label` prop for the left column; slot default for right column value. |
 | Global | N/A | — | `b-accordion` | `BentoAccordion` + `BentoAccordionItem` | — | `<bento-accordion><bento-accordion-item title="Section">Content</bento-accordion-item></bento-accordion>` | `ready` | Each item needs `title` prop. Use `:is-expanded.sync="flag"` to control open state externally. |
 | Global | N/A | — | `b-divider` | `BentoDivider` | — | `<bento-divider />` | `ready` | Horizontal rule / visual separator. |
 | Global | N/A | — | `b-anchor-scroller` | `BentoAnchorScroller` | — | `<bento-anchor-scroller :items="items" :active-index="activeIndex" @update:active-index="activeIndex = $event"><section ref="s1">…</section></bento-anchor-scroller>` | `ready` | Sections go in the default slot. Each item must have `{ title, elementRef }` where `elementRef` is a Vue `ref` pointing to the matching `<section>`. |
@@ -106,7 +120,7 @@ Use this file as the primary mapping source when implementing Figma designs in t
 
 | Screen / Context | Figma URL | Node ID | Figma Component | Bento Component | Explicit Import | Canonical Usage | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Global | N/A | — | `b-alert` | `BentoAlert` | — | `<bento-alert variant="warning" title="Warning">Description</bento-alert>` | `ready` | Inline alert banner. Variants: `info`, `warning`, `error`, `success`. |
+| Global | N/A | — | `b-alert` | `BentoAlert` | — | `<bento-alert type="highlight"><template #default>Title</template><template #description>Body text</template></bento-alert>` | `ready` | Inline alert banner. **`type`** controls icon/color: `highlight` (blue/info), `warning`, `critical`, `success`. **`variant`** controls layout: `default` (with title+dismiss) or `tip` (compact, no title). Title in `#default` slot (optional), body in `#description` slot. No `title` prop exists. |
 | Global | N/A | — | `b-toast` | `useBentoToastController` (composable) | `import { useBentoToastController } from '@adyen/bento-vue2'` | `const toast = useBentoToastController(); toast.show({ message: 'Saved!' })` | `ready` | Programmatic — use the composable, not a `<bento-toast>` tag. |
 | Global | N/A | — | `b-empty-state` | `BentoEmptyState` | — | `<bento-empty-state title="No results" description="…" />` | `ready` | Pass as `:empty-state` prop to `BentoDataGrid` where possible. |
 | Global | N/A | — | `b-loading-indicator` | `BentoLoadingIndicator` | — | `<bento-loading-indicator :large="true" />` | `ready` | Pass `:loading` prop to `BentoDataGrid` instead where possible. |

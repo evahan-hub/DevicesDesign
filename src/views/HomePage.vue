@@ -37,24 +37,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang="ts" setup>
 import { BentoButton } from '@adyen/bento-vue2';
 
-export default Vue.extend({
-  name: 'HomePage',
-  components: {
-    BentoButton,
-  },
-  data() {
-    return {};
-  },
-  methods: {
-    handleClick() {
-      console.log('Bento button clicked!');
-    },
-  },
-});
+function handleClick(): void {
+  console.log('Bento button clicked!');
+}
 </script>
 
 <style scoped>

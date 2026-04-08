@@ -1,0 +1,29 @@
+{
+  "en-US": {
+    "pageTitle": "Invoice {number}",
+    "fxRate": "FX rate",
+    "downloadInvoice": "Download Invoice",
+    "account": "Account",
+    "issued": "Issued",
+    "due": "Due",
+    "invoicePeriod": "Invoice Period",
+    "fxAppliedOn": "FX applied on",
+    "invoiceType": "Invoice type",
+    "invoiceSummary": "Invoice summary",
+    "invoiceSummaryDesc": "{amount} USD will be automatically debited from your settlement batch under {ref}.",
+    "alertDescription": "Invoice is based on transactions processed between {from} through {to} Central European Time.",
+    "invoiced": "Invoiced",
+    "deducted": "Deducted",
+    "dueAmount": "Due",
+    "byFeeType": "By fee type",
+    "byMerchantAccounts": "By merchant accounts",
+    "feeTypes": "Fee types",
+    "merchantAccounts": "Merchant accounts",
+    "totalTransactions": "Total transactions",
+    "totalTurnover": "Total turnover",
+    "downloadTransactions": "Download transactions",
+    "feeType": "Fee type",
+    "subTotal": "Sub-total",
+    "invoiceNumber": "Invoice number"
+  }
+}

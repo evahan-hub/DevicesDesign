@@ -351,8 +351,8 @@
     </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang="ts" setup>
+import { ref, computed, watch } from 'vue';
 import {
     BentoTypography, BentoTypographyVariant,
     BentoButton, BentoButtonVariant,
@@ -371,367 +371,325 @@ import {
     BentoTabs,
     BentoTab,
 } from '@adyen/bento-vue2';
-import { mockReports } from '../data/reports';
-import type { MockReport } from '../data/reports';
-import { getMockGeneratedReports, getMockReportRequests } from '../data/mockGeneratedReports';
-import type { GeneratedReport, ReportRequest } from '../data/mockGeneratedReports';
-import IparGenerateModal from '../components/reports/IparGenerateModal.vue';
+import { useRoute } from 'vue-router/composables';
+import { mockReports } from '../../data/reports';
+import type { MockReport } from '../../data/reports';
+import { getMockGeneratedReports, getMockReportRequests } from '../../data/mockGeneratedReports';
+import type { GeneratedReport, ReportRequest } from '../../data/mockGeneratedReports';
+import IparGenerateModal from '../../components/reports/IparGenerateModal.vue';
+import { WEEKDAYS, INPUT_TYPE_ORDER, SCHEDULE_EXCLUDED, ALL_COLUMNS, DEFAULT_ENABLED, PREVIEW_ROWS } from './report-details.mock-data';
+import type { ColItem } from './report-details.types';
 
-const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const INPUT_TYPE_ORDER: Record<string, number> = {
-    accountCodes: 0,
-    date: 1, date_in_companytimezone: 1, date_as_parameter: 1,
-    dateRange: 1, datetime_utc: 1,
-    month: 1, monthSelection: 1, monthSelectionWithMaxDate: 1, monthSelectionWithMaxDateUsingDateFormat: 1,
-    yearquarter: 1,
-    timezone: 2,
-    boolean: 3,
-};
-const SCHEDULE_EXCLUDED = ['date','date_in_companytimezone','date_as_parameter','datetime_utc','dateRange','month','monthSelection','monthSelectionWithMaxDate','monthSelectionWithMaxDateUsingDateFormat','yearquarter'];
+const route = useRoute();
 
-const ALL_COLUMNS = [
-    { name: 'companyAccount', label: 'Company account', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'merchantAccount', label: 'Merchant account', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'subMerchantIdentifier', label: 'Sub-merchant identifier', description: 'Identifies the sub-merchant level used for reporting breakdowns', type: 'String' },
-    { name: 'pspReference', label: 'PSP reference', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'merchantReference', label: 'Merchant reference', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'paymentMethod', label: 'Payment method', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'creationDate', label: 'Creation date, time zone', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'type', label: 'Type', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'modificationReference', label: 'Modification reference', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'grossCurrency', label: 'Gross currency, gross debit, gross credit, exchange rate', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'commission', label: 'Commission', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'markup', label: 'Markup', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'schemeFees', label: 'Scheme fees', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'interchange', label: 'Interchange', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'paymentMethodVariant', label: 'Payment method variant', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'modMerchantReference', label: 'Modification merchant reference', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'batchNumber', label: 'Batch number', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved4', label: 'Reserved4', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved5', label: 'Reserved5', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved6', label: 'Reserved6', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved7', label: 'Reserved7', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved8', label: 'Reserved8', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved9', label: 'Reserved9', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-    { name: 'reserved10', label: 'Reserved10', description: 'Description of the column contents and why it\'s helpful', type: 'String' },
-];
-const DEFAULT_ENABLED = new Set(['companyAccount','merchantAccount','subMerchantIdentifier','pspReference','merchantReference','paymentMethod','creationDate','type','modificationReference','grossCurrency','commission','markup','schemeFees','interchange','paymentMethodVariant','modMerchantReference','batchNumber','reserved4','reserved5','reserved6','reserved7','reserved8']);
+const loading = ref(true);
+const error = ref<string | null>(null);
+const report = ref<MockReport | null>(null);
+const generatedReports = ref<GeneratedReport[]>([]);
+const pendingRequests = ref<ReportRequest[]>([]);
+const reportsDaysCount = ref(100);
+const activeTabIndex = ref(0);
+const tabs = ref([
+    { id: 'generatedReportsTab', title: 'Generated reports' },
+    { id: 'reportConfigurationTab', title: 'Column Settings' },
+]);
+const isIparModalOpen = ref(false);
+const isGenerateModalOpen = ref(false);
+const generationType = ref('manual');
+const generating = ref(false);
+const mockMerchantAccounts = ref(['AdyenTechSupport_NL', 'AdyenTechSupport_EU', 'AdyenTechSupport_US']);
+const generateForm = ref<Record<string, any>>({ params: {} as Record<string, any>, format: 'csv', accountSelection: 'current' });
+const scheduleForm = ref<Record<string, any>>({ frequency: 'DAILY', dayOfWeek: 1, dayOfMonth: 1 });
+const scheduleViewMode = ref('list');
+const editingScheduleIndex = ref<number | null>(null);
+const mockSchedules = ref<any[]>([]);
+const isColumnModalOpen = ref(false);
+const applyToOtherAccounts = ref(false);
+const selectedAccounts = ref<string[]>([]);
+const columnConfig = ref<ColItem[]>(ALL_COLUMNS.map(c => ({ ...c, enabled: DEFAULT_ENABLED.has(c.name) })));
+const draftColumnConfig = ref<ColItem[]>([]);
+const draftSelectedOrder = ref<string[]>([]);
+const draftChecked = ref<Record<string, boolean>>({});
+const dragIndex = ref<number | null>(null);
+const previewRows = ref(PREVIEW_ROWS);
+const selectAccountsOptions = ref([
+    { label: 'TheHarporiumEU', value: 'TheHarporiumEU' },
+    { label: 'TheHarporiumUS', value: 'TheHarporiumUS' },
+    { label: 'TheHarporiumAU', value: 'TheHarporiumAU' },
+]);
 
-const PREVIEW_ROWS: Record<string, string>[] = [
-    { companyAccount:'TheHarporium', merchantAccount:'TheHarporiumEU', subMerchantIdentifier:'Store_001', pspReference:'A9S2K3LD0P2M', merchantReference:'2857493285', paymentMethod:'Visa', creationDate:'Dec 28, 2020, 10:20', type:'Settled', modificationReference:'MOD-001', grossCurrency:'EUR 120.00', commission:'1.20', markup:'0.15', schemeFees:'0.08', interchange:'0.45', paymentMethodVariant:'visacredit', modMerchantReference:'MMOD-001', batchNumber:'1001' },
-    { companyAccount:'TheHarporium', merchantAccount:'TheHarporiumEU', subMerchantIdentifier:'Store_002', pspReference:'B4H7G1J9K2RT', merchantReference:'9573957395', paymentMethod:'Visa', creationDate:'Dec 28, 2020, 10:20', type:'Settled', modificationReference:'MOD-002', grossCurrency:'EUR 85.50', commission:'0.86', markup:'0.10', schemeFees:'0.06', interchange:'0.32', paymentMethodVariant:'visadebit', modMerchantReference:'MMOD-002', batchNumber:'1001' },
-    { companyAccount:'TheHarporium', merchantAccount:'TheHarporiumEU', subMerchantIdentifier:'Store_001', pspReference:'Z7X9C3V1B5NM', merchantReference:'8596846378', paymentMethod:'Mastercard', creationDate:'Dec 28, 2020, 10:21', type:'Refunded', modificationReference:'MOD-003', grossCurrency:'EUR 42.00', commission:'0.42', markup:'0.05', schemeFees:'0.03', interchange:'0.18', paymentMethodVariant:'mc', modMerchantReference:'MMOD-003', batchNumber:'1002' },
-];
-
-interface ColItem { name: string; label: string; description: string; type: string; enabled: boolean }
-
-export default Vue.extend({
-    name: 'ReportDetailsPage',
-    components: {
-        BentoTypography, BentoButton, BentoLoadingIndicator, BentoAlert, BentoDataGrid, BentoStatus, BentoLink,
-        BentoDropdown, BentoToggle, BentoToast, BentoRadioGroup, BentoCheckbox,
-        BentoDatePicker, BentoDateRangePicker, BentoTabs, BentoTab,
-        IparGenerateModal,
-    },
-    data() {
-        return {
-            BentoTypographyVariant,
-            BentoButtonVariant,
-            loading: true,
-            error: null as string | null,
-            report: null as MockReport | null,
-            generatedReports: [] as GeneratedReport[],
-            pendingRequests: [] as ReportRequest[],
-            reportsDaysCount: 100,
-            activeTabIndex: 0,
-            tabs: [
-                { id: 'generatedReportsTab', title: 'Generated reports' },
-                { id: 'reportConfigurationTab', title: 'Column Settings' },
-            ],
-            isIparModalOpen: false,
-            isGenerateModalOpen: false,
-            generationType: 'manual' as string,
-            generating: false,
-            mockMerchantAccounts: ['AdyenTechSupport_NL', 'AdyenTechSupport_EU', 'AdyenTechSupport_US'],
-            generateForm: { params: {} as Record<string, any>, format: 'csv', accountSelection: 'current' } as Record<string, any>,
-            scheduleForm: { frequency: 'DAILY', dayOfWeek: 1, dayOfMonth: 1 } as Record<string, any>,
-            scheduleViewMode: 'list' as string,
-            editingScheduleIndex: null as number | null,
-            mockSchedules: [] as any[],
-            isColumnModalOpen: false,
-            applyToOtherAccounts: false,
-            selectedAccounts: [] as string[],
-            columnConfig: ALL_COLUMNS.map(c => ({ ...c, enabled: DEFAULT_ENABLED.has(c.name) })) as ColItem[],
-            draftColumnConfig: [] as ColItem[],
-            draftSelectedOrder: [] as string[],
-            draftChecked: {} as Record<string, boolean>,
-            dragIndex: null as number | null,
-            previewRows: PREVIEW_ROWS,
-            selectAccountsOptions: [
-                { label: 'TheHarporiumEU', value: 'TheHarporiumEU' },
-                { label: 'TheHarporiumUS', value: 'TheHarporiumUS' },
-                { label: 'TheHarporiumAU', value: 'TheHarporiumAU' },
-            ],
-        };
-    },
-    computed: {
-        activeTabId(): string { return this.tabs[this.activeTabIndex]?.id || ''; },
-        reportParameters(): any[] { return this.report?.parameters || []; },
-        reportFormats(): string[] { return this.report?.formats || ['csv']; },
-        sortedManualParameters(): any[] {
-            return [...this.reportParameters].sort((a, b) => (INPUT_TYPE_ORDER[a.inputType] ?? 99) - (INPUT_TYPE_ORDER[b.inputType] ?? 99));
-        },
-        reportPeriodicities(): string[] { return this.report?.scheduledPeriodicities || []; },
-        scheduleParameters(): any[] { return this.reportParameters.filter((p: any) => !SCHEDULE_EXCLUDED.includes(p.inputType)); },
-        fileTypeDropdownItems(): any[] {
-            return this.reportFormats.map(f => ({
-                value: f,
-                label: f.toUpperCase() === 'XLSX' ? '.XLSX (Excel)' : f.toUpperCase() === 'CSV' ? '.CSV (Comma-separated values)' : `.${f.toUpperCase()}`,
-            }));
-        },
-        frequencyDropdownItems(): any[] { return this.reportPeriodicities.map(p => ({ value: p, label: this.periodicityLabel(p) })); },
-        weekdayDropdownItems(): any[] { return WEEKDAYS.map((d, i) => ({ value: i + 1, label: d })); },
-        dayOfMonthDropdownItems(): any[] {
-            return Array.from({ length: 31 }, (_, i) => {
-                const d = i + 1;
-                const s = [1,21,31].includes(d) ? 'st' : [2,22].includes(d) ? 'nd' : [3,23].includes(d) ? 'rd' : 'th';
-                return { value: d, label: `${d}${s}` };
-            });
-        },
-        merchantAccountDropdownItems(): any[] { return this.mockMerchantAccounts.map(a => ({ value: a, label: a })); },
-        accountSelectionItems(): any[] { return [{ value: 'current', label: 'Current account' }, { value: 'specific', label: 'Specific accounts' }]; },
-        booleanItems(): any[] { return [{ value: true, label: 'Yes' }, { value: false, label: 'No' }]; },
-        enabledColumns(): ColItem[] { return this.columnConfig.filter(c => c.enabled); },
-        enabledCount(): number { return this.enabledColumns.length; },
-        totalCount(): number { return this.columnConfig.length; },
-        showAccountsColumn(): boolean {
-            return [...this.pendingRequests, ...this.generatedReports].some(r => {
-                const codes = (r as any).merchantAccountCodes || (r as any).reportParameters?.merchantAccountCodes;
-                return codes && codes.length > 0;
-            });
-        },
-        generatedReportsColumns(): any[] {
-            const cols: any[] = [
-                { field: 'fileName', label: 'Filename', minWidth: 320 },
-            ];
-            if (this.showAccountsColumn) cols.push({ field: 'accounts', label: 'Accounts', minWidth: 220 });
-            cols.push(
-                { field: 'generatedOn', label: 'Generated on', minWidth: 220 },
-                { field: 'size', label: 'Size', minWidth: 120 },
-                { field: 'download', label: 'Download', minWidth: 140 }
-            );
-            return cols;
-        },
-        generatedReportRows(): any[] {
-            const pending = this.pendingRequests.map((req, idx) => ({
-                id: `pending-${idx}-${req.fileName}`,
-                pending: true,
-                fileName: req.fileName,
-                accounts: this.formatMerchantAccounts(req),
-                generatedOn: this.getStatusLabel(req.status),
-                statusLabel: this.getStatusLabel(req.status),
-                size: '—',
-                download: null,
-            }));
-            const generated = this.generatedReports.map((gen, idx) => ({
-                id: `generated-${idx}-${gen.fileName}`,
-                pending: false,
-                fileName: gen.fileName,
-                accounts: this.formatMerchantAccounts(gen),
-                generatedOn: this.formatDate(gen.generationDate),
-                statusLabel: null,
-                size: this.formatSize(gen.size),
-                download: gen.links && gen.links.download ? gen.links.download : '#',
-            }));
-            return [...pending, ...generated];
-        },
-        previewColumns(): any[] {
-            return this.enabledColumns.map(col => ({ field: col.name, label: col.label, minWidth: 170 }));
-        },
-        previewData(): Record<string, string>[] {
-            return this.previewRows.map(row => {
-                const out: Record<string, string> = {};
-                this.enabledColumns.forEach(col => { out[col.name] = row[col.name] || '—'; });
-                return out;
-            });
-        },
-        draftAvailableColumns(): ColItem[] { return this.draftColumnConfig.filter(c => !c.enabled); },
-        draftSelectedColumns(): ColItem[] {
-            const map = new Map(this.draftColumnConfig.filter(c => c.enabled).map(c => [c.name, c]));
-            return this.draftSelectedOrder.filter(n => map.has(n)).map(n => map.get(n) as ColItem);
-        },
-    },
-    created() { this.loadReport(); },
-    watch: {
-        '$route.params.reportCode'() { this.loadReport(); },
-    },
-    methods: {
-        loadReport() {
-            this.loading = true;
-            this.error = null;
-            this.report = null;
-            const code = this.$route.params.reportCode as string;
-            setTimeout(() => {
-                const found = mockReports.find(r => r.code === code) || null;
-                if (found) {
-                    this.report = { ...found };
-                    this.generatedReports = getMockGeneratedReports(code);
-                    this.pendingRequests = getMockReportRequests(code);
-                } else {
-                    this.error = `Report "${code}" not found.`;
-                }
-                this.loading = false;
-            }, 300);
-        },
-        setActiveTab(i: number) { this.activeTabIndex = i; },
-        handleGenerateClick() {
-            if (this.report?.isIPAR) {
-                this.isIparModalOpen = true;
-            } else {
-                this.openGenerateModal('manual');
-            }
-        },
-        openGenerateModal(type: string) {
-            this.generationType = type;
-            this.initFormDefaults();
-            if (type === 'automatic') { this.scheduleViewMode = 'list'; this.editingScheduleIndex = null; }
-            this.isGenerateModalOpen = true;
-        },
-        closeGenerateModal() { this.isGenerateModalOpen = false; this.generating = false; },
-        initFormDefaults() {
-            const params: Record<string, any> = {};
-            const today = new Date().toISOString().split('T')[0];
-            const thirtyAgo = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
-            for (const p of this.reportParameters) {
-                if (p.inputType === 'date') params[p.name] = p.name.includes('start') ? thirtyAgo : today;
-                else if (p.inputType === 'month') params[p.name] = new Date().toISOString().slice(0, 7);
-                else if (p.inputType === 'accountCodes') params[p.name] = [];
-                else if (p.inputType === 'boolean') params[p.name] = false;
-                else if (p.inputType === 'timezone' && p.options) params[p.name] = p.options[0]?.value ?? false;
-                else params[p.name] = null;
-            }
-            this.generateForm = { params, format: this.reportFormats[0] || 'csv', accountSelection: 'current' };
-            this.scheduleForm = { frequency: this.reportPeriodicities[0] || 'DAILY', dayOfWeek: 1, dayOfMonth: 1 };
-        },
-        setParam(name: string, value: any) { this.$set(this.generateForm.params, name, value); },
-        async handleGenerateReport() {
-            this.generating = true;
-            await new Promise(r => setTimeout(r, 1500));
-            const params = this.generateForm.params;
-            const datePart = params.reportstartdate?.replace(/-/g, '_') || (params.reportdate ? String(params.reportdate).replace(/-/g, '_') : 'custom');
-            const merchantAccounts = params.merchantAccountCodes || [];
-            const newReq: ReportRequest = {
-                fileName: `${this.report!.code}_${datePart}.${this.generateForm.format}`,
-                requestDate: new Date().toISOString(),
-                status: 'IN_PROGRESS',
-                failed: false,
-                reportParameters: merchantAccounts.length ? { merchantAccountCodes: [...merchantAccounts] } : null,
-            };
-            this.pendingRequests = [newReq, ...this.pendingRequests];
-            this.generating = false;
-            this.isGenerateModalOpen = false;
-            setTimeout(() => {
-                this.pendingRequests = this.pendingRequests.filter(r => r.fileName !== newReq.fileName);
-                this.generatedReports = [{
-                    fileName: newReq.fileName,
-                    generationDate: new Date().toISOString(),
-                    size: Math.floor(Math.random() * 500000) + 10000,
-                    links: { download: '#' },
-                    merchantAccountCodes: merchantAccounts.length ? [...merchantAccounts] : null,
-                    reportParameters: newReq.reportParameters,
-                }, ...this.generatedReports];
-            }, 3000);
-        },
-        handleIparGenerate(payload: any) {
-            this.isIparModalOpen = false;
-            const ext = payload.fileType || 'csv';
-            const datePart = payload.template === 'invoice' ? payload.month?.toLowerCase() : 'custom';
-            const fileName = `${this.report!.code}_${datePart}.${ext}`;
-            const newReq: ReportRequest = { fileName, requestDate: new Date().toISOString(), status: 'IN_PROGRESS', failed: false, reportParameters: null };
-            this.pendingRequests = [newReq, ...this.pendingRequests];
-            setTimeout(() => {
-                this.pendingRequests = this.pendingRequests.filter(r => r.fileName !== newReq.fileName);
-                this.generatedReports = [{ fileName, generationDate: new Date().toISOString(), size: Math.floor(Math.random() * 500000) + 10000, links: { download: '#' }, merchantAccountCodes: null, reportParameters: null }, ...this.generatedReports];
-            }, 3000);
-        },
-        addSchedule() {
-            const entry = { frequency: this.scheduleForm.frequency, dayOfWeek: this.scheduleForm.dayOfWeek, dayOfMonth: this.scheduleForm.dayOfMonth, format: this.generateForm.format || 'csv', accounts: this.generateForm.accountSelection === 'specific' ? (this.generateForm.params.merchantAccountCodes || []).join(', ') : 'All accounts' };
-            if (this.editingScheduleIndex !== null) { this.mockSchedules.splice(this.editingScheduleIndex, 1, entry); this.editingScheduleIndex = null; }
-            else { this.mockSchedules.push(entry); }
-            this.scheduleViewMode = 'list';
-        },
-        editSchedule(idx: number) {
-            const s = this.mockSchedules[idx];
-            this.scheduleForm.frequency = s.frequency; this.scheduleForm.dayOfWeek = s.dayOfWeek; this.scheduleForm.dayOfMonth = s.dayOfMonth;
-            this.generateForm.format = s.format; this.editingScheduleIndex = idx; this.scheduleViewMode = 'form';
-        },
-        deleteSchedule(idx: number) { this.mockSchedules.splice(idx, 1); },
-        formatScheduleFrequency(s: any) {
-            const label = this.periodicityLabel(s.frequency);
-            if (s.frequency === 'WEEKLY') return `${label} on ${WEEKDAYS[s.dayOfWeek - 1]}`;
-            if (s.frequency === 'MONTHLY') return `${label} on day ${s.dayOfMonth}`;
-            if (s.frequency === 'QUARTERLY') return `Quarterly on day ${s.dayOfMonth}`;
-            return label;
-        },
-        periodicityLabel(p: string) {
-            const m: Record<string, string> = { HOURLY: 'Hourly', DAILY: 'Daily', WEEKLY: 'Weekly', MONTHLY: 'Monthly', QUARTERLY: 'Quarterly', BATCH_CLOSE: 'At batch close' };
-            return m[p] || p;
-        },
-        showMoreReports() { this.reportsDaysCount += 100; },
-        formatMerchantAccounts(r: any) {
-            const codes = r.merchantAccountCodes || r.reportParameters?.merchantAccountCodes;
-            return (!codes || !codes.length) ? '-' : codes.join(', ');
-        },
-        formatDate(s: string) { return new Date(s).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); },
-        formatSize(b: number) { if (!b) return 'n/a'; if (b < 1024) return `${b} B`; if (b < 1048576) return `${(b / 1024).toFixed(1)} KB`; return `${(b / 1048576).toFixed(1)} MB`; },
-        getStatusLabel(s: string) { return ({ QUEUED: 'Queued', IN_PROGRESS: 'In progress' } as Record<string, string>)[s] || 'In progress'; },
-        openColumnModal() {
-            this.draftColumnConfig = this.columnConfig.map(c => ({ ...c }));
-            this.draftSelectedOrder = this.columnConfig.filter(c => c.enabled).map(c => c.name);
-            this.draftChecked = {};
-            this.isColumnModalOpen = true;
-        },
-        closeColumnModal() { this.isColumnModalOpen = false; },
-        saveColumnConfig() {
-            const checked = Object.keys(this.draftChecked).filter(k => this.draftChecked[k]);
-            const newConfig = this.draftColumnConfig.map(c => checked.includes(c.name) ? { ...c, enabled: true } : { ...c });
-            const newOrder = [...this.draftSelectedOrder];
-            checked.forEach(n => { if (!newOrder.includes(n)) newOrder.push(n); });
-            this.columnConfig = newConfig;
-            this.draftSelectedOrder = newOrder;
-            this.isColumnModalOpen = false;
-        },
-        removeAllSelectedColumns() {
-            this.draftColumnConfig = this.draftColumnConfig.map(c => ({ ...c, enabled: false }));
-            this.draftSelectedOrder = [];
-            this.draftChecked = {};
-        },
-        setCheckedAvailable(col: ColItem, checked: boolean) { this.$set(this.draftChecked, col.name, checked); },
-        toggleCheckAvailable(col: ColItem) { this.$set(this.draftChecked, col.name, !this.draftChecked[col.name]); },
-        isChecked(col: ColItem): boolean { return !!this.draftChecked[col.name]; },
-        deselectColumn(col: ColItem) {
-            const idx = this.draftColumnConfig.findIndex(c => c.name === col.name);
-            if (idx >= 0) this.$set(this.draftColumnConfig, idx, { ...this.draftColumnConfig[idx], enabled: false });
-            this.draftSelectedOrder = this.draftSelectedOrder.filter(n => n !== col.name);
-        },
-        onToggleChange(e: Event) {
-            const t = e.target as HTMLInputElement;
-            if (t && t.type === 'checkbox') this.applyToOtherAccounts = t.checked;
-        },
-        onDragStart(index: number, e: DragEvent) { this.dragIndex = index; e.dataTransfer!.effectAllowed = 'move'; },
-        onDragOver(_index: number, e: DragEvent) { e.dataTransfer!.dropEffect = 'move'; },
-        onDrop(targetIndex: number) {
-            if (this.dragIndex === null || this.dragIndex === targetIndex) return;
-            const order = [...this.draftSelectedOrder];
-            const [moved] = order.splice(this.dragIndex, 1);
-            order.splice(targetIndex, 0, moved);
-            this.draftSelectedOrder = order;
-            this.dragIndex = null;
-        },
-        onDragEnd() { this.dragIndex = null; },
-        onNativeInput(name: string, e: Event) { this.setParam(name, (e.target as HTMLInputElement).value); },
-    },
+const activeTabId = computed(() => tabs.value[activeTabIndex.value]?.id || '');
+const reportParameters = computed<any[]>(() => report.value?.parameters || []);
+const reportFormats = computed<string[]>(() => report.value?.formats || ['csv']);
+const sortedManualParameters = computed(() =>
+    [...reportParameters.value].sort((a, b) => (INPUT_TYPE_ORDER[a.inputType] ?? 99) - (INPUT_TYPE_ORDER[b.inputType] ?? 99))
+);
+const reportPeriodicities = computed<string[]>(() => report.value?.scheduledPeriodicities || []);
+const scheduleParameters = computed(() => reportParameters.value.filter((p: any) => !SCHEDULE_EXCLUDED.includes(p.inputType)));
+const fileTypeDropdownItems = computed(() =>
+    reportFormats.value.map(f => ({
+        value: f,
+        label: f.toUpperCase() === 'XLSX' ? '.XLSX (Excel)' : f.toUpperCase() === 'CSV' ? '.CSV (Comma-separated values)' : `.${f.toUpperCase()}`,
+    }))
+);
+const frequencyDropdownItems = computed(() => reportPeriodicities.value.map(p => ({ value: p, label: periodicityLabel(p) })));
+const weekdayDropdownItems = computed(() => WEEKDAYS.map((d, i) => ({ value: i + 1, label: d })));
+const dayOfMonthDropdownItems = computed(() =>
+    Array.from({ length: 31 }, (_, i) => {
+        const d = i + 1;
+        const s = [1,21,31].includes(d) ? 'st' : [2,22].includes(d) ? 'nd' : [3,23].includes(d) ? 'rd' : 'th';
+        return { value: d, label: `${d}${s}` };
+    })
+);
+const merchantAccountDropdownItems = computed(() => mockMerchantAccounts.value.map(a => ({ value: a, label: a })));
+const accountSelectionItems = computed(() => [{ value: 'current', label: 'Current account' }, { value: 'specific', label: 'Specific accounts' }]);
+const booleanItems = computed(() => [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }]);
+const enabledColumns = computed<ColItem[]>(() => columnConfig.value.filter(c => c.enabled));
+const enabledCount = computed(() => enabledColumns.value.length);
+const totalCount = computed(() => columnConfig.value.length);
+const showAccountsColumn = computed(() =>
+    [...pendingRequests.value, ...generatedReports.value].some(r => {
+        const codes = (r as any).merchantAccountCodes || (r as any).reportParameters?.merchantAccountCodes;
+        return codes && codes.length > 0;
+    })
+);
+const generatedReportsColumns = computed(() => {
+    const cols: any[] = [{ field: 'fileName', label: 'Filename', minWidth: 320 }];
+    if (showAccountsColumn.value) cols.push({ field: 'accounts', label: 'Accounts', minWidth: 220 });
+    cols.push(
+        { field: 'generatedOn', label: 'Generated on', minWidth: 220 },
+        { field: 'size', label: 'Size', minWidth: 120 },
+        { field: 'download', label: 'Download', minWidth: 140 }
+    );
+    return cols;
 });
+const generatedReportRows = computed(() => {
+    const pending = pendingRequests.value.map((req, idx) => ({
+        id: `pending-${idx}-${req.fileName}`, pending: true, fileName: req.fileName,
+        accounts: formatMerchantAccounts(req), generatedOn: getStatusLabel(req.status),
+        statusLabel: getStatusLabel(req.status), size: '—', download: null,
+    }));
+    const generated = generatedReports.value.map((gen, idx) => ({
+        id: `generated-${idx}-${gen.fileName}`, pending: false, fileName: gen.fileName,
+        accounts: formatMerchantAccounts(gen), generatedOn: formatDate(gen.generationDate),
+        statusLabel: null, size: formatSize(gen.size),
+        download: gen.links?.download || '#',
+    }));
+    return [...pending, ...generated];
+});
+const previewColumns = computed(() => enabledColumns.value.map(col => ({ field: col.name, label: col.label, minWidth: 170 })));
+const previewData = computed<Record<string, string>[]>(() =>
+    previewRows.value.map(row => {
+        const out: Record<string, string> = {};
+        enabledColumns.value.forEach(col => { out[col.name] = row[col.name] || '—'; });
+        return out;
+    })
+);
+const draftAvailableColumns = computed<ColItem[]>(() => draftColumnConfig.value.filter(c => !c.enabled));
+const draftSelectedColumns = computed<ColItem[]>(() => {
+    const map = new Map(draftColumnConfig.value.filter(c => c.enabled).map(c => [c.name, c]));
+    return draftSelectedOrder.value.filter(n => map.has(n)).map(n => map.get(n) as ColItem);
+});
+
+function loadReport(): void {
+    loading.value = true;
+    error.value = null;
+    report.value = null;
+    const code = route.params.reportCode as string;
+    setTimeout(() => {
+        const found = mockReports.find(r => r.code === code) || null;
+        if (found) {
+            report.value = { ...found };
+            generatedReports.value = getMockGeneratedReports(code);
+            pendingRequests.value = getMockReportRequests(code);
+        } else {
+            error.value = `Report "${code}" not found.`;
+        }
+        loading.value = false;
+    }, 300);
+}
+
+function setActiveTab(i: number): void { activeTabIndex.value = i; }
+
+function handleGenerateClick(): void {
+    if (report.value?.isIPAR) { isIparModalOpen.value = true; }
+    else { openGenerateModal('manual'); }
+}
+
+function openGenerateModal(type: string): void {
+    generationType.value = type;
+    initFormDefaults();
+    if (type === 'automatic') { scheduleViewMode.value = 'list'; editingScheduleIndex.value = null; }
+    isGenerateModalOpen.value = true;
+}
+
+function closeGenerateModal(): void { isGenerateModalOpen.value = false; generating.value = false; }
+
+function initFormDefaults(): void {
+    const params: Record<string, any> = {};
+    const today = new Date().toISOString().split('T')[0];
+    const thirtyAgo = new Date(Date.now() - 30 * 86400000).toISOString().split('T')[0];
+    for (const p of reportParameters.value) {
+        if (p.inputType === 'date') params[p.name] = p.name.includes('start') ? thirtyAgo : today;
+        else if (p.inputType === 'month') params[p.name] = new Date().toISOString().slice(0, 7);
+        else if (p.inputType === 'accountCodes') params[p.name] = [];
+        else if (p.inputType === 'boolean') params[p.name] = 'false';
+        else if (p.inputType === 'timezone' && p.options) params[p.name] = p.options[0]?.value ?? 'false';
+        else params[p.name] = null;
+    }
+    generateForm.value = { params, format: reportFormats.value[0] || 'csv', accountSelection: 'current' };
+    scheduleForm.value = { frequency: reportPeriodicities.value[0] || 'DAILY', dayOfWeek: 1, dayOfMonth: 1 };
+}
+
+function setParam(name: string, value: any): void {
+    generateForm.value = { ...generateForm.value, params: { ...generateForm.value.params, [name]: value } };
+}
+
+async function handleGenerateReport(): Promise<void> {
+    generating.value = true;
+    await new Promise(r => setTimeout(r, 1500));
+    const params = generateForm.value.params;
+    const datePart = params.reportstartdate?.replace(/-/g, '_') || (params.reportdate ? String(params.reportdate).replace(/-/g, '_') : 'custom');
+    const merchantAccounts = params.merchantAccountCodes || [];
+    const newReq: ReportRequest = {
+        fileName: `${report.value!.code}_${datePart}.${generateForm.value.format}`,
+        requestDate: new Date().toISOString(),
+        status: 'IN_PROGRESS',
+        failed: false,
+        reportParameters: merchantAccounts.length ? { merchantAccountCodes: [...merchantAccounts] } : null,
+    };
+    pendingRequests.value = [newReq, ...pendingRequests.value];
+    generating.value = false;
+    isGenerateModalOpen.value = false;
+    setTimeout(() => {
+        pendingRequests.value = pendingRequests.value.filter(r => r.fileName !== newReq.fileName);
+        generatedReports.value = [{
+            fileName: newReq.fileName, generationDate: new Date().toISOString(),
+            size: Math.floor(Math.random() * 500000) + 10000, links: { download: '#' },
+            merchantAccountCodes: merchantAccounts.length ? [...merchantAccounts] : null,
+            reportParameters: newReq.reportParameters,
+        }, ...generatedReports.value];
+    }, 3000);
+}
+
+function handleIparGenerate(payload: any): void {
+    isIparModalOpen.value = false;
+    const ext = payload.fileType || 'csv';
+    const datePart = payload.template === 'invoice' ? payload.month?.toLowerCase() : 'custom';
+    const fileName = `${report.value!.code}_${datePart}.${ext}`;
+    const newReq: ReportRequest = { fileName, requestDate: new Date().toISOString(), status: 'IN_PROGRESS', failed: false, reportParameters: null };
+    pendingRequests.value = [newReq, ...pendingRequests.value];
+    setTimeout(() => {
+        pendingRequests.value = pendingRequests.value.filter(r => r.fileName !== newReq.fileName);
+        generatedReports.value = [{ fileName, generationDate: new Date().toISOString(), size: Math.floor(Math.random() * 500000) + 10000, links: { download: '#' }, merchantAccountCodes: null, reportParameters: null }, ...generatedReports.value];
+    }, 3000);
+}
+
+function addSchedule(): void {
+    const entry = { frequency: scheduleForm.value.frequency, dayOfWeek: scheduleForm.value.dayOfWeek, dayOfMonth: scheduleForm.value.dayOfMonth, format: generateForm.value.format || 'csv', accounts: generateForm.value.accountSelection === 'specific' ? (generateForm.value.params.merchantAccountCodes || []).join(', ') : 'All accounts' };
+    if (editingScheduleIndex.value !== null) {
+        const s = [...mockSchedules.value];
+        s.splice(editingScheduleIndex.value, 1, entry);
+        mockSchedules.value = s;
+        editingScheduleIndex.value = null;
+    } else { mockSchedules.value = [...mockSchedules.value, entry]; }
+    scheduleViewMode.value = 'list';
+}
+
+function editSchedule(idx: number): void {
+    const s = mockSchedules.value[idx];
+    scheduleForm.value.frequency = s.frequency; scheduleForm.value.dayOfWeek = s.dayOfWeek; scheduleForm.value.dayOfMonth = s.dayOfMonth;
+    generateForm.value.format = s.format; editingScheduleIndex.value = idx; scheduleViewMode.value = 'form';
+}
+
+function deleteSchedule(idx: number): void { mockSchedules.value = mockSchedules.value.filter((_, i) => i !== idx); }
+
+function formatScheduleFrequency(s: any): string {
+    const label = periodicityLabel(s.frequency);
+    if (s.frequency === 'WEEKLY') return `${label} on ${WEEKDAYS[s.dayOfWeek - 1]}`;
+    if (s.frequency === 'MONTHLY') return `${label} on day ${s.dayOfMonth}`;
+    if (s.frequency === 'QUARTERLY') return `Quarterly on day ${s.dayOfMonth}`;
+    return label;
+}
+
+function periodicityLabel(p: string): string {
+    const m: Record<string, string> = { HOURLY: 'Hourly', DAILY: 'Daily', WEEKLY: 'Weekly', MONTHLY: 'Monthly', QUARTERLY: 'Quarterly', BATCH_CLOSE: 'At batch close' };
+    return m[p] || p;
+}
+
+function showMoreReports(): void { reportsDaysCount.value += 100; }
+
+function formatMerchantAccounts(r: any): string {
+    const codes = r.merchantAccountCodes || r.reportParameters?.merchantAccountCodes;
+    return (!codes || !codes.length) ? '-' : codes.join(', ');
+}
+
+function formatDate(s: string): string { return new Date(s).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+function formatSize(b: number): string { if (!b) return 'n/a'; if (b < 1024) return `${b} B`; if (b < 1048576) return `${(b / 1024).toFixed(1)} KB`; return `${(b / 1048576).toFixed(1)} MB`; }
+function getStatusLabel(s: string): string { return ({ QUEUED: 'Queued', IN_PROGRESS: 'In progress' } as Record<string, string>)[s] || 'In progress'; }
+
+function openColumnModal(): void {
+    draftColumnConfig.value = columnConfig.value.map(c => ({ ...c }));
+    draftSelectedOrder.value = columnConfig.value.filter(c => c.enabled).map(c => c.name);
+    draftChecked.value = {};
+    isColumnModalOpen.value = true;
+}
+
+function closeColumnModal(): void { isColumnModalOpen.value = false; }
+
+function saveColumnConfig(): void {
+    const checked = Object.keys(draftChecked.value).filter(k => draftChecked.value[k]);
+    const newConfig = draftColumnConfig.value.map(c => checked.includes(c.name) ? { ...c, enabled: true } : { ...c });
+    const newOrder = [...draftSelectedOrder.value];
+    checked.forEach(n => { if (!newOrder.includes(n)) newOrder.push(n); });
+    columnConfig.value = newConfig;
+    draftSelectedOrder.value = newOrder;
+    isColumnModalOpen.value = false;
+}
+
+function removeAllSelectedColumns(): void {
+    draftColumnConfig.value = draftColumnConfig.value.map(c => ({ ...c, enabled: false }));
+    draftSelectedOrder.value = [];
+    draftChecked.value = {};
+}
+
+function setCheckedAvailable(col: ColItem, checked: boolean): void {
+    draftChecked.value = { ...draftChecked.value, [col.name]: checked };
+}
+
+function toggleCheckAvailable(col: ColItem): void {
+    draftChecked.value = { ...draftChecked.value, [col.name]: !draftChecked.value[col.name] };
+}
+
+function isChecked(col: ColItem): boolean { return !!draftChecked.value[col.name]; }
+
+function deselectColumn(col: ColItem): void {
+    draftColumnConfig.value = draftColumnConfig.value.map(c => c.name === col.name ? { ...c, enabled: false } : c);
+    draftSelectedOrder.value = draftSelectedOrder.value.filter(n => n !== col.name);
+}
+
+function onToggleChange(e: Event): void {
+    const t = e.target as HTMLInputElement;
+    if (t && t.type === 'checkbox') applyToOtherAccounts.value = t.checked;
+}
+
+function onDragStart(index: number, e: DragEvent): void { dragIndex.value = index; e.dataTransfer!.effectAllowed = 'move'; }
+function onDragOver(_index: number, e: DragEvent): void { e.dataTransfer!.dropEffect = 'move'; }
+
+function onDrop(targetIndex: number): void {
+    if (dragIndex.value === null || dragIndex.value === targetIndex) return;
+    const order = [...draftSelectedOrder.value];
+    const [moved] = order.splice(dragIndex.value, 1);
+    order.splice(targetIndex, 0, moved);
+    draftSelectedOrder.value = order;
+    dragIndex.value = null;
+}
+
+function onDragEnd(): void { dragIndex.value = null; }
+function onNativeInput(name: string, e: Event): void { setParam(name, (e.target as HTMLInputElement).value); }
+
+loadReport();
+watch(() => route.params.reportCode, () => loadReport());
 </script>
 
 <style lang="scss" scoped>

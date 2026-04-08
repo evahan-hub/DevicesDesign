@@ -1,0 +1,24 @@
+{
+  "en-US": {
+    "pageTitle": "Payment details",
+    "backToPayments": "Back to Payments",
+    "customisePage": "Customise this page",
+    "refundPayment": "Refund payment",
+    "downloadRefundLetter": "Download refund letter",
+    "summary": "Summary",
+    "customize": "Customize",
+    "pspReference": "PSP reference",
+    "lastStatus": "Last status",
+    "authorizedAmount": "Authorized amount",
+    "date": "Date",
+    "merchantReference": "Merchant reference",
+    "acquirerResponse": "Acquirer response",
+    "paymentMethod": "Payment method",
+    "shopper": "Shopper",
+    "paymentLifecycle": "Payment lifecycle",
+    "events": "Events",
+    "fraudInformation": "Fraud information",
+    "riskScore": "Risk score",
+    "submitFraudReport": "Submit fraud report"
+  }
+}

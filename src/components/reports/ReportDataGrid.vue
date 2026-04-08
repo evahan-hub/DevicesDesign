@@ -16,6 +16,7 @@
             :search-term="searchTerm"
             @toggle-favorite="e => $emit('toggle-favorite', e)"
             @generate="e => $emit('generate', e)"
+            @view-reports="e => $emit('view-reports', e)"
         />
 
         <bento-pagination

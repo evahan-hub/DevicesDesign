@@ -157,6 +157,11 @@
   margin-inline: calc(var(--content-area-padding-inline, var(--b-spacer-090)) * -1) !important;
 }
 
+.page--data-grid > .content-section--flex .b-tabs {
+  padding-left: var(--b-spacer-090) !important;
+  padding-right: var(--b-spacer-090) !important;
+}
+
 .page--data-grid > .content-section--flex .b-data-grid__filters {
   padding-left: var(--b-spacer-090) !important;
   padding-right: var(--b-spacer-090) !important;
@@ -173,10 +178,16 @@
 }
 
 .page--data-grid > .content-section--flex .b-data-grid,
-.page--data-grid > .content-section--flex .b-data-grid__wrapper,
-.page--data-grid > .content-section--flex .b-data-grid__body {
+.page--data-grid > .content-section--flex .b-data-grid__wrapper {
   height: 100%;
   min-height: 0;
+}
+
+.page--data-grid > .content-section--flex .b-data-grid__pagination {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--b-z-index-local-tier-1);
+  background-color: var(--b-color-background-primary);
 }
 
 /* --- Keep the rest of your file from .info-card downwards unchanged --- */

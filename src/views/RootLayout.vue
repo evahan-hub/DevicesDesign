@@ -10,18 +10,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang="ts" setup>
 import SideNavigation from '../components/SideNavigation.vue';
 import TopBar from '../components/TopBar.vue';
-
-export default Vue.extend({
-  name: 'RootLayout',
-  components: {
-    SideNavigation,
-    TopBar,
-  },
-});
 </script>
 
 <style scoped>

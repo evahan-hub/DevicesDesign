@@ -39,14 +39,12 @@
         </div>
 
         <div class="report-item__actions">
-            <router-link
-                :to="{ name: 'report-details', params: { reportCode: report.code } }"
-                class="report-item__view-link"
+            <bento-button
+                :variant="BentoButtonVariant.TERTIARY"
+                @click="$emit('view-reports', report)"
             >
-                <bento-button :variant="BentoButtonVariant.TERTIARY">
-                    View reports
-                </bento-button>
-            </router-link>
+                View reports
+            </bento-button>
             <bento-button
                 v-if="showGenerate"
                 :variant="BentoButtonVariant.SECONDARY"
@@ -79,7 +77,7 @@ export default defineComponent({
         report: { type: Object as PropType<MockReport>, required: true },
         searchTerm: { type: String, default: '' },
     },
-    emits: ['toggle-favorite', 'generate'],
+    emits: ['toggle-favorite', 'generate', 'view-reports'],
     data() {
         return { BentoTypographyVariant, BentoButtonVariant };
     },
@@ -136,7 +134,7 @@ export default defineComponent({
     }
 
     &__star-wrap {
-        padding: var(--b-spacer-030) var(--b-spacer-030) var(--b-spacer-030) 0;
+        padding: 11px var(--b-spacer-030) var(--b-spacer-030) 0;
         display: flex;
         align-items: center;
     }

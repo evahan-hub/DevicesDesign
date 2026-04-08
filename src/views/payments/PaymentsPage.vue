@@ -97,205 +97,63 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang="ts" setup>
+import { ref, computed } from 'vue';
 import {
-  BentoHeader,
-  BentoDataGrid,
-  BentoLink,
-  BentoStatus,
-  BentoStatusVariant,
-  BentoCurrency,
-  BentoColumnOverflow,
-  BentoFilterItemType
+  BentoHeader, BentoDataGrid, BentoLink, BentoStatus, BentoStatusVariant, BentoCurrency,
 } from '@adyen/bento-vue2';
-import type { 
-  BentoColumn, 
-  BentoDatagridSelection,
-  BentoFilterBarModel,
-  BentoFilterValues
-} from '@adyen/bento-vue2';
+import type { BentoDatagridSelection, BentoFilterValues } from '@adyen/bento-vue2';
+import type { Payment } from './payments-page.types';
+import { PAYMENTS_COLUMNS, PAYMENTS_FILTERS, MOCK_PAYMENTS } from './payments-page.mock-data';
 
-const OptionsVerticalIcon = Vue.extend({
-  functional: true,
-  render(h) {
-    return h(
-      'svg',
-      {
-        attrs: {
-          width: '16',
-          height: '16',
-          viewBox: '0 0 16 16',
-          fill: 'none',
-          xmlns: 'http://www.w3.org/2000/svg',
-          'aria-hidden': 'true'
-        }
-      },
-      [
-        h('circle', { attrs: { cx: '8', cy: '3', r: '1.25', fill: 'currentColor' } }),
-        h('circle', { attrs: { cx: '8', cy: '8', r: '1.25', fill: 'currentColor' } }),
-        h('circle', { attrs: { cx: '8', cy: '13', r: '1.25', fill: 'currentColor' } })
-      ]
-    );
+const OptionsVerticalIcon = {
+  render(h: any) {
+    return h('svg', { attrs: { width: '16', height: '16', viewBox: '0 0 16 16', fill: 'none', 'aria-hidden': 'true' } }, [
+      h('circle', { attrs: { cx: '8', cy: '3', r: '1.25', fill: 'currentColor' } }),
+      h('circle', { attrs: { cx: '8', cy: '8', r: '1.25', fill: 'currentColor' } }),
+      h('circle', { attrs: { cx: '8', cy: '13', r: '1.25', fill: 'currentColor' } }),
+    ]);
+  },
+};
+
+const headerActions = [
+  { title: 'Export', variant: 'secondary' as const, event: () => {} },
+  { title: 'More actions', variant: 'secondary' as const, iconOnly: true, icon: OptionsVerticalIcon, event: () => {} },
+];
+
+const selection = ref<BentoDatagridSelection>([]);
+const pagination = ref({ page: 1, size: 20, totalCount: 16, pageSizes: [10, 20, 50, 100] });
+const searchTerm = ref('');
+const filterValues = ref<BentoFilterValues>([]);
+const searchConfig = { placeholder: 'Search PSP reference or Merchant reference', inputFieldAriaLabel: 'Search PSP reference or Merchant reference' };
+const filtersConfig = PAYMENTS_FILTERS;
+const columns = ref(PAYMENTS_COLUMNS);
+const payments = ref<Payment[]>(MOCK_PAYMENTS.map(p => ({ ...p })));
+
+const filteredAndSortedData = computed(() =>
+  payments.value.filter(item => {
+    const matchesFilters = filterValues.value.length > 0
+      ? filterValues.value.every((filter: any) => {
+          if (!filter.value || filter.field === 'dateFilter') return true;
+          return String(item[filter.field as keyof typeof item]).toLowerCase().includes(String(filter.value).toLowerCase());
+        })
+      : true;
+    const matchesSearch = searchTerm.value
+      ? String(item.pspReference).toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+        String(item.account).toLowerCase().includes(searchTerm.value.toLowerCase())
+      : true;
+    return matchesFilters && matchesSearch;
+  })
+);
+
+function getStatusVariant(status: string): BentoStatusVariant {
+  switch (status) {
+    case 'Authorised': case 'Settled': return BentoStatusVariant.GREEN;
+    case 'Refused': case 'Cancelled': return BentoStatusVariant.RED;
+    case 'SentForSettle': return BentoStatusVariant.YELLOW;
+    default: return BentoStatusVariant.GREY;
   }
-});
-
-export default Vue.extend({
-  name: 'PaymentsPage',
-  components: {
-    BentoHeader,
-    BentoDataGrid,
-    BentoLink,
-    BentoStatus,
-    BentoCurrency
-  },
-  data() {
-    return {
-      headerActions: [
-        {
-          title: 'Export',
-          variant: 'secondary' as 'secondary',
-          event: () => {}
-        },
-        {
-          title: 'More actions',
-          variant: 'secondary' as 'secondary',
-          iconOnly: true,
-          icon: OptionsVerticalIcon,
-          event: () => {}
-        }
-      ],
-
-      selection: [] as BentoDatagridSelection,
-      
-      pagination: {
-        page: 1,
-        size: 20,
-        totalCount: 16,
-        pageSizes: [10, 20, 50, 100]
-      },
-
-      searchTerm: '',
-      filterValues: [] as BentoFilterValues,
-      searchConfig: {
-        placeholder: 'Search PSP reference or Merchant reference',
-        inputFieldAriaLabel: 'Search PSP reference or Merchant reference'
-      },
-      
-      filtersConfig: [
-        {
-          field: 'dateFilter',
-          label: 'Date',
-          value: null,
-          options: {
-            listboxItems: [
-              { value: 'today', label: 'Today' },
-              { value: 'yesterday', label: 'Yesterday' },
-              { value: 'last7days', label: 'Last 7 days' },
-              { value: 'thisMonth', label: 'This month' }
-            ]
-          },
-          type: BentoFilterItemType.SELECT,
-        },
-        {
-          field: 'status',
-          label: 'Status',
-          value: null,
-          options: {
-            listboxItems: [
-              { value: 'Authorised', label: 'Authorised' },
-              { value: 'Settled', label: 'Settled' },
-              { value: 'Refused', label: 'Refused' },
-              { value: 'SentForSettle', label: 'SentForSettle' }
-            ]
-          },
-          type: BentoFilterItemType.SELECT,
-        },
-        {
-          field: 'paymentMethod',
-          label: 'Payment method',
-          value: null,
-          options: {
-            listboxItems: [
-              { value: 'Visa', label: 'Visa' },
-              { value: 'Mastercard', label: 'Mastercard' },
-              { value: 'iDEAL', label: 'iDEAL' },
-              { value: 'PayPal', label: 'PayPal' },
-              { value: 'Amex', label: 'Amex' }
-            ]
-          },
-          type: BentoFilterItemType.SELECT,
-        }
-      ] as BentoFilterBarModel,
-
-      // INCREASED minWidth values to ensure single-line headers!
-      columns: [
-        { field: 'amount', label: 'Amount', minWidth: 140, numeric: true },
-        { field: 'pspReference', label: 'PSP reference', minWidth: 220, overflow: BentoColumnOverflow.ELLIPSIS, mandatory: true },
-        { field: 'status', label: 'Status', minWidth: 160, overflow: BentoColumnOverflow.ELLIPSIS },
-        { field: 'paymentMethod', label: 'Payment method', minWidth: 200, overflow: BentoColumnOverflow.ELLIPSIS },
-        { field: 'date', label: 'Date', minWidth: 180, overflow: BentoColumnOverflow.ELLIPSIS },
-        { field: 'account', label: 'Account', minWidth: 180, overflow: BentoColumnOverflow.ELLIPSIS }
-      ] as BentoColumn[],
-      
-      payments: [
-        { id: '1', amount: 15000, currency: 'EUR', pspReference: 'KDN8FPRT3BGT9Y7C', status: 'Settled', paymentMethod: 'Visa', date: 'Oct 24, 2025, 14:30', account: 'AdyenTestAccount' },
-        { id: '2', amount: 2500, currency: 'USD', pspReference: 'VXZ2LMNQ5JHW6R4P', status: 'Refused', paymentMethod: 'Mastercard', date: 'Oct 23, 2025, 12:15', account: 'AdyenTestAccount' },
-        { id: '3', amount: 9900, currency: 'EUR', pspReference: 'S4G7CKB9Z1DFM3V', status: 'Authorised', paymentMethod: 'iDEAL', date: 'Oct 23, 2025, 09:45', account: 'AdyenTestAccount' },
-        { id: '4', amount: 12550, currency: 'GBP', pspReference: 'T8YHJN5R2WEXQ6A9', status: 'SentForSettle', paymentMethod: 'Visa', date: 'Oct 22, 2025, 17:45', account: 'GlobalMerchant' },
-        { id: '5', amount: 1000, currency: 'EUR', pspReference: 'P6M3C7V1L9KDF2Z8', status: 'Settled', paymentMethod: 'PayPal', date: 'Oct 21, 2025, 21:05', account: 'AdyenTestAccount' },
-        { id: '6', amount: 84000, currency: 'USD', pspReference: 'B5N4W7S8G9R2T1Q', status: 'Authorised', paymentMethod: 'Amex', date: 'Oct 20, 2025, 10:10', account: 'GlobalMerchant' },
-        { id: '7', amount: 550, currency: 'EUR', pspReference: 'F3H2J6K1L5P9M7N8', status: 'Settled', paymentMethod: 'Visa', date: 'Oct 19, 2025, 14:22', account: 'AdyenTestAccount' },
-        { id: '8', amount: 3300, currency: 'EUR', pspReference: 'ZXC7VBNM4LKJHG2F', status: 'Refused', paymentMethod: 'iDEAL', date: 'Oct 18, 2025, 11:11', account: 'AdyenTestAccount' },
-        { id: '9', amount: 4999, currency: 'GBP', pspReference: 'QWERT9YUI1OPASDF', status: 'Settled', paymentMethod: 'Mastercard', date: 'Oct 17, 2025, 23:59', account: 'GlobalMerchant' },
-        { id: '10', amount: 1200, currency: 'EUR', pspReference: 'G5HJK3L4M2NBVCX', status: 'Authorised', paymentMethod: 'PayPal', date: 'Oct 16, 2025, 06:45', account: 'AdyenTestAccount' },
-        { id: '11', amount: 21000, currency: 'USD', pspReference: 'R4T6Y8U1I3O5P7A9', status: 'Settled', paymentMethod: 'Visa', date: 'Oct 15, 2025, 07:00', account: 'GlobalMerchant' },
-        { id: '12', amount: 750, currency: 'EUR', pspReference: 'S2D4F6G8H1J3K5L7', status: 'SentForSettle', paymentMethod: 'Mastercard', date: 'Oct 14, 2025, 18:00', account: 'AdyenTestAccount' },
-        { id: '13', amount: 3450, currency: 'EUR', pspReference: 'X1C3V5B7N9M2L4K6', status: 'Authorised', paymentMethod: 'iDEAL', date: 'Oct 13, 2025, 03:45', account: 'AdyenTestAccount' },
-        { id: '14', amount: 9999, currency: 'GBP', pspReference: 'A8S7D6F5G4H3J2K1', status: 'Refused', paymentMethod: 'Visa', date: 'Oct 12, 2025, 16:55', account: 'GlobalMerchant' },
-        { id: '15', amount: 1500, currency: 'EUR', pspReference: 'POIU9YTRE6WQAS2D', status: 'Settled', paymentMethod: 'PayPal', date: 'Oct 11, 2025, 13:13', account: 'AdyenTestAccount' },
-        { id: '16', amount: 6200, currency: 'USD', pspReference: 'MNB4VCX5ZLKJHG3F', status: 'Settled', paymentMethod: 'Amex', date: 'Oct 10, 2025, 23:00', account: 'GlobalMerchant' }
-      ]
-    };
-  },
-  computed: {
-    filteredAndSortedData(): any[] {
-      return this.payments.filter(item => {
-        const foundFilteredItem = this.filterValues.length > 0
-          ? this.filterValues.every((filter: any) => {
-              if (!filter.value || filter.field === 'dateFilter') return true; 
-              return String(item[filter.field as keyof typeof item])
-                .toLowerCase()
-                .includes(String(filter.value).toLowerCase());
-            })
-          : true;
-          
-        const foundSearchFilteredItem = this.searchTerm
-          ? String(item.pspReference).toLowerCase().includes(this.searchTerm.toLowerCase()) || 
-            String(item.account).toLowerCase().includes(this.searchTerm.toLowerCase())
-          : true;
-
-        return foundFilteredItem && foundSearchFilteredItem;
-      });
-    }
-  },
-  methods: {
-    getStatusVariant(status: string) {
-      switch (status) {
-        case 'Authorised':
-        case 'Settled':
-          return BentoStatusVariant.GREEN;
-        case 'Refused':
-        case 'Cancelled':
-          return BentoStatusVariant.RED;
-        case 'SentForSettle':
-          return BentoStatusVariant.YELLOW;
-        default:
-          return BentoStatusVariant.GREY;
-      }
-    }
-  }
-});
+}
 </script>
 
 <style scoped>

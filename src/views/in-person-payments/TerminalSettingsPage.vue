@@ -97,65 +97,33 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import {
-  BentoHeader,
-  BentoTab,
-  BentoTabs,
-  BentoButton,
-  BentoTypography
-} from '@adyen/bento-vue2';
+<script lang="ts" setup>
+import { ref, computed } from 'vue';
+import { BentoHeader, BentoTab, BentoTabs, BentoButton, BentoTypography } from '@adyen/bento-vue2';
 
-type CustomRule = {
+interface CustomRule {
   id: string;
   name: string;
   devicesAffected: number;
   activeSettings: number;
-};
+}
 
-export default Vue.extend({
-  name: 'TerminalSettingsPage',
-  components: {
-    BentoHeader,
-    BentoTab,
-    BentoTabs,
-    BentoButton,
-    BentoTypography
-  },
+const activeTabIndex = ref(1);
+const customRuleSearch = ref('');
+const customRules = ref<CustomRule[]>([
+  { id: 'ams1-us', name: 'Wi-Fi for AMS1 in US', devicesAffected: 53, activeSettings: 2 },
+  { id: 'ams1-ca', name: 'Wi-fi for AMS1 in CA', devicesAffected: 81, activeSettings: 1 },
+]);
 
-  data() {
-    return {
-      activeTabIndex: 1,
-      customRuleSearch: '',
-      customRules: [
-        { id: 'ams1-us', name: 'Wi-Fi for AMS1 in US', devicesAffected: 53, activeSettings: 2 },
-        { id: 'ams1-ca', name: 'Wi-fi for AMS1 in CA', devicesAffected: 81, activeSettings: 1 }
-      ] as CustomRule[]
-    };
-  },
-
-  computed: {
-    filteredCustomRules(): CustomRule[] {
-      const search = this.customRuleSearch.trim().toLowerCase();
-
-      if (!search) {
-        return this.customRules;
-      }
-
-      return this.customRules.filter((rule) => {
-        const searchable = `${rule.name} ${rule.devicesAffected} ${rule.activeSettings}`.toLowerCase();
-        return searchable.includes(search);
-      });
-    }
-  },
-
-  methods: {
-    setActiveTab(index: number) {
-      this.activeTabIndex = index;
-    }
-  }
+const filteredCustomRules = computed<CustomRule[]>(() => {
+  const search = customRuleSearch.value.trim().toLowerCase();
+  if (!search) return customRules.value;
+  return customRules.value.filter(rule =>
+    `${rule.name} ${rule.devicesAffected} ${rule.activeSettings}`.toLowerCase().includes(search)
+  );
 });
+
+function setActiveTab(index: number): void { activeTabIndex.value = index; }
 </script>
 
 <style scoped>

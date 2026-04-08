@@ -281,81 +281,33 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 import {
-  BentoHeader,
-  BentoButton,
-  BentoCard,
-  BentoStatus,
-  BentoSummaryGrid,
-  BentoSummaryGridItemText,
-  BentoSummaryGridItemAmount,
-  BentoSummaryGridItemCustom,
-  BentoLayout,
-  BentoLayoutRow,
-  BentoDataGrid,
-  BentoLink
+  BentoHeader, BentoButton, BentoCard, BentoStatus,
+  BentoSummaryGrid, BentoSummaryGridItemText, BentoSummaryGridItemAmount, BentoSummaryGridItemCustom,
+  BentoLayout, BentoLayoutRow, BentoDataGrid, BentoLink,
 } from '@adyen/bento-vue2';
-import type { BentoColumn } from '@adyen/bento-vue2';
+import { useRoute, useRouter } from 'vue-router/composables';
+import { LIFECYCLE_COLUMNS, LIFECYCLE_DATA, EVENTS_COLUMNS, EVENTS_DATA } from './payment-details.mock-data';
 
-export default Vue.extend({
-  name: 'PaymentDetailsPage',
-  components: {
-    BentoHeader,
-    BentoButton,
-    BentoCard,
-    BentoStatus,
-    BentoSummaryGrid,
-    BentoSummaryGridItemText,
-    BentoSummaryGridItemAmount,
-    BentoSummaryGridItemCustom,
-    BentoLayout,
-    BentoLayoutRow,
-    BentoDataGrid,
-    BentoLink
-  },
-  data() {
-    return {
-      lifecycleColumns: [
-        { field: 'journal', label: 'Journal Type', width: 200 },
-        { field: 'date', label: 'Date', minWidth: 260 },
-        { field: 'user', label: 'Audit user', minWidth: 260 },
-        { field: 'seq', label: 'Installment sequence', minWidth: 160 }
-      ] as BentoColumn[],
-      
-      lifecycleData: [
-        { id: 1, journal: 'Authorised', date: 'Dec 28, 2020, 12:26:35 GMT+2', user: 'ws_29124@Company.test', seq: '-' },
-        { id: 2, journal: 'Received', date: 'Dec 28, 2020, 12:26:35 GMT+2', user: 'ws_29124@Company.test', seq: '-' }
-      ],
+const route = useRoute();
+const router = useRouter();
 
-      eventsColumns: [
-        { field: 'type', label: 'Type', width: 200 },
-        { field: 'psp', label: 'PSP reference', minWidth: 260 },
-        { field: 'merchant', label: 'Merchant reference', minWidth: 260 },
-        { field: 'status', label: 'Status', minWidth: 160 }
-      ] as BentoColumn[],
-      
-      eventsData: [
-        { id: 1, type: 'Capture', psp: 'ZNQPBSJD3CTVLD75', merchant: '1216597958.MYJZ2KHB0BJV', status: 'SentForSettle' },
-        { id: 2, type: 'Payment', psp: 'ZNQPBSJD3CTVLD75', merchant: '1216597958.MYJZ2KHB0BJV', status: 'SentForSettle' }
-      ]
-    };
-  },
-  computed: {
-    pspReference(): string {
-      return this.$route.params.id || 'ZNQPBSJD3CTVLD75';
-    }
-  },
-  methods: {
-    goBackToPayments() {
-      this.$router.push({ name: 'payments' });
-    },
-    customisePage() {
-      return undefined;
-    }
-  }
-});
+const lifecycleColumns = LIFECYCLE_COLUMNS;
+const lifecycleData = LIFECYCLE_DATA;
+const eventsColumns = EVENTS_COLUMNS;
+const eventsData = EVENTS_DATA;
+
+const pspReference = computed<string>(() => route.params.id || 'ZNQPBSJD3CTVLD75');
+
+function goBackToPayments(): void {
+  router.push({ name: 'payments' });
+}
+
+function customisePage(): void {
+  return undefined;
+}
 </script>
 
 <style scoped>

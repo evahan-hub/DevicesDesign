@@ -8,8 +8,8 @@ const PerformancePage = () => import('./views/PerformancePage.vue');
 const SettingsPage = () => import('./views/SettingsPage.vue');
 
 // Transaction sub-tabs
-const PaymentsPage = () => import('./views/PaymentsPage.vue');
-const PaymentDetailsPage = () => import('./views/PaymentDetailsPage.vue'); // ADD THIS
+const PaymentsPage = () => import('./views/payments/PaymentsPage.vue');
+const PaymentDetailsPage = () => import('./views/payments/PaymentDetailsPage.vue');
 const OffersPage = () => import('./views/OffersPage.vue');
 const PayoutsPage = () => import('./views/PayoutsPage.vue');
 
@@ -51,7 +51,8 @@ const FinancePage = () => import('./views/FinancePage.vue');
 const BalancesOverviewPage = () => import('./views/finance/BalancesOverviewPage.vue');
 const CompanyBalancesOverviewPage = () => import('./views/finance/CompanyBalancesOverviewPage.vue');
 const MPLPage = () => import('./views/finance/MPLPage.vue');
-const InvoicesPage = () => import('./views/finance/InvoicesPage.vue');
+const InvoicesPage = () => import('./views/finance/invoices/InvoicesPage.vue');
+const InvoiceDetailPage = () => import('./views/finance/invoices/InvoiceDetailPage.vue');
 const SalesToPayoutsPage = () => import('./views/finance/SalesToPayoutsPage.vue');
 const PayoutAccountsPage = () => import('./views/finance/PayoutAccountsPage.vue');
 //const PayoutModelPage = () => import('./views/finance/PayoutModelPage.vue');
@@ -74,8 +75,8 @@ const TerminalSoftwarePage = () => import('./views/in-person-payments/TerminalSo
 const InPersonThemesPage = () => import('./views/in-person-payments/ThemesPage.vue');
 
 // Reports sub-tabs
-const ReportsPage = () => import('./views/ReportsPage.vue');
-const ReportDetailsStub = () => import('./views/ReportDetailsStub.vue');
+const ReportsPage = () => import('./views/reports/ReportsPage.vue');
+const ReportDetailsStub = () => import('./views/reports/ReportDetailsStub.vue');
 
 export const router = new VueRouter({
   mode: 'history',
@@ -137,6 +138,7 @@ export const router = new VueRouter({
         { path: 'finance/company-balances-overview', component: CompanyBalancesOverviewPage, name: 'company-balances-overview' },
         { path: 'finance/mpl', component: MPLPage, name: 'mpl' },
         { path: 'finance/invoices', component: InvoicesPage, name: 'invoices' },
+        { path: 'finance/invoices/:id', component: InvoiceDetailPage, name: 'invoice-detail' },
         { path: 'finance/sales-to-payouts', component: SalesToPayoutsPage, name: 'sales-to-payouts' },
         { path: 'finance/payout-accounts', component: PayoutAccountsPage, name: 'payout-accounts' },
         //{ path: 'finance/payout-model', component: PayoutModelPage, name: 'payout-model' },
