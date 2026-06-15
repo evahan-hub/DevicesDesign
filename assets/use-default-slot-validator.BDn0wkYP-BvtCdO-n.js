@@ -1,0 +1,1 @@
+import{o as n}from"./ResizeObserver.es-WWb1bdFA.js";const d=(e,l,...r)=>{n(()=>{let o=!1,t=!1;if(o=!!l,t=r.some(s=>s),!o&&t)throw new Error(`${e}: optional slots should only be provided together with #default slot`)})};export{d as n};

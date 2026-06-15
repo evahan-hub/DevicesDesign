@@ -1,0 +1,1 @@
+import{C as o}from"./button-actions.D9n7MxWe-Dy2HOCGo.js";const u=(e,t)=>{const n=!t.modifiers.bubble;if(typeof t.value=="function")e.__onClickOutside_stop=o(e,t.value,{capture:n});else{const[c,i]=t.value;e.__onClickOutside_stop=o(e,c,{capture:n,...i})}},s=e=>{e.__onClickOutside_stop()},l={inserted:u,unbind:s,beforeMount:u,unmounted:s};export{l as _};

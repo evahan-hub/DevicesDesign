@@ -1,0 +1,1 @@
+import{r as o,a as r}from"./ResizeObserver.es-WWb1bdFA.js";const u=(n,a)=>{const t=o(null);return{updateContentHeight:async()=>{var e;await r();const l=((e=n.value)==null?void 0:e.scrollHeight)||null;t.value=a.value?`${l}px`:"0"},contentHeight:t}};export{u as s};
