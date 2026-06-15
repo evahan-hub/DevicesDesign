@@ -30,7 +30,7 @@
             :key="item.id"
             type="button"
             :class="['ts__nav-item', { 'ts__nav-item--active': activeItemId === item.id }]"
-            @click="activeItemId = item.id"
+            @click="activeItemId = item.id; alertsRevealed = false; showCompanyAlert = true"
           >
             {{ item.label }}
           </button>
@@ -51,7 +51,7 @@
         </div>
 
         <bento-alert
-          v-if="activeItem.id === 'p2p-encryption' && showCompanyAlert && !p2peToggled"
+          v-if="activeItem.id === 'p2p-encryption' && alertsRevealed && showCompanyAlert && !p2peToggled"
           type="warning"
           variant="tip"
           class="ts__alert ts__alert--clickable"
@@ -64,7 +64,7 @@
         </bento-alert>
 
         <bento-alert
-          v-if="activeItem.id === 'p2p-encryption' && !showCompanyAlert && !p2peToggled"
+          v-if="activeItem.id === 'p2p-encryption' && alertsRevealed && !showCompanyAlert && !p2peToggled"
           type="warning"
           variant="tip"
           class="ts__alert ts__alert--clickable"
@@ -81,7 +81,7 @@
           <div v-if="field.type === 'toggle'" class="ts__toggle-field">
             <div class="ts__toggle-layout">
               <div class="ts__toggle-text">
-                <p class="ts__field-label">
+                <p class="ts__field-label" @click="alertsRevealed = true">
                   <bento-status v-if="field.toggled" variant="blue" class="ts__toggle-dot" />{{ field.label }}
                   <span
                     v-if="field.id === 'p2pe-allow-moto'"
@@ -256,6 +256,7 @@ const sidebarSearch = ref('');
 const activeItemId = ref('p2p-encryption');
 const hasUnsavedChanges = ref(false);
 const showCompanyAlert = ref(true);
+const alertsRevealed = ref(false);
 
 const p2peToggled = computed(() => {
   for (const g of navGroups) {

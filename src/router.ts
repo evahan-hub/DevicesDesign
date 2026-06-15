@@ -189,7 +189,7 @@ const CrrScopeSettingsPage = () => import('./views/psp/crr-admin/CrrScopeSetting
 const FormTemplatesPage = () => import('./views/psp/arc/FormTemplatesPage.vue');
 
 export const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/',

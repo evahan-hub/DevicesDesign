@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue2';
 import path from 'path';
 
 export default defineConfig({
+  base: '/IPP-Design/',
   plugins: [vue()],
   server: {
     port: 5173,
