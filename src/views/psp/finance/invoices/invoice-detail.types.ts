@@ -22,6 +22,7 @@ export interface FeeDetailRow {
   label: string;
   subtitle: string;
   invoiced: number;
+  turnover: number;
   deducted: number;
   rate: string;
   deductedRate: string;

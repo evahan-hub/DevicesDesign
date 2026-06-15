@@ -1,0 +1,27 @@
+{
+  "en-US": {
+    "experiments": "Experiments",
+    "createExperiment": "Create experiment",
+    "active": "Active",
+    "completed": "Completed",
+    "drafts": "Drafts",
+    "experimentName": "Experiment name",
+    "profile": "Profile",
+    "status": "Status",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "trafficSplit": "Traffic split",
+    "blockRate": "Block rate",
+    "controlBlockRate": "Control block rate",
+    "falsePositiveRate": "False positive rate",
+    "uplift": "Uplift",
+    "transactions": "Transactions",
+    "running": "Running",
+    "paused": "Paused",
+    "draft": "Draft",
+    "viewDetails": "View details",
+    "pause": "Pause",
+    "resume": "Resume",
+    "delete": "Delete"
+  }
+}

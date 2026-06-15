@@ -173,7 +173,13 @@ export default Vue.extend({
         { key: 'financial-products', label: 'Financial Products', route: '/financial-products' },
         { key: 'revenue-risk', label: 'Revenue & Risk', route: '/revenue-risk' },
         { key: 'finance', label: 'Finance', route: '/finance' },
-        { key: 'settings', label: 'Settings', route: '/settings' },
+        {
+          key: 'settings',
+          label: 'Settings',
+          children: [
+            { key: 'bank-transfer-settings', label: 'Bank transfer settings', route: '/settings/bank-transfer' },
+          ],
+        },
       ] as NavItem[],
     };
   },

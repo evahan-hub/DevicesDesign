@@ -48,7 +48,7 @@
             color: 'var(--b-color-label-inverse-primary)',
           }"
         >
-          Dominos Pizza Finance Team
+          Lightspeed
         </span>
       </div>
       <icon-expand-vertically
@@ -393,9 +393,9 @@ export default Vue.extend({
         { icon: 'icon-store', label: 'In-person payments', children: [
           { label: 'Orders and returns', route: '/in-person-payments/orders-returns' }, 
           { label: 'Stores', route: '/in-person-payments/stores' }, 
-          { label: 'Terminals', route: '/in-person-payments/terminals' },
+          { label: 'Payment devices', route: '/in-person-payments/payment-devices' },
           { label: 'Tap to pay & card reader', route: '/in-person-payments/tap-to-pay' }, 
-          { label: 'Terminal settings', route: '/in-person-payments/terminal-settings' },
+          { label: 'Device settings', route: '/in-person-payments/terminal-settings' },
           { label: 'Android', route: '/in-person-payments/android' }, 
           { label: 'Terminal software', route: '/in-person-payments/terminal-software' }, 
           { label: 'Themes', route: '/in-person-payments/themes' },

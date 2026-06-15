@@ -1,7 +1,11 @@
 <template>
   <div :style="{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', backgroundColor: 'var(--b-color-background-primary)' }">
     <!-- Bar content -->
-    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1, padding: '6px var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
+    <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, padding: '6px var(--b-spacer-070)', gap: 'var(--b-spacer-070)' }">
+      <!-- Left slot (breadcrumb, page title, etc.) -->
+      <slot />
+      <!-- Right side: search + icons -->
+      <div :style="{ display: 'flex', alignItems: 'center', gap: 'var(--b-spacer-070)', flexShrink: 0 }">
       <!-- Search -->
       <div :style="{ position: 'relative', width: '240px', height: '36px', borderRadius: 'var(--b-border-radius-m)', border: '1px solid var(--b-color-outline-tertiary)', backgroundColor: 'var(--b-color-background-primary)', flexShrink: 0 }">
         <svg :style="{ position: 'absolute', left: '12px', top: '10px' }" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -51,8 +55,8 @@
         </div>
       </div>
 
-      <!-- Icon buttons -->
-      <div :style="{ display: 'flex', alignItems: 'center', gap: '4px' }">
+        <!-- Icon buttons -->
+        <div :style="{ display: 'flex', alignItems: 'center', gap: '4px' }">
         <!-- Thumbs Up -->
         <button :style="iconBtnStyle" title="Feedback">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -81,6 +85,7 @@
             <span :style="{ fontFamily: 'var(--b-text-body-font-family)', fontSize: 'var(--b-text-body-font-size)', lineHeight: '20px', color: 'var(--b-color-label-on-color)', fontWeight: 400 }">S</span>
           </div>
         </button>
+        </div>
       </div>
     </div>
 
@@ -129,3 +134,6 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+</style>

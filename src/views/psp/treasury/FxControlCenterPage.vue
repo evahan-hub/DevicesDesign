@@ -1,25 +1,25 @@
 <template>
   <div>
-    <bento-header title="Payment Lifecycle">
-      View payment lifecycle analytics and insights
+    <bento-header title="FX Control Center">
+      Monitor and manage foreign exchange positions and controls
     </bento-header>
     <bento-layout class="b-p-090">
       <bento-layout-row>
         <bento-card>
-          Lifecycle Analytics
-          <template #description>Monitor payment lifecycle performance metrics</template>
+          FX Positions
+          <template #description>View and manage current foreign exchange positions across all currencies</template>
         </bento-card>
       </bento-layout-row>
       <bento-layout-row>
         <bento-card>
-          Process Optimization
-          <template #description>View payment process optimization opportunities</template>
+          FX Controls
+          <template #description>Configure FX conversion rules, limits, and automatic hedging settings</template>
         </bento-card>
       </bento-layout-row>
       <bento-layout-row>
         <bento-card>
-          Lifecycle Tracking
-          <template #description>Track payment lifecycle stages and performance</template>
+          FX Rates
+          <template #description>View current and historical exchange rates used for settlement</template>
         </bento-card>
       </bento-layout-row>
     </bento-layout>

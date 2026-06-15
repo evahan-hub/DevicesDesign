@@ -25,7 +25,8 @@ export const routerBP = new VueRouter({
         { path: 'financial-products', component: BPStubPage, name: 'bp-financial-products', meta: { title: 'Financial Products' } },
         { path: 'revenue-risk', component: BPStubPage, name: 'bp-revenue-risk', meta: { title: 'Revenue & Risk' } },
         { path: 'finance', component: BPStubPage, name: 'bp-finance', meta: { title: 'Finance' } },
-        { path: 'settings', component: BPStubPage, name: 'bp-settings', meta: { title: 'Settings' } },
+        // Settings
+        { path: 'settings/bank-transfer', component: BPStubPage, name: 'bp-bank-transfer-settings', meta: { title: 'Bank transfer settings' } },
       ],
     },
   ],

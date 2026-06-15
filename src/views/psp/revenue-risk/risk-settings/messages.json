@@ -1,0 +1,19 @@
+{
+  "en-US": {
+    "riskSettings": "Risk settings",
+    "shopperDnaLinking": "Shopper DNA linking",
+    "caseManagement": "Case management",
+    "velocityChecks": "Velocity checks",
+    "referralChecks": "Referral checks",
+    "consistencyChecks": "Consistency checks",
+    "shopperDna": "Shopper DNA",
+    "save": "Save",
+    "cancel": "Cancel",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "region": "Region",
+    "merchantAccounts": "Merchant accounts",
+    "configure": "Configure",
+    "dataRegion": "Data region"
+  }
+}
