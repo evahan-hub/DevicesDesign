@@ -184,7 +184,7 @@
                 </template>
               </div>
               <div
-                v-else-if="(isFavorited(item.label) || hoveredItem === item.label)"
+                v-else-if="hoveredItem === item.label"
                 :style="{ cursor: 'pointer', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }"
                 @click.stop="toggleFavorite(item.label)"
               >
@@ -227,7 +227,7 @@
                       {{ child.label }}
                     </span>
                     <div
-                      v-if="isFavorited(child.label) || hoveredChildItem === child.label"
+                      v-if="hoveredChildItem === child.label"
                       :style="{ cursor: 'pointer', width: 'var(--b-spacer-070, 28px)', height: 'var(--b-spacer-070, 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center', '--fill-0': 'var(--b-color-label-inverse-secondary)' }"
                       @click.stop="toggleFavorite(child.label)"
                     >
