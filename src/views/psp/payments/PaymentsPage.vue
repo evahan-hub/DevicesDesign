@@ -117,7 +117,7 @@ const OptionsVerticalIcon = {
 };
 
 const headerActions = [
-  { title: 'Export', variant: 'secondary' as const, event: () => {} },
+  { title: 'Export', variant: 'primary' as const, event: () => {} },
   { title: 'More actions', variant: 'secondary' as const, iconOnly: true, icon: OptionsVerticalIcon, event: () => {} },
 ];
 

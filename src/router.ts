@@ -20,14 +20,15 @@ const ScorePage = () => import('./views/psp/ScorePage.vue');
 // Revenue & risk sub-tabs
 const UpliftOverviewPage = () => import('./views/psp/revenue-risk/UpliftOverviewPage.vue');
 const RecommendationsPage = () => import('./views/psp/revenue-risk/RecommendationsPage.vue');
-//const CaseManagementPage = () => import('./views/psp/revenue-risk/CaseManagementPage.vue');
+const CaseManagementPage = () => import('./views/psp/revenue-risk/case-management/CaseManagementPage.vue');
 const DisputesPage = () => import('./views/psp/revenue-risk/DisputesPage.vue');
 const Dynamic3DSecurePage = () => import('./views/psp/revenue-risk/Dynamic3DSecurePage.vue');
-const ExperimentsPage = () => import('./views/psp/revenue-risk/ExperimentsPage.vue');
+const ExperimentsPage = () => import('./views/psp/revenue-risk/experiments/ExperimentsPage.vue');
 const RiskFieldsPage = () => import('./views/psp/revenue-risk/RiskFieldsPage.vue');
 const RiskListsPage = () => import('./views/psp/revenue-risk/RiskListsPage.vue');
-const RiskProfileDetailsPage = () => import('./views/psp/revenue-risk/RiskProfileDetailsPage.vue');
-const RiskSettingsPage = () => import('./views/psp/revenue-risk/SettingsPage.vue');
+const RiskProfilesPage = () => import('./views/psp/revenue-risk/risk-profiles/RiskProfilesPage.vue');
+const RiskProfileDetailsPage = () => import('./views/psp/revenue-risk/profile-details/ProfileDetailsPage.vue');
+const RiskSettingsPage = () => import('./views/psp/revenue-risk/risk-settings/RiskSettingsPage.vue');
 
 // Partner sub-tabs
 const PartnerOverviewPage = () => import('./views/psp/partner/OverviewPage.vue');
@@ -37,8 +38,8 @@ const MerchantAccessPage = () => import('./views/psp/partner/MerchantAccessPage.
 
 // Insights sub-tabs
 const CheckoutPage = () => import('./views/psp/insights/CheckoutPage.vue');
-const PaymentLifecyclePage = () => import('./views/psp/insights/PaymentLifecyclePage.vue');
-//const RiskDisputeManagementPage = () => import('./views/psp/insights/RiskDisputeManagementPage.vue');
+const PaymentLifecyclePage = () => import('./views/psp/insights/payment-lifecycle/PaymentLifecyclePage.vue');
+const RiskDisputeManagementPage = () => import('./views/psp/insights/risk-dispute-management/RiskDisputeManagementPage.vue');
 
 // Pay by Link sub-tabs
 const PaymentLinksPage = () => import('./views/psp/pay-by-link/PaymentLinksPage.vue');
@@ -71,6 +72,8 @@ const TerminalsPage = () => import('./views/psp/in-person-payments/TerminalsPage
 const TapToPayPage = () => import('./views/psp/in-person-payments/TapToPayPage.vue');
 const TerminalSettingsPage = () => import('./views/psp/in-person-payments/TerminalSettingsPage.vue');
 const AndroidPage = () => import('./views/psp/in-person-payments/AndroidPage.vue');
+const PaymentDevicesPage = () => import('./views/psp/in-person-payments/PaymentDevicesPage.vue');
+const PaymentDevicesCopyPage = () => import('./views/psp/in-person-payments/PaymentDevicesCopyPage.vue');
 const TerminalSoftwarePage = () => import('./views/psp/in-person-payments/TerminalSoftwarePage.vue');
 const InPersonThemesPage = () => import('./views/psp/in-person-payments/ThemesPage.vue');
 
@@ -105,13 +108,13 @@ export const router = new VueRouter({
         // Revenue & risk sub-tabs
         { path: 'revenue-risk/uplift-overview', component: UpliftOverviewPage, name: 'uplift-overview' },
         { path: 'revenue-risk/recommendations', component: RecommendationsPage, name: 'recommendations' },
-        //{ path: 'revenue-risk/case-management', component: CaseManagementPage, name: 'case-management' },
+        { path: 'revenue-risk/case-management', component: CaseManagementPage, name: 'case-management' },
         { path: 'revenue-risk/disputes', component: DisputesPage, name: 'disputes' },
         { path: 'revenue-risk/dynamic-3d-secure', component: Dynamic3DSecurePage, name: 'dynamic-3d-secure' },
         { path: 'revenue-risk/experiments', component: ExperimentsPage, name: 'experiments' },
         { path: 'revenue-risk/risk-fields', component: RiskFieldsPage, name: 'risk-fields' },
         { path: 'revenue-risk/risk-lists', component: RiskListsPage, name: 'risk-lists' },
-        //{ path: 'revenue-risk/risk-profiles', component: RiskProfilesPage, name: 'risk-profiles' },
+        { path: 'revenue-risk/risk-profiles', component: RiskProfilesPage, name: 'risk-profiles' },
         { path: 'revenue-risk/risk-profile-details', component: RiskProfileDetailsPage, name: 'risk-profile-details' },
         { path: 'revenue-risk/settings', component: RiskSettingsPage, name: 'risk-settings' },
         
@@ -124,7 +127,7 @@ export const router = new VueRouter({
         // Insights sub-tabs
         { path: 'insights/checkout', component: CheckoutPage, name: 'checkout' },
         { path: 'insights/payment-lifecycle', component: PaymentLifecyclePage, name: 'payment-lifecycle' },
-        //{ path: 'insights/risk-dispute-management', component: RiskDisputeManagementPage, name: 'risk-dispute-management' },
+        { path: 'insights/risk-dispute-management', component: RiskDisputeManagementPage, name: 'risk-dispute-management' },
         
         // Pay by Link sub-tabs
         { path: 'pay-by-link/payment-links', component: PaymentLinksPage, name: 'payment-links' },
@@ -157,6 +160,8 @@ export const router = new VueRouter({
         { path: 'in-person-payments/tap-to-pay', component: TapToPayPage, name: 'tap-to-pay' },
         { path: 'in-person-payments/terminal-settings', component: TerminalSettingsPage, name: 'terminal-settings' },
         { path: 'in-person-payments/android', component: AndroidPage, name: 'android' },
+        { path: 'in-person-payments/payment-devices', component: PaymentDevicesPage, name: 'payment-devices' },
+        { path: 'in-person-payments/payment-devices-copy', component: PaymentDevicesCopyPage, name: 'payment-devices-copy' },
         { path: 'in-person-payments/terminal-software', component: TerminalSoftwarePage, name: 'terminal-software' },
         { path: 'in-person-payments/themes', component: InPersonThemesPage, name: 'in-person-themes' },
         

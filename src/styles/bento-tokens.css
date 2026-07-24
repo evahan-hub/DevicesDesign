@@ -42,6 +42,9 @@
   --b-color-background-success-strong: #008845;
   --b-color-background-highlight-weak: #F0F6FD;
   --b-color-background-highlight-strong: #0F75DC;
+  --b-color-background-navigation: #CEF6E2;
+  --b-color-background-navigation-hover: #B8F2D6;
+  --b-color-background-navigation-active: #9DEDC6;
   --b-color-background-inverse-primary: #001222;
   --b-color-background-inverse-primary-hover: #5C6874;
   --b-color-background-inverse-primary-active: #6C7782;

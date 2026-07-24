@@ -7,6 +7,7 @@ import BentoVue from '@adyen/bento-vue2';
 import './styles/index.css';
 import '@adyen/bento-vue2/fonts.css';
 import '@adyen/bento-vue2/styles/bento.css';
+import '@adyen/bento-vue2/styles/utility.css';
 import ResizeObserver from 'resize-observer-polyfill';
 
 if (typeof window !== 'undefined' && !(window as any).ResizeObserver) {

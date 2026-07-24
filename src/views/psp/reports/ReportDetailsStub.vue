@@ -96,18 +96,20 @@
 
             <!-- Column Settings Tab -->
             <div v-if="activeTabId === 'reportConfigurationTab'" class="report-details__tab-content">
-                <div class="report-details__settings-header">
-                    <bento-typography :variant="BentoTypographyVariant.TITLE" medium>Default columns</bento-typography>
-                    <bento-button :variant="BentoButtonVariant.SECONDARY" @click="openColumnModal">Configure columns</bento-button>
-                </div>
-                <bento-typography :variant="BentoTypographyVariant.BODY" class="report-details__settings-count">
-                    {{ enabledCount }} of {{ totalCount }} columns selected
-                </bento-typography>
-                <div class="report-details__settings-columns">
-                    <span v-for="col in enabledColumns" :key="col.name" class="report-details__settings-col-name">
-                        {{ col.label }}
-                    </span>
-                </div>
+                <template v-if="!isBalancePlatformPaymentsReport">
+                    <div class="report-details__settings-header">
+                        <bento-typography :variant="BentoTypographyVariant.TITLE" medium>Default columns</bento-typography>
+                        <bento-button :variant="BentoButtonVariant.SECONDARY" @click="openColumnModal">Configure columns</bento-button>
+                    </div>
+                    <bento-typography :variant="BentoTypographyVariant.BODY" class="report-details__settings-count">
+                        {{ enabledCount }} of {{ totalCount }} columns selected
+                    </bento-typography>
+                    <div class="report-details__settings-columns">
+                        <span v-for="col in enabledColumns" :key="col.name" class="report-details__settings-col-name">
+                            {{ col.label }}
+                        </span>
+                    </div>
+                </template>
                 <bento-typography :variant="BentoTypographyVariant.TITLE" medium class="report-details__preview-title">Preview</bento-typography>
                 <div class="report-details__preview-table-wrapper">
                     <bento-data-grid
@@ -419,6 +421,7 @@ const selectAccountsOptions = ref([
 ]);
 
 const activeTabId = computed(() => tabs.value[activeTabIndex.value]?.id || '');
+const isBalancePlatformPaymentsReport = computed(() => report.value?.code === 'balance_platform_payments');
 const reportParameters = computed<any[]>(() => report.value?.parameters || []);
 const reportFormats = computed<string[]>(() => report.value?.formats || ['csv']);
 const sortedManualParameters = computed(() =>

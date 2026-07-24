@@ -1,0 +1,31 @@
+{
+  "en-US": {
+    "caseManagement": "Case management",
+    "openCases": "Open cases",
+    "myCases": "My cases",
+    "closedCases": "Closed cases",
+    "assignTo": "Assign to",
+    "accept": "Accept",
+    "reject": "Reject",
+    "export": "Export",
+    "reports": "Reports",
+    "pspReference": "PSP reference",
+    "merchantReference": "Merchant reference",
+    "merchantAccount": "Merchant account",
+    "amount": "Amount",
+    "paymentMethod": "Payment method",
+    "shopperEmail": "Shopper email",
+    "shopperCountry": "Shopper country",
+    "riskScore": "Risk score",
+    "status": "Status",
+    "assignee": "Assignee",
+    "creationDate": "Creation date",
+    "lastEvent": "Last event",
+    "tags": "Tags",
+    "casesSelected": "cases selected",
+    "searchUsers": "Search users",
+    "filterPaymentsList": "Filter payments list",
+    "findWhatYouLookingFor": "Find what you are looking for",
+    "learnMore": "Learn more"
+  }
+}

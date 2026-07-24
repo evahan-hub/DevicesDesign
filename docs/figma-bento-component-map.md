@@ -90,7 +90,7 @@ Use `--b-text-*` for typography, NOT `--b-font-size-*` (those are internal Bento
 | Global | N/A | — | `b-inspector` | `BentoInspector` | — | `<bento-inspector title="Details" size="large" :is-open="isOpen" :active-page="activePage" expandable @update:is-open="isOpen = $event" @update:active-page="activePage = $event"><template #page><!-- main content + trigger --></template><template #content><!-- detail content --></template></bento-inspector>` | `ready` | Layout wrapper — NOT a `:items` list. `#page` = main page content + open trigger. `#content` = inspector detail. `active-page` must be set and kept in sync. `size`: `"small"` (420px) or `"large"` (595px). |
 | Global | N/A | — | `b-ai-tag` | `BentoAiTag` | — | `<bento-ai-tag title="Auto-filled by AI" description="AI prefilled these fields." influenced-value="30%" :action="{ title: 'Learn more', event: onLearnMore }" />` | `ready` | Clickable AI badge that opens an explainability popover. Requires `title` + `description`. `influenced-value` shows a metric. `action` adds a CTA in the popover. |
 | Global | N/A | — | `b-image` | `BentoImage` | `import { BentoImageAspectRatio } from '@adyen/bento-vue2'` (only when specifying aspect ratio) | `<bento-image :src="url" alt="Description" />` | `ready` | Lazy-loaded image. `BentoImageAspectRatio` enum needed for `aspect-ratio` prop. |
-| Global | N/A | — | `b-info-icon` | `BentoInfoIcon` | — | `<bento-info-icon popover-text="Helpful tooltip" />` | `ready` | ⓘ icon with popover on hover. |
+| Global | N/A | — | `b-info-icon` | `BentoInfoIcon` | — | `<bento-info-icon tooltip-text="Helpful tooltip" />` | `ready` | ⓘ icon with tooltip on hover. Prop is `tooltip-text` (not `popover-text`). |
 
 ---
 

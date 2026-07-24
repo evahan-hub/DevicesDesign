@@ -1,0 +1,17 @@
+{
+  "en-US": {
+    "riskProfiles": "Risk profiles",
+    "createNewProfile": "Create new profile",
+    "profileName": "Profile name",
+    "profileType": "Profile type",
+    "defaultProfile": "Default",
+    "assignedMerchants": "Assigned merchants",
+    "lastModified": "Last modified",
+    "experiment": "Experiment",
+    "actions": "Actions",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "deprecated": "Deprecated",
+    "premium": "Premium"
+  }
+}

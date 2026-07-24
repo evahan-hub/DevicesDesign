@@ -53,8 +53,7 @@ input, textarea, select, button, table, th, td {
   --content-area-padding-inline: var(--b-spacer-070);
   padding-block-start: var(--b-spacer-070);
   padding-inline: var(--content-area-padding-inline);
-    padding-bottom : 14px;
-
+  padding-bottom: var(--b-spacer-100, 32px);
 }
 
 /* s + m: 376px-767px — padding 24px */
@@ -72,8 +71,7 @@ input, textarea, select, button, table, th, td {
     --content-area-padding-inline: var(--b-spacer-100);
     padding-block-start: var(--b-spacer-100);
     padding-inline: var(--content-area-padding-inline);
-      padding-bottom : 14px;
-
+    padding-bottom: var(--b-spacer-100, 32px);
   }
 }
 
@@ -83,8 +81,7 @@ input, textarea, select, button, table, th, td {
     --content-area-padding-inline: var(--b-spacer-110);
     padding-block-start: var(--b-spacer-110);
     padding-inline: var(--content-area-padding-inline);
-      padding-bottom : 14px;
-
+    padding-bottom: var(--b-spacer-100, 32px);
   }
 }
 
@@ -94,8 +91,7 @@ input, textarea, select, button, table, th, td {
     --content-area-padding-inline: var(--b-spacer-140);
     padding-block-start: var(--b-spacer-110);
     padding-inline: var(--content-area-padding-inline);
-      padding-bottom : 14px;
-
+    padding-bottom: var(--b-spacer-100, 32px);
   }
 }
 
