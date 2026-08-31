@@ -18,6 +18,16 @@ if ! git remote get-url origin >/dev/null 2>&1; then
   git remote add origin "$REMOTE_URL"
 fi
 
+# Keep app/index.html (the GitHub Pages entry at /app/) in sync with root index.html.
+# It's the same page but with asset paths rewritten to load from the repo root (../).
+mkdir -p app
+python3 - <<'PYEOF'
+s = open("index.html", encoding="utf-8").read()
+s = (s.replace('"_ds/', '"../_ds/').replace("'_ds/", "'../_ds/")
+       .replace('"assets/', '"../assets/').replace('./support.js', '../support.js'))
+open("app/index.html", "w", encoding="utf-8").write(s)
+PYEOF
+
 git add -A
 # Only commit if there is something to commit.
 if git diff --cached --quiet; then
