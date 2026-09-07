@@ -4013,8 +4013,8 @@ class Component extends DCLogic {
         // positionCoordinates ({x,y}) — only valid when animationType = front
         const kioskFront = kioskAnimType === 'front';
         const kioskPosMode = (kioskFront && s.uiKioskPosMode === 'coords') ? 'coords' : 'preset';
-        const kioskCoordX = s.uiKioskCoordX !== undefined ? s.uiKioskCoordX : '0.3';
-        const kioskCoordY = s.uiKioskCoordY !== undefined ? s.uiKioskCoordY : '0.7';
+        const kioskCoordX = s.uiKioskCoordX !== undefined ? s.uiKioskCoordX : '0.5';
+        const kioskCoordY = s.uiKioskCoordY !== undefined ? s.uiKioskCoordY : '1';
         const _uiMode0 = s.uiMode || 'taptopay';
         const uiMode = (_uiMode0 === 'android' || _uiMode0 === 'ios') ? 'taptopay' : (_uiMode0 === 'ioscr' ? 'cardreader' : _uiMode0);
         const screen = uiMode === 'kiosk' ? 'kiosk' : 'payment';
@@ -4057,7 +4057,7 @@ class Component extends DCLogic {
           selMode: (e) => this.setState(st => ({ uiMode: e.target.value, chg: Object.assign({}, st.chg, { uiMode: true }) })),
           selTtpPos: (e) => this.setState(st => ({ uiTtpPos: e.target.value, chg: Object.assign({}, st.chg, { uiTtpPos: true }) })),
           selCrPos: (e) => this.setState(st => ({ uiCrPos: e.target.value, chg: Object.assign({}, st.chg, { uiCrPos: true }) })),
-          selKioskPos: (e) => this.setState(st => ({ uiKioskPos: e.target.value, uiScreen: 'payment', uiKioskCustom: false, chg: Object.assign({}, st.chg, { uiKioskPos: true }) })),
+          selKioskPos: (e) => this.setState(st => { var v = e.target.value; var m = { TopCenter:['0.5','0'], Center:['0.5','0.5'], BottomCenter:['0.5','1'], LeftCenter:['0','0.5'], RightCenter:['1','0.5'] }; var p = { uiKioskPos: v, uiScreen: 'payment', uiKioskCustom: false, chg: Object.assign({}, st.chg, { uiKioskPos: true }) }; if (m[v]) { p.uiKioskCoordX = m[v][0]; p.uiKioskCoordY = m[v][1]; } return p; }),
           selKioskAnimType: (e) => this.setState(st => ({ uiKioskAnimType: e.target.value, uiScreen: 'payment', uiKioskCustom: false, chg: Object.assign({}, st.chg, { uiKioskAnimType: true }) })),
           toggleKioskApplyAll: (e) => this.setState(st => ({ uiKioskApplyAll: e.target.checked, chg: Object.assign({}, st.chg, { uiKioskApplyAll: true }) })),
           kioskFront, kioskDirectional: kioskAnimType === 'directional', kioskCoordX, kioskCoordY,
