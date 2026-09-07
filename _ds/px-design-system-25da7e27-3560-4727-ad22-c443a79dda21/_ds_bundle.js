@@ -785,7 +785,7 @@ function Alert({
     style: {
       display: 'flex',
       alignItems: 'flex-start',
-      gap: tip ? 'var(--b-spacer-060)' : 'var(--b-spacer-080)',
+      gap: tip ? 'var(--b-spacer-060)' : 'var(--b-spacer-060)',
       background: t.bg,
       borderRadius: 'var(--b-border-radius-m)',
       padding: tip ? 'var(--b-spacer-050) var(--b-spacer-060)' : 'var(--b-spacer-080)',
