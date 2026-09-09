@@ -1,0 +1,658 @@
+{
+"opps": [
+{
+"id": "O1",
+"title": "Flexible configuration scoping",
+"priority": "P0",
+"coverage": "gap",
+"coverageLabel": "Gap",
+"desc": "Account structure forces manual overhead for franchises, regional groups and multi-brand setups. Decisions made at setup get locked in and cause downstream pain.",
+"evidence": "High \u2014 5 evidence points, 22% workaround stat, 4 named merchants",
+"business": "High \u2014 blocks 1\u21925M scaling; structurally caps growth for franchise / multi-brand",
+"urgency": "High \u2014 competitive risk (36% mention better PSPs); merchants create dummy stores today",
+"dependency": "Yes \u2014 every other opp operates within the account-structure model",
+"why": "Scores high on all four signals. Under-invested due to org complexity, not strategic unimportance."
+},
+{
+"id": "O2",
+"title": "Scalable deployment of settings & assets",
+"priority": "P0",
+"coverage": "partial",
+"coverageLabel": "Partial",
+"desc": "No bulk apply across merchant accounts or stores; deploying configs and assets is manual at fleet scale.",
+"evidence": "High \u2014 Adidas Olympics miss, 36% competitive comparison, top survey request",
+"business": "High \u2014 directly enables campaign revenue moments",
+"urgency": "High \u2014 already costing real money (Olympics missed)",
+"dependency": "Partial \u2014 depends on O1 to be fully effective",
+"why": "Quantified business loss plus competitive pressure. The Adidas anecdote alone justifies P0."
+},
+{
+"id": "O3",
+"title": "Settings transparency & override management",
+"priority": "P0",
+"coverage": "strong",
+"coverageLabel": "Strong",
+"desc": "73% override at device level; inheritance logic is opaque; no overview of what is set where.",
+"evidence": "Highest \u2014 7 evidence points, \u201conly 27% never overridden\u201d, usability-test failures",
+"business": "High \u2014 directly serves the 15% support-reduction target (inheritance drives tickets)",
+"urgency": "High \u2014 confusion compounds with fleet size; worsens as Adyen scales",
+"dependency": "Yes \u2014 every self-service feature depends on transparency",
+"why": "Most evidence of any opportunity plus a direct line to the 2026 OKR. Strongest case in the tree."
+},
+{
+"id": "O4",
+"title": "Submerchant activation kit",
+"priority": "P0",
+"coverage": "partial",
+"coverageLabel": "Partial",
+"desc": "Activation is the #1 pain for AfP platforms; manual workarounds at scale. First boot, passcode and Wi-Fi are major friction.",
+"evidence": "Highest in B-journey \u2014 Tide 200/mo, Fresha 4h/day, Palisis 30%, Munu 5%",
+"business": "High \u2014 caps AfP segment growth (Adyen's fastest-growing area)",
+"urgency": "High \u2014 losing platforms to competitive PSPs implicitly",
+"dependency": "No \u2014 but cross-squad fragmentation makes it harder, not less important",
+"why": "Highest quantified evidence in either journey plus strategic AfP importance. Coverage fragments across squads."
+},
+{
+"id": "O5",
+"title": "Device customization at scale",
+"priority": "P1",
+"coverage": "unmapped",
+"coverageLabel": "Unmapped",
+"desc": "MVP exists for SFO1 only; not extensible across fleet or models; merchants want segment-based content.",
+"evidence": "Medium \u2014 5 evidence points from Branding research only",
+"business": "Medium \u2014 supports merchant brand investment, no direct 2026 OKR hit",
+"urgency": "Medium \u2014 desirable but not blocking; MVP exists for SFO1",
+"dependency": "No",
+"why": "Real demand but the business case is \u201cmerchant satisfaction\u201d rather than a quantified Adyen-side outcome."
+},
+{
+"id": "O6",
+"title": "Merchant self-service & role-based access",
+"priority": "P1",
+"coverage": "strong",
+"coverageLabel": "Strong",
+"desc": "Many settings require Adyen support intervention; access controls within the merchant org are missing.",
+"evidence": "Medium-High \u2014 5 evidence points including the AllSaints escalation",
+"business": "High \u2014 directly serves the 15% support reduction",
+"urgency": "Medium \u2014 manageable today, but every new merchant adds friction",
+"dependency": "No \u2014 depends on O3 to be safe",
+"why": "Strong evidence plus outcome link. Delivered through O3 work. Could be P0 if weighted on support target alone."
+},
+{
+"id": "O7",
+"title": "Setting taxonomy & shared language",
+"priority": "P1",
+"coverage": "partial",
+"coverageLabel": "Partial",
+"desc": "No shared definitions; misleading names; unclear merchant-facing vs internal classification.",
+"evidence": "High \u2014 6 evidence points with concrete examples (contactless floor limit, t\u00e9l\u00e9collecte, EventUrl)",
+"business": "High \u2014 drives support tickets directly",
+"urgency": "Medium \u2014 slow burn; worsens with scale and new markets",
+"dependency": "Yes \u2014 every self-service capability degrades without it",
+"why": "Strong evidence, but cost is spread across many small tickets with no single Olympics-style anecdote. Could be P0."
+},
+{
+"id": "O8",
+"title": "Branded packaging & preboarding",
+"priority": "P2",
+"coverage": "out",
+"coverageLabel": "Not Devices-owned",
+"desc": "Platforms carry shipping, branding and preboarding overhead outside their core business.",
+"evidence": "High within IPP \u2014 4 quantified evidence points",
+"business": "Medium \u2014 platform stickiness, not a direct Adyen revenue line",
+"urgency": "Low for Devices \u2014 owned elsewhere",
+"dependency": "No",
+"why": "Real opportunity, but not Devices-owned. P2 reflects tracking for completeness, not active ownership."
+},
+{
+"id": "O9",
+"title": "Dynamic / personalized terminal content",
+"priority": "Explore",
+"coverage": "unmapped",
+"coverageLabel": "Unmapped",
+"desc": "Signals for transaction- or loyalty-driven content; no current way to deliver.",
+"evidence": "Low-Medium \u2014 4 evidence points, mostly aspirational",
+"business": "Unclear \u2014 no quantified business case yet",
+"urgency": "Low \u2014 desirable, not blocking",
+"dependency": "No \u2014 depends on O5 first",
+"why": "Demand is real but the use case is unproven. Mantel's 68-category content is interesting, not a roadmap commitment."
+},
+{
+"id": "O10",
+"title": "Configuration lifecycle controls",
+"priority": "P1",
+"coverage": "infra",
+"coverageLabel": "Infra only",
+"desc": "No scheduling, no TEST\u2194LIVE parity, no rollback for setting changes.",
+"evidence": "Medium \u2014 5 evidence points in a \u201cwhat we lack\u201d framing",
+"business": "High \u2014 enables scheduling (Adidas) and rollback (troubleshooting)",
+"urgency": "Medium \u2014 infra investment substantial, user-facing missing",
+"dependency": "Yes \u2014 TEST\u2194LIVE, scheduling, rollback are platform capabilities",
+"why": "Infra work is happening. Risk: infra ships without user-facing scope. Would be P0 if infra stalled."
+}
+],
+"journeyA": [
+{
+"id": "1.a",
+"label": "Preparation",
+"phase": "1 \u00b7 Exploration",
+"opps": [],
+"star": false,
+"note": "No setting interaction",
+"device": "both"
+},
+{
+"id": "1.b",
+"label": "Account Setup & Decision",
+"phase": "1 \u00b7 Exploration",
+"opps": [
+"O1"
+],
+"star": false,
+"note": "Structure rigidity baked in",
+"device": "both"
+},
+{
+"id": "2.a",
+"label": "Initial Ordering",
+"phase": "2 \u00b7 Test & Integration",
+"opps": [],
+"star": false,
+"note": "Logistics",
+"device": "terminal"
+},
+{
+"id": "2.b",
+"label": "Test Terminal Delivery",
+"phase": "2 \u00b7 Test & Integration",
+"opps": [],
+"star": false,
+"note": "Hardware arrival",
+"device": "terminal"
+},
+{
+"id": "2.c",
+"label": "Test Configuration",
+"phase": "2 \u00b7 Test & Integration",
+"opps": [
+"O3",
+"O7",
+"O10"
+],
+"star": false,
+"note": "First setting encounter",
+"device": "both"
+},
+{
+"id": "2.d",
+"label": "Testing",
+"phase": "2 \u00b7 Test & Integration",
+"opps": [
+"O3",
+"O10"
+],
+"star": false,
+"note": "Override patterns emerge",
+"device": "both"
+},
+{
+"id": "3.a",
+"label": "Ordering & Delivery",
+"phase": "3 \u00b7 Migration to LIVE",
+"opps": [],
+"star": false,
+"note": "Logistics",
+"device": "terminal"
+},
+{
+"id": "3.b",
+"label": "Terminal Delivery",
+"phase": "3 \u00b7 Migration to LIVE",
+"opps": [],
+"star": false,
+"note": "Bulk hardware arrival",
+"device": "terminal"
+},
+{
+"id": "3.c",
+"label": "Initial Configuration",
+"phase": "3 \u00b7 Migration to LIVE",
+"opps": [
+"O1",
+"O2",
+"O3",
+"O7",
+"O10"
+],
+"star": true,
+"note": "HIGHEST LEVERAGE moment \u2014 5 opps converge",
+"device": "both"
+},
+{
+"id": "4.a",
+"label": "Routine Configuration",
+"phase": "4 \u00b7 BAU / Troubleshooting",
+"opps": [
+"O2",
+"O3",
+"O6",
+"O7"
+],
+"star": false,
+"note": "Compounding pain",
+"device": "both"
+},
+{
+"id": "4.b",
+"label": "First Troubleshooting",
+"phase": "4 \u00b7 BAU / Troubleshooting",
+"opps": [
+"O3",
+"O6",
+"O7",
+"O10"
+],
+"star": true,
+"note": "Where the 15% support-reduction target lives",
+"device": "both"
+},
+{
+"id": "5.a",
+"label": "Malfunction & Replacement Ordering",
+"phase": "5 \u00b7 Terminal Replacements",
+"opps": [
+"O10"
+],
+"star": false,
+"note": "Version history",
+"device": "terminal"
+},
+{
+"id": "5.b",
+"label": "Setting Up Replacements in Store",
+"phase": "5 \u00b7 Terminal Replacements",
+"opps": [
+"O2",
+"O4"
+],
+"star": false,
+"note": "Replacement config inheritance",
+"device": "terminal"
+},
+{
+"id": "5.c",
+"label": "FM Configuration",
+"phase": "5 \u00b7 Terminal Replacements",
+"opps": [
+"O3",
+"O7",
+"O10"
+],
+"star": false,
+"note": "Same as 3.c, smaller scope",
+"device": "terminal"
+},
+{
+"id": "5.d",
+"label": "Return Faulty Terminals",
+"phase": "5 \u00b7 Terminal Replacements",
+"opps": [],
+"star": false,
+"note": "Logistics",
+"device": "terminal"
+}
+],
+"journeyB": [
+{
+"id": "B1.a",
+"label": "Platform Orders Bulk Hardware",
+"phase": "B1 \u00b7 Platform setup",
+"opps": [],
+"star": false,
+"note": "Hardware order",
+"device": "terminal"
+},
+{
+"id": "B1.b",
+"label": "Define Packaging & Branding",
+"phase": "B1 \u00b7 Platform setup",
+"opps": [
+"O8"
+],
+"star": false,
+"note": "Branded packaging needs",
+"device": "terminal"
+},
+{
+"id": "B2.a",
+"label": "Preboard at Warehouse",
+"phase": "B2 \u00b7 Preboarding",
+"opps": [
+"O8"
+],
+"star": false,
+"note": "Preboarding service \u2014 Fresha 4h/day, Palisis 30% ops time",
+"device": "terminal"
+},
+{
+"id": "B2.b",
+"label": "Insert Activation Guide & QR Codes",
+"phase": "B2 \u00b7 Preboarding",
+"opps": [
+"O4"
+],
+"star": false,
+"note": "Topper, stickers, QR codes in box",
+"device": "terminal"
+},
+{
+"id": "B3.a",
+"label": "Dropship to Submerchant",
+"phase": "B3 \u00b7 Delivery",
+"opps": [],
+"star": false,
+"note": "Logistics",
+"device": "terminal"
+},
+{
+"id": "B3.b",
+"label": "Submerchant Receives Package",
+"phase": "B3 \u00b7 Delivery",
+"opps": [
+"O8"
+],
+"star": false,
+"note": "Branding affects delivery acceptance",
+"device": "terminal"
+},
+{
+"id": "B4.a",
+"label": "Unbox Terminal",
+"phase": "B4 \u00b7 Activation",
+"opps": [
+"O4"
+],
+"star": true,
+"note": "First impression, branding",
+"device": "terminal"
+},
+{
+"id": "B4.b",
+"label": "Connect Wi-Fi & Enter Passcode",
+"phase": "B4 \u00b7 Activation",
+"opps": [
+"O4"
+],
+"star": true,
+"note": "Tide: 200 tickets/month from passcode alone",
+"device": "terminal"
+},
+{
+"id": "B4.c",
+"label": "First Boot & Software Updates",
+"phase": "B4 \u00b7 Activation",
+"opps": [
+"O4"
+],
+"star": true,
+"note": "Munu: confusing updates \u2192 failed onboardings",
+"device": "terminal"
+},
+{
+"id": "B4.d",
+"label": "First Test Transaction",
+"phase": "B4 \u00b7 Activation",
+"opps": [
+"O4"
+],
+"star": true,
+"note": "Activation success moment",
+"device": "terminal"
+},
+{
+"id": "B5.a",
+"label": "Day-to-day Use",
+"phase": "B5 \u00b7 BAU",
+"opps": [],
+"star": false,
+"note": "Normal operation",
+"device": "terminal"
+},
+{
+"id": "B5.b",
+"label": "Replacement Cycle",
+"phase": "B5 \u00b7 BAU",
+"opps": [
+"O4"
+],
+"star": false,
+"note": "AfP submerchants face activation again",
+"device": "terminal"
+}
+],
+"heatCols": [
+{
+"id": "1.b",
+"j": "A",
+"label": "Account setup",
+"star": false
+},
+{
+"id": "2.c",
+"j": "A",
+"label": "Test config",
+"star": false
+},
+{
+"id": "2.d",
+"j": "A",
+"label": "Testing",
+"star": false
+},
+{
+"id": "3.c",
+"j": "A",
+"label": "Initial config (LIVE)",
+"star": true
+},
+{
+"id": "4.a",
+"j": "A",
+"label": "Routine config",
+"star": false
+},
+{
+"id": "4.b",
+"j": "A",
+"label": "Troubleshooting",
+"star": true
+},
+{
+"id": "5.a",
+"j": "A",
+"label": "Malfunction / replace",
+"star": false
+},
+{
+"id": "5.b",
+"j": "A",
+"label": "Replace in store",
+"star": false
+},
+{
+"id": "5.c",
+"j": "A",
+"label": "FM config",
+"star": false
+},
+{
+"id": "B1.b",
+"j": "B",
+"label": "Packaging & branding",
+"star": false
+},
+{
+"id": "B2.a",
+"j": "B",
+"label": "Preboarding",
+"star": false
+},
+{
+"id": "B2.b",
+"j": "B",
+"label": "Activation guide",
+"star": false
+},
+{
+"id": "B3.b",
+"j": "B",
+"label": "Submerchant receives",
+"star": false
+},
+{
+"id": "B4",
+"j": "B",
+"label": "Activation phase",
+"star": true
+},
+{
+"id": "B5.b",
+"j": "B",
+"label": "Replacement cycle",
+"star": false
+}
+],
+"heat": {
+"O1": {
+"1.b": "Account structure choice",
+"3.c": "Rigidity surfaces at scale"
+},
+"O2": {
+"3.c": "Bulk apply across fleet",
+"4.a": "Routine bulk edits",
+"5.b": "Replacement inheritance"
+},
+"O3": {
+"2.c": "First setting overview",
+"2.d": "Override visibility",
+"3.c": "Inheritance visualisation",
+"4.a": "Daily settings overview",
+"4.b": "Troubleshooting transparency",
+"5.c": "FM-level settings"
+},
+"O4": {
+"5.b": "AfP replacement activation",
+"B2.b": "Topper / QR in box",
+"B4": "Full activation kit",
+"B5.b": "Re-activation"
+},
+"O6": {
+"4.a": "Self-serve setting changes",
+"4.b": "Self-serve troubleshooting"
+},
+"O7": {
+"2.c": "Setting names at first encounter",
+"4.a": "Names at scale",
+"4.b": "Routine name clarity",
+"5.c": "FM-level taxonomy"
+},
+"O8": {
+"B1.b": "Define branding",
+"B2.a": "Preboarding service",
+"B3.b": "Delivery acceptance"
+},
+"O10": {
+"2.c": "TEST\u2192LIVE promotion",
+"2.d": "Rollback during testing",
+"3.c": "Lifecycle at scale",
+"4.b": "Version history",
+"5.c": "Config history for replacement"
+}
+},
+"heatOrder": [
+"O1",
+"O2",
+"O3",
+"O4",
+"O6",
+"O7",
+"O8",
+"O10"
+],
+"leverage": [
+{
+"rank": 1,
+"journey": "A \u00b7 Config",
+"step": "3.c Initial Configuration",
+"count": 5,
+"why": "Single highest-leverage moment in the Config journey",
+"opps": [
+"O1",
+"O2",
+"O3",
+"O7",
+"O10"
+]
+},
+{
+"rank": 2,
+"journey": "A \u00b7 Config",
+"step": "4.b First Troubleshooting",
+"count": 4,
+"why": "Where the 15% support reduction lives",
+"opps": [
+"O3",
+"O6",
+"O7",
+"O10"
+]
+},
+{
+"rank": 3,
+"journey": "A \u00b7 Config",
+"step": "4.a Routine Configuration",
+"count": 4,
+"why": "Sustained, compounding pain",
+"opps": [
+"O2",
+"O3",
+"O6",
+"O7"
+]
+},
+{
+"rank": 4,
+"journey": "B \u00b7 Submerchant",
+"step": "B4 Activation (all sub-steps)",
+"count": 4,
+"why": "Tide passcode tickets + Munu failed onboardings",
+"opps": [
+"O4"
+]
+},
+{
+"rank": 5,
+"journey": "A \u00b7 Config",
+"step": "2.c Test Configuration",
+"count": 3,
+"why": "First setting encounter",
+"opps": [
+"O3",
+"O7",
+"O10"
+]
+},
+{
+"rank": 6,
+"journey": "A \u00b7 Config",
+"step": "5.c FM Configuration",
+"count": 3,
+"why": "Replacements re-run the config problem",
+"opps": [
+"O3",
+"O7",
+"O10"
+]
+}
+]
+}
