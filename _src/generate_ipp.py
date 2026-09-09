@@ -250,9 +250,9 @@ SIDEBAR = r'''
     </a>
   </div>
   <nav class="sb-nav">
-    <a class="sb-link" data-tab="journey" onclick="switchTab('journey')">''' + nav_icon('<path d="M3 3h7v7H3z"/><path d="M14 3h7v4h-7z"/><path d="M14 10h7v4h-7z"/><path d="M3 14h7v7H3z"/><path d="M14 17h7v4h-7z"/>') + r'''Journey map</a>
+    <a class="sb-link active-link" data-tab="journey" onclick="switchTab('journey')">''' + nav_icon('<path d="M3 3h7v7H3z"/><path d="M14 3h7v4h-7z"/><path d="M14 10h7v4h-7z"/><path d="M3 14h7v7H3z"/><path d="M14 17h7v4h-7z"/>') + r'''Journey map</a>
     <a class="sb-link" data-tab="sysinfo" onclick="switchTab('sysinfo')">''' + nav_icon('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>') + r'''System context</a>
-    <a class="sb-link active-link" data-tab="overview" onclick="switchTab('overview')">''' + nav_icon('<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>') + r'''Customer context</a>
+    <a class="sb-link" data-tab="overview" onclick="switchTab('overview')">''' + nav_icon('<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>') + r'''Customer context</a>
     <div class="sb-divider"></div>
     <div class="sb-section-label">Source of truth</div>
     <a class="sb-link" data-tab="datasource" onclick="switchTab('datasource')">''' + nav_icon('<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>') + r'''Data source</a>
@@ -278,7 +278,7 @@ TOPBAR = r'''
 '''
 
 JOURNEY_BP = r'''
-<section class="view" id="journey">
+<section class="view active" id="journey">
   <div class="viewhead">
     <h2>Journey map</h2>
     <p class="sub">A journey, cascading from strategic phases to JTBD actors responsible for each opportunity. Filter by actors and owners to isolate stakeholder-specific views.</p>
@@ -295,7 +295,10 @@ JOURNEY_BP = r'''
     <button type="button" class="freset" id="fReset">Reset filters</button>
     <span class="fhint" id="fHint">Showing all 19 opportunities</span>
   </div>
-  <div class="bp-canvas"><div class="bp-flow" id="bpCanvas"></div></div>
+  <div class="bp-canvas" id="bpCanvasWrap">
+    <button class="bp-expand" id="bpExpandBtn" onclick="toggleJourneyExpand()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg><span id="bpExpandLbl">Expand</span></button>
+    <div class="bp-flow" id="bpCanvas"></div>
+  </div>
 </section>
 '''
 
@@ -467,7 +470,7 @@ def build_overview():
     return OVERVIEW_TMPL.replace("__BARS__", bars).replace("__CARDS__", cards)
 
 OVERVIEW_TMPL = r'''
-<section class="view active" id="overview">
+<section class="view" id="overview">
   <div class="viewhead"><h2>IPP customer sentiment</h2>
     <p class="sub">What in-person merchants &mdash; and the teams serving them &mdash; keep telling us, synthesised across Unwrap, Salesforce support, NPS, Slack and partner feedback to steer the <b>H1 2027 roadmap</b>.</p>
   </div>
@@ -650,9 +653,18 @@ function switchTab(v){
 }
 window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace('#','');if(LEAF[h])switchTab(h);});
 
+/* ---- journey map: expand / full-screen ---- */
+function toggleJourneyExpand(){
+  const w=document.getElementById('bpCanvasWrap');if(!w)return;
+  const on=w.classList.toggle('is-expanded');
+  document.body.classList.toggle('bp-expanded-lock',on);
+  const lbl=document.getElementById('bpExpandLbl');if(lbl)lbl.textContent=on?'Close':'Expand';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const w=document.getElementById('bpCanvasWrap');if(w&&w.classList.contains('is-expanded'))toggleJourneyExpand();}});
+
 /* ---- init ---- */
 renderSolutions();
-(function(){const h=(location.hash||'').replace('#','');switchTab(LEAF[h]?h:'overview');})();
+(function(){const h=(location.hash||'').replace('#','');switchTab(LEAF[h]?h:'journey');})();
 </script>
 '''
 
@@ -753,6 +765,15 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-actor2{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;line-height:1.35;width:100%;margin-top:3px}
 .bp-actor2 .bp-adot{width:6px;height:6px;border-radius:50%;flex:none}
 .bp-sub-tag{font-size:11px}
+/* expand / full-screen */
+.bp-canvas{position:relative}
+.bp-expand{position:absolute;top:10px;right:10px;z-index:4;display:inline-flex;align-items:center;gap:6px;
+  height:30px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  font-family:var(--font-sans);font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:var(--b-shadow-low)}
+.bp-expand:hover{background:var(--b-color-background-secondary);border-color:var(--ink-faint)}
+.bp-canvas.is-expanded{position:fixed;inset:0;z-index:400;margin:0;border-radius:0;max-height:none;
+  overflow:auto;padding:58px 24px 28px;box-shadow:none}
+body.bp-expanded-lock{overflow:hidden}
 '''
 DASH_CSS = r'''
 /* ===== Context sentiment dashboard ===== */
