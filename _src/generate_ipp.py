@@ -51,24 +51,138 @@ bp_script = bp_script.replace("'Inter',var(--font-body)", "var(--font-sans)")
 
 # Reorganise each job card: Job -> Opportunities -> owner/size (actor demoted to a tag)
 NEW_JOB_BLOCK = r'''if (!matchedIds.length) {
-        html += `<div class="bp-noopp">${oppIds.length ? 'No opportunities match filters' : 'No opportunities mapped to this job'}</div>`;
+        html += (typeof STEP_NOTE !== 'undefined' && STEP_NOTE[si] && !oppIds.length)
+          ? `<div class="bp-note">${STEP_NOTE[si]}</div>`
+          : `<div class="bp-noopp">${oppIds.length ? 'No opportunities match filters' : 'No opportunities mapped to this job'}</div>`;
       } else {
         html += `<div class="bp-opps"><div class="bp-opps-h">Opportunities \u00b7 ${matchedIds.length}</div>`;
         matchedIds.forEach(oi => {
           const o = OPPS[oi];
-          const ownerCls = o[4] === 'IPP Platform' ? 'owner-ipp' : 'owner-oc';
-          const ac = actorColor[o[5]] || {dot:'var(--ink-faint)'};
-          html += `<div class="bp-opp2">`;
+          const sc = squadColor(o[4]);
+          html += `<div class="bp-opp2" style="border-left:3px solid ${sc}">`;
           html += `<div class="bp-oname2">${o[0]}${o[6] ? '<span class="bp-chk"> \u2713</span>' : ''}</div>`;
-          html += `<div class="bp-otags2"><span class="bp-owner ${ownerCls}">${o[4]}</span>`;
+          html += `<div class="bp-otags2"><span class="bp-team" style="color:${sc}"><span class="bp-adot" style="background:${sc}"></span>${o[4]}</span>`;
           if (o[3] && o[3] !== '\u2014') html += `<span class="bp-size2">${o[3]}</span>`;
-          html += `<span class="bp-actor2" style="color:${ac.dot}"><span class="bp-adot" style="background:${ac.dot}"></span>${o[5]}</span>`;
-          html += `</div></div>`;
+          html += `<span class="bp-nbadge ${natureCls(o[2])}">${o[2]}</span>`;
+          html += `</div>`;
+          html += `<div class="bp-actor2">${o[5]}</div>`;
+          html += `</div>`;
         });
         html += `</div>`;
       }'''
 bp_script, _n = re.subn(r"if \(!matchedIds\.length\) \{.*?\n      \} else \{.*?\n      \}", lambda m: NEW_JOB_BLOCK, bp_script, count=1, flags=re.S)
 assert _n == 1, "job-card block not patched"
+
+# --- team / squad ownership layer (draft mapping, editable) ---
+TEAM_LAYER = r'''
+/* simplified: colour by parent team, not per-squad */
+const SQUADS = {
+  'Device Config':'#0F75DC','Device Software & Security':'#0F75DC',
+  'Device Fleet Core':'#0F75DC','Device Supply & Services':'#0F75DC',
+  'Hardware portfolio':'#0F75DC',
+  'Core experience':'#7C3AED','Shopper experience':'#7C3AED',
+  'Payment client foundations':'#7C3AED',
+  'Talon One':'#8C959D','Account management':'#8C959D'
+};
+function squadColor(n){return SQUADS[n]||'#8C959D';}
+const TEAM_BY_OPP = ['Device Software & Security','Device Software & Security','Talon One','Shopper experience','Device Fleet Core','Device Supply & Services','Device Fleet Core','Device Fleet Core','Device Config','Device Fleet Core','Core experience','Device Fleet Core','Device Supply & Services','Device Fleet Core','Payment client foundations','Device Software & Security','Device Config','Device Fleet Core','Device Config'];
+OPPS.forEach(function(o,i){ if(TEAM_BY_OPP[i]) o[4]=TEAM_BY_OPP[i]; });
+const PHASE_TEAMS = {
+  '1 \u00b7 Exploration':['Hardware portfolio','Account management'],
+  '2 \u00b7 Test & Integration':['Device Supply & Services','Core experience'],
+  '3 \u00b7 Go Live & Rollout':['Device Fleet Core','Device Config','Device Software & Security','Core experience','Shopper experience'],
+  '4 \u00b7 BAU & Growth':['Device Fleet Core','Core experience','Shopper experience','Talon One'],
+  '5 \u00b7 Fleet Operation':['Device Fleet Core','Shopper experience','Device Supply & Services']
+};
+const STEP_NOTE = {
+  0: 'Find the right model with the <b>Hardware portfolio</b> team, order through <b>Customer Area</b> or the <b>Adyen Hardware Portfolio Manager</b>, and agree the IPP <b>cost contract</b> with an <b>Account manager</b>.'
+};
+'''
+bp_script = bp_script.replace("const OPP_BY_STEP =", TEAM_LAYER + "\nconst OPP_BY_STEP =", 1)
+
+# phase header: append owning-squad tags
+_ph_old = '<div class="bp-phsub">${phOppCount} opportunit${phOppCount === 1 ? \'y\' : \'ies\'} in this phase</div>'
+_ph_new = _ph_old + '<div class="bp-phteams">${(PHASE_TEAMS[ph.label]||[]).map(function(t){return \'<span class="bp-phteam" style="color:\'+squadColor(t)+\'"><span class="bp-adot" style="background:\'+squadColor(t)+\'"></span>\'+t+\'</span>\';}).join(\'\')}</div>'
+assert _ph_old in bp_script, "phase header anchor not found"
+bp_script = bp_script.replace(_ph_old, _ph_new, 1)
+
+# relabel filter copy: Owner -> Team, Actor -> Persona (dropdown internals)
+bp_script = bp_script.replace('All owners', 'All teams').replace('All actors', 'All personas')
+# the "Showing N of 19" hint element is removed from the UI; guard its (unconditional) writes
+bp_script = bp_script.replace("document.getElementById('fHint').textContent", "(document.getElementById('fHint')||{}).textContent")
+# sub-steps default to collapsed (clamped to 3 rows) instead of fully open
+bp_script = bp_script.replace('<div class="bp-subs open" onclick', '<div class="bp-subs" onclick')
+
+# --- alternative layouts: swimlane blueprint (default) + ownership matrix, with the
+#     existing stacked cards kept as a third option. Appended inside the IIFE. ---
+SWIM_JS = r'''
+/* ===== alternative journey-map layouts ===== */
+function bpPhaseAgg(ph,f){
+  var jobs=[],pain=0,little=0,oppIds=[];
+  ph.steps.forEach(function(si){
+    var st=STEPS[si]; jobs.push({si:si,big:st.big,pains:st.pains,littles:st.littles}); pain+=st.pains; little+=st.littles;
+    (OPP_BY_STEP[si]||[]).forEach(function(oi){ if(oppMatches(oi,f)&&oppIds.indexOf(oi)<0) oppIds.push(oi); });
+  });
+  return {jobs:jobs,pain:pain,little:little,oppIds:oppIds};
+}
+function bpOppChip(oi){ var o=OPPS[oi], sc=squadColor(o[4]); return '<span class="bp-oppchip" style="color:'+sc+';border-color:'+sc+'55"><span class="bp-adot" style="background:'+sc+'"></span>'+o[0]+'</span>'; }
+function renderSwimlane(f){
+  var N=PHASES.length, cols='150px repeat('+N+',minmax(200px,1fr))';
+  var aggs=PHASES.map(function(ph){return bpPhaseAgg(ph,f);});
+  var maxPain=Math.max.apply(null,[1].concat(aggs.map(function(a){return a.pain;})));
+  var total=0; aggs.forEach(function(a){total+=a.oppIds.length;});
+  var fh=document.getElementById('fHint'); if(fh) fh.textContent='Showing '+total+' of 19 opportunities';
+  var h='<div class="bp-swim" style="grid-template-columns:'+cols+'">';
+  h+='<div class="bp-cell bp-corner"></div>';
+  PHASES.forEach(function(ph,pi){ h+='<div class="bp-cell bp-ph-cell" style="cursor:pointer" onclick="openPhaseDrawer('+pi+')"><div class="bp-ph-name">'+ph.label+'</div><div class="bp-ph-sub">'+aggs[pi].oppIds.length+' opportunit'+(aggs[pi].oppIds.length===1?'y':'ies')+'</div></div>'; });
+  h+='<div class="bp-cell bp-rowlabel">Merchant job</div>';
+  aggs.forEach(function(a){ h+='<div class="bp-cell">'+(a.jobs.length?a.jobs.map(function(j){return '<div class="bp-job-line" onclick="openLittleJobsDrawer('+j.si+')">'+j.big+'</div>';}).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
+  h+='<div class="bp-cell bp-rowlabel">Friction</div>';
+  aggs.forEach(function(a,pi){ var inten=a.pain/maxPain; var bg=a.pain?'rgba(220,56,1,'+(0.06+0.36*inten).toFixed(3)+')':'transparent'; var fs=PHASES[pi].steps.filter(function(si){return STEPS[si].pains>0;})[0]; var click=(a.pain&&fs!==undefined)?' onclick="openPainDrawer('+fs+')"':''; h+='<div class="bp-cell bp-friction'+(a.pain?' bp-clk':'')+'" style="background:'+bg+'"'+click+'>'+(a.pain?'<span class="bp-painnum">'+a.pain+' pain points</span>':'<span class="bp-empty">No pain points</span>')+'</div>'; });
+  h+='<div class="bp-cell bp-rowlabel">Opportunities</div>';
+  aggs.forEach(function(a){ h+='<div class="bp-cell">'+(a.oppIds.length?a.oppIds.map(bpOppChip).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
+  h+='<div class="bp-cell bp-rowlabel">Owning teams</div>';
+  PHASES.forEach(function(ph){ var t=PHASE_TEAMS[ph.label]||[]; h+='<div class="bp-cell">'+(t.length?t.map(function(x){var sc=squadColor(x);return '<span class="bp-team" style="color:'+sc+'"><span class="bp-adot" style="background:'+sc+'"></span>'+x+'</span>';}).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
+  h+='</div>';
+  return h;
+}
+function renderMatrix(f){
+  var order=Object.keys(SQUADS), used=[]; OPPS.forEach(function(o){ if(used.indexOf(o[4])<0) used.push(o[4]); });
+  var squads=order.filter(function(s){return used.indexOf(s)>=0;});
+  var N=PHASES.length, cols='200px repeat('+N+',minmax(150px,1fr))';
+  var phaseOpps=PHASES.map(function(ph){ var ids=[]; ph.steps.forEach(function(si){ (OPP_BY_STEP[si]||[]).forEach(function(oi){ if(ids.indexOf(oi)<0) ids.push(oi); }); }); return ids; });
+  var h='<div class="bp-swim" style="grid-template-columns:'+cols+'">';
+  h+='<div class="bp-cell bp-corner">Team \u00d7 phase</div>';
+  PHASES.forEach(function(ph){ h+='<div class="bp-cell bp-ph-cell"><div class="bp-ph-name">'+ph.label+'</div></div>'; });
+  squads.forEach(function(s){ var sc=squadColor(s);
+    h+='<div class="bp-cell bp-rowlabel"><span class="bp-team" style="color:'+sc+'"><span class="bp-adot" style="background:'+sc+'"></span>'+s+'</span></div>';
+    phaseOpps.forEach(function(ids){ var mine=ids.filter(function(oi){return OPPS[oi][4]===s&&oppMatches(oi,f);}); h+='<div class="bp-cell'+(mine.length?' bp-cell-on':'')+'">'+(mine.length?mine.map(bpOppChip).join(''):'')+'</div>'; });
+  });
+  h+='</div>';
+  var shown=0; phaseOpps.forEach(function(ids){ ids.forEach(function(oi){ if(oppMatches(oi,f)) shown++; }); });
+  var fh=document.getElementById('fHint'); if(fh) fh.textContent='Showing '+shown+' of 19 opportunities';
+  return h;
+}
+/* clamp each sub-steps box to 3 rows; only keep the expand toggle when it overflows */
+function bpFitSubs(){
+  document.querySelectorAll('#bpCanvas .bp-subs').forEach(function(box){
+    var body=box.querySelector('.bp-sub-body'); if(!body) return;
+    box.classList.remove('bp-subs--fit','open');
+    if(body.scrollHeight <= 80){ box.classList.add('bp-subs--fit'); box.onclick=null; }
+  });
+}
+var bpLayout='stacked';
+var renderStacked = render;
+render = function(){
+  var canvas=document.getElementById('bpCanvas'); if(!canvas) return;
+  if(bpLayout==='stacked'){ canvas.style.display='flex'; renderStacked(); bpFitSubs(); return; }
+  canvas.style.display='block';
+  canvas.innerHTML = (bpLayout==='matrix') ? renderMatrix(getFilters()) : renderSwimlane(getFilters());
+};
+(function(){ var tg=document.getElementById('bpLayoutToggle'); if(!tg) return; tg.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; bpLayout=b.dataset.l; tg.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);}); render(); }); })();
+render();
+'''
+bp_script += SWIM_JS
 # expose inline-referenced handlers to window (script is wrapped in an IIFE)
 bp_script += ("\n;window.openAllOppsDrawer=openAllOppsDrawer;window.openAllJobsDrawer=openAllJobsDrawer;"
               "window.openPhaseDrawer=openPhaseDrawer;window.openEvidenceDrawer=openEvidenceDrawer;"
@@ -289,18 +403,20 @@ JOURNEY_BP = r'''
     <div class="kpi"><div class="v" id="kpiLittle">49</div><div class="l"><b>Little jobs</b> &mdash; granular tasks under each JTBD</div></div>
   </div>
   <div class="toolbar" id="toolbar">
-    <div class="ff"><span class="fl">Actor</span><div class="ms-wrap" id="msActor"><button type="button" class="ms-btn" id="msActorBtn">All actors</button><div class="ms-drop" id="msActorDrop"></div></div></div>
-    <div class="ff"><span class="fl">Owner</span><div class="ms-wrap" id="msOwner"><button type="button" class="ms-btn" id="msOwnerBtn" style="min-width:140px">All owners</button><div class="ms-drop" id="msOwnerDrop"></div></div></div>
+    <div class="ff"><span class="fl">View</span><div class="jtoggle" id="bpLayoutToggle"><button class="on" data-l="stacked">Journey map</button><button data-l="swim">Blueprint</button><button data-l="matrix">Ownership</button></div></div>
+    <div class="ff"><span class="fl">Team</span><div class="ms-wrap" id="msOwner"><button type="button" class="ms-btn" id="msOwnerBtn" style="min-width:180px">All teams</button><div class="ms-drop" id="msOwnerDrop"></div></div></div>
+    <div class="ff"><span class="fl">Persona</span><div class="ms-wrap" id="msActor"><button type="button" class="ms-btn" id="msActorBtn">All personas</button><div class="ms-drop" id="msActorDrop"></div></div></div>
     <div class="ff"><span class="fl">Opportunity size</span><div class="ms-wrap" id="msSize"><button type="button" class="ms-btn" id="msSizeBtn" style="min-width:140px">All sizes</button><div class="ms-drop" id="msSizeDrop"></div></div></div>
     <button type="button" class="freset" id="fReset">Reset filters</button>
-    <span class="fhint" id="fHint">Showing all 19 opportunities</span>
+    <button class="bp-expand" id="bpExpandBtn" aria-label="Expand" title="Expand" onclick="toggleJourneyExpand()" style="margin-left:auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg></button>
   </div>
+  __LEGEND__
   <div class="bp-canvas" id="bpCanvasWrap">
-    <button class="bp-expand" id="bpExpandBtn" onclick="toggleJourneyExpand()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg><span id="bpExpandLbl">Expand</span></button>
     <div class="bp-flow" id="bpCanvas"></div>
   </div>
 </section>
 '''
+JOURNEY_BP = JOURNEY_BP.replace("__LEGEND__", "")
 
 COVERAGE = r'''
 <section class="view" id="coverage">
@@ -507,17 +623,6 @@ OVERVIEW_TMPL = r'''
   <h3 style="font-size:16px;margin:0 0 4px">Insights, ranked (severity &times; frequency)</h3>
   <p class="sub" style="margin:0 0 14px;color:var(--ink-soft);font-size:var(--fs-caption)">Every insight is tied to its evidence &mdash; volumes from Unwrap/Salesforce, plus a representative verbatim.</p>
   <div class="ins-grid">__CARDS__</div>
-
-  <div class="opp-grid" style="margin-top:22px">
-    <div class="card prose" style="padding:18px 20px;border-left:3px solid var(--partial)">
-      <h3 style="font-size:14px">Blind spot 1 &mdash; Fulfilment has no owner</h3>
-      <p style="font-size:13px;margin:0;color:var(--ink-soft)">Warehousing &amp; logistics is the 2nd-largest pain (25.5% of IPP feedback) yet was never on the roadmap list &mdash; it hides in support tickets, not NPS or Slack.</p>
-    </div>
-    <div class="card prose" style="padding:18px 20px;border-left:3px solid var(--gap)">
-      <h3 style="font-size:14px">Blind spot 2 &mdash; Partners benchmark us against Stripe</h3>
-      <p style="font-size:13px;margin:0;color:var(--ink-soft)">Platform partners such as Lightspeed carry enough API/tooling overhead to compare Adyen unfavorably against Stripe &mdash; a strategic churn risk if left unfixed.</p>
-    </div>
-  </div>
 </section>
 '''
 
@@ -658,7 +763,14 @@ function toggleJourneyExpand(){
   const w=document.getElementById('bpCanvasWrap');if(!w)return;
   const on=w.classList.toggle('is-expanded');
   document.body.classList.toggle('bp-expanded-lock',on);
-  const lbl=document.getElementById('bpExpandLbl');if(lbl)lbl.textContent=on?'Close':'Expand';
+  const btn=document.getElementById('bpExpandBtn');
+  if(btn){
+    btn.setAttribute('aria-label',on?'Collapse':'Expand');
+    btn.setAttribute('title',on?'Collapse':'Expand');
+    btn.innerHTML = on
+      ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h5V4"/><path d="M20 15h-5v5"/><path d="M15 4v5h5"/><path d="M9 20v-5H4"/></svg>'
+      : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>';
+  }
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const w=document.getElementById('bpCanvasWrap');if(w&&w.classList.contains('is-expanded'))toggleJourneyExpand();}});
 
@@ -765,15 +877,68 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-actor2{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;line-height:1.35;width:100%;margin-top:3px}
 .bp-actor2 .bp-adot{width:6px;height:6px;border-radius:50%;flex:none}
 .bp-sub-tag{font-size:11px}
+/* sub-steps: uniform 3-row height, expand only when it overflows */
+.bp-subs .bp-sub-body{max-height:80px;min-height:80px;overflow:hidden;margin-top:6px;transition:max-height .25s ease}
+.bp-subs.open .bp-sub-body{max-height:600px}
+.bp-subs--fit .bp-sub-body{max-height:none}
+.bp-subs--fit .bp-subs-toggle{cursor:default}
+.bp-subs--fit .bp-subs-toggle::before{visibility:hidden}
+/* team ownership */
+.bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700}
+.bp-team .bp-adot{width:7px;height:7px;border-radius:50%;flex:none}
+.bp-nbadge{font-size:9.5px}
+.bp-actor2{color:var(--ink-faint);font-weight:500;font-size:10.5px;line-height:1.35;width:100%;margin-top:5px}
+.bp-actor2::before{content:"For: ";color:var(--ink-faint);opacity:.75}
+.bp-phhead{min-height:122px;display:flex;flex-direction:column;box-sizing:border-box}
+.bp-phteams{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:auto;padding-top:10px}
+.bp-phteam{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600}
+.bp-phteam .bp-adot{width:6px;height:6px;border-radius:50%;flex:none}
+.bp-legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 16px;padding:12px 14px;
+  border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.bp-legend .lg-cap{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px}
+.bp-legend .lg-grp{font-size:10px;font-weight:600;color:var(--ink-faint);margin-left:6px}
+.bp-legend .lg-item{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft)}
+.bp-legend .lg-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.bp-howto{font-size:12.5px;color:var(--ink-soft);line-height:1.5;max-width:900px;margin:0 0 14px}
+.bp-note{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line-soft);font-size:11.5px;color:var(--ink-soft);line-height:1.55}
+.bp-note b{color:var(--ink);font-weight:600}
+/* swimlane blueprint + ownership matrix */
+.bp-swim{width:100%;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.bp-swim .bp-cell{background:var(--panel);padding:11px 13px;min-width:0;font-size:12px;box-sizing:border-box}
+.bp-swim .bp-corner,.bp-swim .bp-rowlabel,.bp-swim .bp-ph-cell{background:var(--b-color-grey-100)}
+.bp-swim .bp-rowlabel{font-weight:700;color:var(--ink-soft);font-size:11px;display:flex;align-items:center}
+.bp-swim .bp-corner{font-size:10.5px;color:var(--ink-faint);display:flex;align-items:center}
+.bp-swim .bp-ph-name{font-size:13px;font-weight:700;color:var(--ink)}
+.bp-swim .bp-ph-sub{font-size:11px;color:var(--ink-faint);margin-top:2px}
+.bp-swim .bp-job-line{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:8px;cursor:pointer}
+.bp-swim .bp-job-line:last-child{margin-bottom:0}
+.bp-swim .bp-job-line:hover{text-decoration:underline}
+.bp-swim .bp-friction{display:flex;align-items:center}
+.bp-swim .bp-clk{cursor:pointer}
+.bp-swim .bp-painnum{font-size:11.5px;font-weight:700;color:var(--gap)}
+.bp-swim .bp-empty{color:var(--ink-faint)}
+.bp-swim .bp-oppchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 8px;border:1px solid;border-radius:6px;margin:0 4px 4px 0;line-height:1.3}
+.bp-swim .bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;margin:0 8px 5px 0}
+.bp-swim .bp-cell-on{background:var(--b-color-background-primary)}
+/* simpler, neutral dropdowns (no green) */
+.ms-btn:hover,.ms-btn.open{border-color:var(--ink-faint)}
+.ms-drop{box-shadow:var(--b-shadow-low)}
+.ms-drop label:hover{background:var(--b-color-background-secondary)}
+.ms-drop label input{accent-color:var(--ink)}
+.ms-group-hdr .ms-grp-btn{color:var(--ink-soft)}
+.toolbar .freset:hover,.tbl-filters .freset:hover{border-color:var(--ink-faint);color:var(--ink)}
+.tbl-filters select:focus{border-color:var(--ink-faint)}
 /* expand / full-screen */
-.bp-canvas{position:relative}
-.bp-expand{position:absolute;top:10px;right:10px;z-index:4;display:inline-flex;align-items:center;gap:6px;
-  height:30px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
-  font-family:var(--font-sans);font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;box-shadow:var(--b-shadow-low)}
+.bp-howto-row{display:flex;align-items:flex-start;gap:16px;margin:0 0 14px}
+.bp-howto-row .bp-howto{margin:0;flex:1}
+.bp-howto-row .bp-expand{flex:none;margin-top:1px}
+.bp-expand{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;box-shadow:var(--b-shadow-low)}
 .bp-expand:hover{background:var(--b-color-background-secondary);border-color:var(--ink-faint)}
 .bp-canvas.is-expanded{position:fixed;inset:0;z-index:400;margin:0;border-radius:0;max-height:none;
-  overflow:auto;padding:58px 24px 28px;box-shadow:none}
+  overflow:auto;padding:64px 24px 28px;box-shadow:none}
 body.bp-expanded-lock{overflow:hidden}
+body.bp-expanded-lock .bp-expand{position:fixed;top:14px;right:20px;z-index:401}
 '''
 DASH_CSS = r'''
 /* ===== Context sentiment dashboard ===== */
@@ -815,6 +980,9 @@ DASH_CSS = r'''
 UI_POLISH_CSS = r'''
 /* ===== UI polish: Bento surfaces, font & spacing ===== */
 :root{
+  /* everything on Adyen UI */
+  --font-sans:'Adyen UI', var(--b-font-family-primary);
+  --font-mono:'Adyen UI', var(--b-font-family-primary);
   /* re-point the ported spacing scale onto Bento spacers */
   --spacing-3xs:var(--b-spacer-020); /* 4 */
   --spacing-2xs:var(--b-spacer-050); /* 10 */
@@ -823,12 +991,13 @@ UI_POLISH_CSS = r'''
 }
 /* sidebar stays grey; main content one step lighter */
 body{background:var(--b-color-background-secondary);background-image:none;
-  font-family:var(--b-text-body-font-family);letter-spacing:var(--b-letter-spacing-300)}
+  font-family:'Adyen UI', var(--b-font-family-primary)}
 .sidebar{background:var(--b-color-background-secondary)}
 .main-content{background:#FBFBFC}
-/* Bento type ramp */
-h1,h2,h3{font-family:var(--b-font-family-primary)}
-.mono,.eyebrow,.src-meta,.sev,.badge,.opin,.bar-val,.nps-num,.ins-rank,.sb-section-label{font-family:var(--b-font-family-secondary)}
+/* single font family across the pages */
+h1,h2,h3,.mono,.eyebrow,.src-meta,.sev,.badge,.opin,.bar-val,.nps-num,.ins-rank,.sb-section-label{font-family:'Adyen UI', var(--b-font-family-primary)}
+/* regular spacing, no uppercase, anywhere */
+*{letter-spacing:normal !important;text-transform:none !important;font-family:'Adyen UI', var(--b-font-family-primary)}
 /* Bento spacing rhythm for the shell */
 .wrap{padding:0 var(--b-spacer-100)}                 /* 32 */
 section.view{padding:var(--b-spacer-100) 0 var(--b-spacer-140)} /* 32 / 64 */
