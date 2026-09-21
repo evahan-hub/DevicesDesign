@@ -112,6 +112,27 @@ bp_script = bp_script.replace('All owners', 'All teams').replace('All actors', '
 bp_script = bp_script.replace("document.getElementById('fHint').textContent", "(document.getElementById('fHint')||{}).textContent")
 # sub-steps default to collapsed (clamped to 3 rows) instead of fully open
 bp_script = bp_script.replace('<div class="bp-subs open" onclick', '<div class="bp-subs" onclick')
+# remove the per-job "N pain points" chip — pains now live in the phase Friction & sentiment box
+bp_script = re.sub(r"if \(st\.pains > 0\) meta\.push\(.*?pain points</span>`\);", "", bp_script, count=1, flags=re.S)
+
+# --- consolidate personas (actors) per JTBD, then rebuild the (deduped) filter groups ---
+_ACTOR_RENAMES = [
+    ('QA Engineer / Integration Developer', 'Integration Developer / Technical Lead'),
+    ('Integration Developer', 'Integration Developer / Technical Lead'),
+    ('Fleet / Operations Manager', 'Fleet Manager / Operations Analyst'),
+    ('IT / Technical Operations Manager', 'Fleet Manager / Operations Analyst'),
+    ('Marketing / CRM Manager', 'Marketing / CRM / CX Manager'),
+    ('Marketing / CX Manager', 'Marketing / CRM / CX Manager'),
+]
+for _old, _new in _ACTOR_RENAMES:
+    bp_script = bp_script.replace('"' + _old + '"', '"' + _new + '"').replace("'" + _old + "'", "'" + _new + "'")
+# rebuild the two filter groups with clean, deduped actor lists (order preserved)
+bp_script = re.sub(r"\{label:'Adyen Internal', actors:\[[^\]]*\]\}",
+    "{label:'Adyen Internal', actors:['Implementation / Finance Operations','Integration Developer / Technical Lead','IT Admin / Security Administrator']}",
+    bp_script)
+bp_script = re.sub(r"\{label:'Merchant Ops', actors:\[[^\]]*\]\}",
+    "{label:'Merchant Ops', actors:['Fleet Manager / Operations Analyst','Head of Payments / Expansion Lead','Marketing / CRM / CX Manager','Operations Manager','Payments Analyst / Operations Manager','Procurement / Fleet Manager','Product / Payments Manager']}",
+    bp_script)
 
 # --- alternative layouts: swimlane blueprint (default) + ownership matrix, with the
 #     existing stacked cards kept as a third option. Appended inside the IIFE. ---
@@ -129,7 +150,8 @@ function bpOppChip(oi){ var o=OPPS[oi], sc=squadColor(o[4]); return '<span class
 function renderSwimlane(f){
   var N=PHASES.length, cols='150px repeat('+N+',minmax(200px,1fr))';
   var aggs=PHASES.map(function(ph){return bpPhaseAgg(ph,f);});
-  var maxPain=Math.max.apply(null,[1].concat(aggs.map(function(a){return a.pain;})));
+  var INS=(typeof IPP_INSIGHTS!=='undefined'?IPP_INSIGHTS:[]);
+  function sentFor(pi){ return INS.filter(function(x){return x.phases.indexOf(pi)>=0;}); }
   var total=0; aggs.forEach(function(a){total+=a.oppIds.length;});
   var fh=document.getElementById('fHint'); if(fh) fh.textContent='Showing '+total+' of 19 opportunities';
   var h='<div class="bp-swim" style="grid-template-columns:'+cols+'">';
@@ -137,14 +159,39 @@ function renderSwimlane(f){
   PHASES.forEach(function(ph,pi){ h+='<div class="bp-cell bp-ph-cell" style="cursor:pointer" onclick="openPhaseDrawer('+pi+')"><div class="bp-ph-name">'+ph.label+'</div><div class="bp-ph-sub">'+aggs[pi].oppIds.length+' opportunit'+(aggs[pi].oppIds.length===1?'y':'ies')+'</div></div>'; });
   h+='<div class="bp-cell bp-rowlabel">Merchant job</div>';
   aggs.forEach(function(a){ h+='<div class="bp-cell">'+(a.jobs.length?a.jobs.map(function(j){return '<div class="bp-job-line" onclick="openLittleJobsDrawer('+j.si+')">'+j.big+'</div>';}).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
-  h+='<div class="bp-cell bp-rowlabel">Friction</div>';
-  aggs.forEach(function(a,pi){ var inten=a.pain/maxPain; var bg=a.pain?'rgba(220,56,1,'+(0.06+0.36*inten).toFixed(3)+')':'transparent'; var fs=PHASES[pi].steps.filter(function(si){return STEPS[si].pains>0;})[0]; var click=(a.pain&&fs!==undefined)?' onclick="openPainDrawer('+fs+')"':''; h+='<div class="bp-cell bp-friction'+(a.pain?' bp-clk':'')+'" style="background:'+bg+'"'+click+'>'+(a.pain?'<span class="bp-painnum">'+a.pain+' pain points</span>':'<span class="bp-empty">No pain points</span>')+'</div>'; });
+  h+='<div class="bp-cell bp-rowlabel">Friction &amp; sentiment</div>';
+  PHASES.forEach(function(ph,pi){
+    var a=aggs[pi], items=sentFor(pi);
+    var fs=PHASES[pi].steps.filter(function(si){return STEPS[si].pains>0;})[0];
+    var head=(a.pain&&fs!==undefined)?'<div class="bp-frichead bp-clk" onclick="openPainDrawer('+fs+')">\u26a0 '+a.pain+' research pain points</div>':'';
+    var chips=items.length?'<div class="bp-sentwrap">'+items.map(function(x){return '<span class="bp-sent bp-sent-'+x.sev+'" onclick="openInsightDrawer('+(x.n-1)+')">'+x.short+'</span>';}).join('')+'</div>':'';
+    h+='<div class="bp-cell bp-friction">'+((head||chips)?(head+chips):'<span class="bp-empty">No pain captured</span>')+'</div>';
+  });
   h+='<div class="bp-cell bp-rowlabel">Opportunities</div>';
   aggs.forEach(function(a){ h+='<div class="bp-cell">'+(a.oppIds.length?a.oppIds.map(bpOppChip).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
   h+='<div class="bp-cell bp-rowlabel">Owning teams</div>';
   PHASES.forEach(function(ph){ var t=PHASE_TEAMS[ph.label]||[]; h+='<div class="bp-cell">'+(t.length?t.map(function(x){var sc=squadColor(x);return '<span class="bp-team" style="color:'+sc+'"><span class="bp-adot" style="background:'+sc+'"></span>'+x+'</span>';}).join(''):'<span class="bp-empty">&mdash;</span>')+'</div>'; });
   h+='</div>';
   return h;
+}
+function openInsightDrawer(i){
+  var x=(typeof IPP_INSIGHTS!=='undefined')?IPP_INSIGHTS[i]:null; if(!x) return;
+  var d=document.getElementById('drawer'); if(!d) return;
+  var col=x.sev==='crit'?'var(--gap)':(x.sev==='high'?'var(--p1)':'var(--infra)');
+  var ph=x.phases.map(function(pi){return PHASES[pi].label;}).join(' &middot; ');
+  d.innerHTML='<div class="dhead"><span class="dbar" style="background:'+col+'"></span>'
+    +'<button class="close" onclick="closeDrawer()">\u00d7</button>'
+    +'<span class="oid mono" style="color:var(--ink-faint);font-size:12px;font-weight:600">CUSTOMER SENTIMENT &middot; #'+x.n+'</span>'
+    +'<h3>'+x.title+'</h3>'
+    +'<div class="dmeta"><span class="sev sev-'+x.sev+'">'+x.sevlbl+'</span></div></div>'
+    +'<div class="dbody">'
+    +'<div class="dsec"><div class="vtxt" style="font-size:13px;color:var(--ink-soft);line-height:1.55">'+x.desc+'</div></div>'
+    +'<div class="dsec"><div class="k">Evidence</div><div class="vtxt" style="font-size:12px;color:var(--ink-faint);line-height:1.5">'+x.meta+'</div></div>'
+    +'<div class="dsec"><div class="k">Verbatim</div><div class="ins-q" style="font-style:italic">'+x.quote+'</div></div>'
+    +'<div class="dsec"><div class="k">Where in the journey</div><div class="vtxt" style="font-size:12.5px;color:var(--ink-soft)">'+ph+'</div></div>'
+    +'<div class="dsec"><div class="k">Recommendation</div><div class="whybox">'+x.rec+'</div></div>'
+    +'</div>';
+  d.classList.add('on'); var s=document.getElementById('scrim'); if(s) s.classList.add('on');
 }
 function renderMatrix(f){
   var order=Object.keys(SQUADS), used=[]; OPPS.forEach(function(o){ if(used.indexOf(o[4])<0) used.push(o[4]); });
@@ -171,11 +218,34 @@ function bpFitSubs(){
     if(body.scrollHeight <= 80){ box.classList.add('bp-subs--fit'); box.onclick=null; }
   });
 }
+/* Cards view: inject the combined Friction & sentiment box at the top of each phase column */
+function bpInjectFriction(){
+  var INS=(typeof IPP_INSIGHTS!=='undefined'?IPP_INSIGHTS:[]);
+  var cols=document.querySelectorAll('#bpCanvas .bp-phase'); if(!cols.length) return;
+  function sentFor(pi){ return INS.filter(function(x){return x.phases.indexOf(pi)>=0;}); }
+  function sevScore(items){ return items.reduce(function(t,x){return t+(x.sev==='crit'?3:(x.sev==='high'?2:1));},0); }
+  var f=getFilters();
+  cols.forEach(function(col,pi){
+    if(col.querySelector('.bp-fs-box')) return;
+    var a=bpPhaseAgg(PHASES[pi],f), items=sentFor(pi);
+    var fs=PHASES[pi].steps.filter(function(si){return STEPS[si].pains>0;})[0];
+    var head=(a.pain&&fs!==undefined)?'<div class="bp-frichead bp-clk" onclick="event.stopPropagation();openPainDrawer('+fs+')">\u26a0 '+a.pain+' research pain points</div>':'';
+    var chips=items.length?'<div class="bp-sentwrap">'+items.map(function(x){return '<span class="bp-sent bp-sent-'+x.sev+'" onclick="event.stopPropagation();openInsightDrawer('+(x.n-1)+')">'+x.short+'</span>';}).join('')+'</div>':'';
+    var count=items.length+(a.pain?1:0);
+    var box=document.createElement('div'); box.className='bp-fs-box';
+    box.innerHTML='<div class="bp-fs-toggle" onclick="this.closest(\'.bp-fs-box\').classList.toggle(\'open\')"><span class="bp-fs-h">Friction &amp; sentiment</span>'
+      +(count?'<span class="bp-fs-count">'+count+'</span>':'')+'<svg class="bp-fs-caret" width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+      +'<div class="bp-fs-body">'+((head||chips)?(head+chips):'<span class="bp-fs-empty">No pain captured</span>')+'</div>';
+    var anchor=col.querySelector('.bp-subs')||col.querySelector('.bp-phhead');
+    if(anchor && anchor.nextSibling) col.insertBefore(box, anchor.nextSibling); else col.appendChild(box);
+  });
+}
 var bpLayout='stacked';
 var renderStacked = render;
 render = function(){
   var canvas=document.getElementById('bpCanvas'); if(!canvas) return;
-  if(bpLayout==='stacked'){ canvas.style.display='flex'; renderStacked(); bpFitSubs(); return; }
+  var wrap=document.getElementById('bpCanvasWrap'); if(wrap) wrap.classList.toggle('bp-canvas--hug', bpLayout==='stacked');
+  if(bpLayout==='stacked'){ canvas.style.display='flex'; renderStacked(); bpFitSubs(); bpInjectFriction(); return; }
   canvas.style.display='block';
   canvas.innerHTML = (bpLayout==='matrix') ? renderMatrix(getFilters()) : renderSwimlane(getFilters());
 };
@@ -187,7 +257,7 @@ bp_script += SWIM_JS
 bp_script += ("\n;window.openAllOppsDrawer=openAllOppsDrawer;window.openAllJobsDrawer=openAllJobsDrawer;"
               "window.openPhaseDrawer=openPhaseDrawer;window.openEvidenceDrawer=openEvidenceDrawer;"
               "window.openPainDrawer=openPainDrawer;window.openLittleJobsDrawer=openLittleJobsDrawer;"
-              "window.closeDrawer=closeDrawer;\n")
+              "window.openInsightDrawer=openInsightDrawer;window.closeDrawer=closeDrawer;\n")
 
 # =====================================================================
 HEAD = r'''<!DOCTYPE html>
@@ -565,6 +635,30 @@ INSIGHTS = [
      "Add a reporting layer that turns fleet data into merchant-visible insight."),
 ]
 
+# ---- map each sentiment insight (pain point) to journey phase(s) ----
+# phase indices: 0 Exploration · 1 Test & Integration · 2 Go Live & Rollout · 3 BAU & Growth · 4 Fleet Operation
+PHASE_SHORT = ["Exploration", "Test & Integration", "Go Live", "BAU & Growth", "Fleet Operation"]
+INSIGHT_SHORT = [
+    "Hardware & connectivity", "Fulfilment & logistics", "Boarding & provisioning",
+    "Tap to Pay / SoftPOS", "Fleet & firmware updates", "API integration overhead",
+    "Opaque settings / CA", "Docs & support", "Payments config",
+    "Localization", "Offline / Store & Forward", "Fleet reporting",
+]
+INSIGHT_PHASES = [
+    [3, 4],       # 1 Hardware & connectivity failures — in-store operation
+    [1, 2, 4],    # 2 Fulfilment / warehousing / orders — ordering, delivery, replacements
+    [2, 4],       # 3 Boarding, reassignment & provisioning — go-live + fleet
+    [1, 3],       # 4 Tap to Pay / SoftPOS — integration + BAU
+    [3, 4],       # 5 Fleet & firmware updates — BAU + fleet
+    [1],          # 6 Developer / API integration overhead — test & integration
+    [1, 2, 3],    # 7 Opaque settings & CA — test config, go-live config, BAU
+    [1, 3],       # 8 Thin docs, slow support — integration + BAU
+    [2, 3],       # 9 Payments configuration & behaviour — go-live + BAU
+    [0, 2],       # 10 Localization / regional fit — planning + go-live
+    [3],          # 11 Store & Forward / offline — BAU operation
+    [3, 4],       # 12 No reporting layer — BAU + fleet
+]
+
 def build_overview():
     bars = ""
     for name, val in THEMES:
@@ -573,7 +667,8 @@ def build_overview():
                  f'<div class="bar-track"><div class="bar-fill" style="width:{pct}%"></div></div>'
                  f'<div class="bar-val">{val:,}</div></div>')
     cards = ""
-    for rank, sev, sevlbl, title, desc, meta, quote, rec in INSIGHTS:
+    for i, (rank, sev, sevlbl, title, desc, meta, quote, rec) in enumerate(INSIGHTS):
+        jchips = ''.join('<span class="ins-jchip">%s</span>' % PHASE_SHORT[p] for p in INSIGHT_PHASES[i])
         cards += (f'<div class="ins-card ins-{sev}">'
                   f'<div class="ins-top"><span class="ins-rank">{rank}</span>'
                   f'<span class="sev sev-{sev}">{sevlbl}</span></div>'
@@ -582,6 +677,7 @@ def build_overview():
                   f'<div class="ins-meta">{meta}</div>'
                   f'<div class="ins-q">{quote}</div>'
                   f'<div class="ins-rec"><span class="arr">&rarr;</span> {rec}</div>'
+                  f'<div class="ins-journey"><span class="ins-jlabel">In journey</span>{jchips}</div>'
                   f'</div>')
     return OVERVIEW_TMPL.replace("__BARS__", bars).replace("__CARDS__", cards)
 
@@ -913,13 +1009,51 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-swim .bp-job-line{font-size:12px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:8px;cursor:pointer}
 .bp-swim .bp-job-line:last-child{margin-bottom:0}
 .bp-swim .bp-job-line:hover{text-decoration:underline}
-.bp-swim .bp-friction{display:flex;align-items:center}
+.bp-swim .bp-friction{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
 .bp-swim .bp-clk{cursor:pointer}
 .bp-swim .bp-painnum{font-size:11.5px;font-weight:700;color:var(--gap)}
+.bp-swim .bp-frichead{font-size:11px;font-weight:700;color:var(--gap);margin-bottom:7px}
+.bp-swim .bp-frichead.bp-clk:hover{text-decoration:underline}
+.bp-swim .bp-sentwrap{display:flex;flex-wrap:wrap}
 .bp-swim .bp-empty{color:var(--ink-faint)}
 .bp-swim .bp-oppchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 8px;border:1px solid;border-radius:6px;margin:0 4px 4px 0;line-height:1.3}
 .bp-swim .bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;margin:0 8px 5px 0}
 .bp-swim .bp-cell-on{background:var(--b-color-background-primary)}
+.bp-swim .bp-sent{display:inline-block;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;margin:0 4px 4px 0;cursor:pointer;line-height:1.3}
+.bp-swim .bp-sent:hover{filter:brightness(0.97)}
+.bp-sent-crit{background:#fbe7e4;color:var(--gap)}
+.bp-sent-high{background:#fef1e2;color:#b45309}
+.bp-sent-med{background:#e6eef4;color:var(--infra)}
+/* Cards view: let the frame hug all columns (so nothing is clipped) and scroll as one unit */
+.bp-canvas.bp-canvas--hug{border:none;background:none;padding:0;border-radius:0}
+.bp-canvas--hug .bp-flow{width:max-content;min-width:min-content;padding:4px 0 24px;border:none;border-radius:0;background:transparent}
+/* transparent canvas, no outline box, left-aligned with the View control */
+.bp-canvas,.journey-canvas{background:transparent;border:none;border-radius:0;padding-left:0;padding-right:0}
+/* Journey map summary — Bento summary-block style: one container, divided cells */
+.bp-kpis{display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:28px}
+.bp-kpis .kpi{flex:1;min-width:0;background:transparent;border:none;border-left:1px solid var(--line);border-radius:0;box-shadow:none;padding:16px 20px}
+.bp-kpis .kpi:first-child,.bp-kpis .kpi:first-child.accent{border-left:none}
+.bp-kpis .kpi.accent{border-left:1px solid var(--line)}
+.bp-kpis .kpi .v{font-size:26px}
+.bp-kpis .kpi[onclick]{cursor:pointer}
+.bp-kpis .kpi[onclick]:hover{background:var(--b-color-grey-100)}
+@media(max-width:640px){.bp-kpis{flex-wrap:wrap}.bp-kpis .kpi{flex:1 1 100%;border-left:none;border-top:1px solid var(--line)}.bp-kpis .kpi:first-child{border-top:none}}
+/* Cards view: per-phase Friction & sentiment box (white, collapsible, below sub-steps) */
+.bp-fs-box{margin:6px 0 2px;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.bp-fs-toggle{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none}
+.bp-fs-count{font-size:10px;font-weight:700;color:var(--ink-soft);background:var(--b-color-grey-100);border-radius:5px;padding:1px 6px}
+.bp-fs-caret{margin-left:auto;flex:none;color:var(--ink-faint);transition:transform .2s ease}
+.bp-fs-box.open .bp-fs-caret{transform:rotate(180deg)}
+.bp-fs-body{max-height:0;overflow:hidden;transition:max-height .25s ease;padding:0 12px}
+.bp-fs-box.open .bp-fs-body{max-height:600px;padding:2px 12px 12px}
+.bp-fs-h{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-faint);font-weight:600}
+.bp-fs-box .bp-frichead{font-size:11px;font-weight:700;color:var(--gap);margin-bottom:7px}
+.bp-fs-box .bp-frichead.bp-clk{cursor:pointer}
+.bp-fs-box .bp-frichead.bp-clk:hover{text-decoration:underline}
+.bp-fs-box .bp-sentwrap{display:flex;flex-wrap:wrap}
+.bp-fs-box .bp-sent{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;margin:0 4px 4px 0;cursor:pointer;line-height:1.3}
+.bp-fs-box .bp-sent:hover{filter:brightness(0.97)}
+.bp-fs-empty{font-size:11px;color:var(--ink-faint)}
 /* simpler, neutral dropdowns (no green) */
 .ms-btn:hover,.ms-btn.open{border-color:var(--ink-faint)}
 .ms-drop{box-shadow:var(--b-shadow-low)}
@@ -932,13 +1066,20 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-howto-row{display:flex;align-items:flex-start;gap:16px;margin:0 0 14px}
 .bp-howto-row .bp-howto{margin:0;flex:1}
 .bp-howto-row .bp-expand{flex:none;margin-top:1px}
-.bp-expand{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;
+.bp-expand{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;box-sizing:border-box;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;box-shadow:var(--b-shadow-low)}
 .bp-expand:hover{background:var(--b-color-background-secondary);border-color:var(--ink-faint)}
-.bp-canvas.is-expanded{position:fixed;inset:0;z-index:400;margin:0;border-radius:0;max-height:none;
-  overflow:auto;padding:64px 24px 28px;box-shadow:none}
+/* align all toolbar controls to a common 34px height */
+#journey .toolbar .ms-btn{height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0;line-height:32px}
+#journey .toolbar .jtoggle{height:34px;box-sizing:border-box}
+#journey .toolbar .freset{height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0;line-height:32px}
+.bp-canvas.is-expanded{position:fixed;inset:24px;z-index:400;margin:0;max-height:none;
+  border:1px solid var(--line);border-radius:14px;background:var(--panel);
+  box-shadow:0 24px 60px rgba(0,18,34,0.28);overflow:auto;padding:56px 28px 28px}
+.bp-canvas.is-expanded .bp-flow{border:none;background:none;padding:0}
 body.bp-expanded-lock{overflow:hidden}
-body.bp-expanded-lock .bp-expand{position:fixed;top:14px;right:20px;z-index:401}
+body.bp-expanded-lock::before{content:"";position:fixed;inset:0;background:rgba(0,18,34,0.5);z-index:399}
+body.bp-expanded-lock .bp-expand{position:fixed;top:38px;right:42px;z-index:401}
 '''
 DASH_CSS = r'''
 /* ===== Context sentiment dashboard ===== */
@@ -972,6 +1113,9 @@ DASH_CSS = r'''
 .ins-q{font-size:12px;color:var(--ink-soft);font-style:italic;line-height:1.5;background:var(--b-color-grey-100);border-radius:8px;padding:10px 12px;margin-bottom:10px}
 .ins-rec{font-size:12.5px;color:var(--accent-deep);line-height:1.45;display:flex;gap:6px}
 .ins-rec .arr{flex:none;font-weight:700}
+.ins-journey{margin-top:10px;padding-top:10px;border-top:1px solid var(--line-soft);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ins-jlabel{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;color:var(--ink-faint);font-weight:600;text-transform:uppercase;margin-right:2px}
+.ins-jchip{font-size:10px;font-weight:600;color:var(--ink-soft);background:var(--b-color-grey-100);border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px}
 @media(max-width:900px){.ins-grid{grid-template-columns:1fr}.bar-row{grid-template-columns:140px 1fr 52px}}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
 .grid3 .card{height:100%}
@@ -1022,9 +1166,17 @@ main = (
     '</div><!-- /main-content -->\n'
 )
 
+# inject the sentiment insights (mapped to phases) so the swimlane lane + drawer can use them
+_insights_js = [{'n': r, 'sev': s, 'sevlbl': sl, 'title': t, 'short': INSIGHT_SHORT[i],
+                 'desc': d, 'meta': m, 'quote': q, 'rec': rc, 'phases': INSIGHT_PHASES[i]}
+                for i, (r, s, sl, t, d, m, q, rc) in enumerate(INSIGHTS)]
+bp_script = "var IPP_INSIGHTS = " + json.dumps(_insights_js) + ";\n" + bp_script
 BP_WRAPPED = "\n<script>\n(function(){\n" + bp_script + "\n})();\n</script>\n"
 
 html = head + GATE + SIDEBAR + main + journey_script + BP_WRAPPED + DS_WRAPPED + "\n</body>\n</html>\n"
+# canonicalize persona names everywhere (incl. legacy JTBD_OPPS) so no stale names linger
+for _old, _new in _ACTOR_RENAMES:
+    html = html.replace('"' + _old + '"', '"' + _new + '"').replace("'" + _old + "'", "'" + _new + "'")
 
 APP.mkdir(exist_ok=True)
 out = APP / "ipp-journey.dc.html"
