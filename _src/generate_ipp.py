@@ -114,6 +114,9 @@ bp_script = bp_script.replace("document.getElementById('fHint').textContent", "(
 bp_script = bp_script.replace('<div class="bp-subs open" onclick', '<div class="bp-subs" onclick')
 # remove the per-job "N pain points" chip — pains now live in the phase Friction & sentiment box
 bp_script = re.sub(r"if \(st\.pains > 0\) meta\.push\(.*?pain points</span>`\);", "", bp_script, count=1, flags=re.S)
+# remove the "already addressed" green check mark from opportunities (cards + drawers)
+bp_script = bp_script.replace(r"""${o[6] ? '<span class="bp-chk"> \u2713</span>' : ''}""", "")
+bp_script = bp_script.replace(r"""${op.addressed ? '<span class="bp-chk">\u2713</span>' : ''}""", "")
 
 # --- consolidate personas (actors) per JTBD, then rebuild the (deduped) filter groups ---
 _ACTOR_RENAMES = [
@@ -970,7 +973,7 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-owner.owner-ipp{color:var(--accent-deep);background:var(--accent-tint)}
 .bp-owner.owner-oc{color:var(--infra);background:rgba(15,117,220,.08)}
 .bp-size2{font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--ink-soft);background:var(--b-color-grey-200);padding:2px 7px;border-radius:5px}
-.bp-actor2{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;line-height:1.35;width:100%;margin-top:3px}
+.bp-actor2{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:400;line-height:1.35;width:100%;margin-top:3px}
 .bp-actor2 .bp-adot{width:6px;height:6px;border-radius:50%;flex:none}
 .bp-sub-tag{font-size:11px}
 /* sub-steps: uniform 3-row height, expand only when it overflows */
@@ -980,14 +983,14 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-subs--fit .bp-subs-toggle{cursor:default}
 .bp-subs--fit .bp-subs-toggle::before{visibility:hidden}
 /* team ownership */
-.bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700}
+.bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:400}
 .bp-team .bp-adot{width:7px;height:7px;border-radius:50%;flex:none}
 .bp-nbadge{font-size:9.5px}
-.bp-actor2{color:var(--ink-faint);font-weight:500;font-size:10.5px;line-height:1.35;width:100%;margin-top:5px}
+.bp-actor2{color:var(--ink-faint);font-weight:400;font-size:10.5px;line-height:1.35;width:100%;margin-top:5px}
 .bp-actor2::before{content:"For: ";color:var(--ink-faint);opacity:.75}
 .bp-phhead{min-height:122px;display:flex;flex-direction:column;box-sizing:border-box}
 .bp-phteams{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:auto;padding-top:10px}
-.bp-phteam{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600}
+.bp-phteam{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:400}
 .bp-phteam .bp-adot{width:6px;height:6px;border-radius:50%;flex:none}
 .bp-legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 16px;padding:12px 14px;
   border:1px solid var(--line);border-radius:12px;background:var(--panel)}
@@ -1017,7 +1020,7 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-swim .bp-sentwrap{display:flex;flex-wrap:wrap}
 .bp-swim .bp-empty{color:var(--ink-faint)}
 .bp-swim .bp-oppchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 8px;border:1px solid;border-radius:6px;margin:0 4px 4px 0;line-height:1.3}
-.bp-swim .bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;margin:0 8px 5px 0}
+.bp-swim .bp-team{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:400;margin:0 8px 5px 0}
 .bp-swim .bp-cell-on{background:var(--b-color-background-primary)}
 .bp-swim .bp-sent{display:inline-block;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;margin:0 4px 4px 0;cursor:pointer;line-height:1.3}
 .bp-swim .bp-sent:hover{filter:brightness(0.97)}
