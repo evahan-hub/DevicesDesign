@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#CFE9F6"/>
+      <stop offset="0.5" stop-color="#9CCBE6"/>
+      <stop offset="1" stop-color="#B9D8EA"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#sky)"/>
+  <ellipse cx="120" cy="345" rx="190" ry="55" fill="#ffffff" opacity="0.35"/>
+  <ellipse cx="500" cy="365" rx="210" ry="60" fill="#ffffff" opacity="0.30"/>
+  <ellipse cx="300" cy="390" rx="240" ry="50" fill="#ffffff" opacity="0.25"/>
+  <g>
+    <path d="M255 400 Q205 320 305 298 Q368 312 346 400 Z" fill="#D6E9F5"/>
+    <path d="M175 400 Q198 332 285 330 L305 400 Z" fill="#C4DFF1" opacity="0.9"/>
+    <path d="M305 300 Q299 248 318 228 L348 230 Q362 260 354 300 Z" fill="#FFFFFF"/>
+    <rect x="324" y="212" width="16" height="22" rx="6" fill="#EAC9B4"/>
+    <ellipse cx="338" cy="194" rx="20" ry="24" fill="#EDCFBB"/>
+    <path d="M332 174 Q300 166 250 198 Q208 222 178 250 Q230 236 282 232 Q322 230 342 212 Q348 192 332 174 Z" fill="#242B33"/>
+    <path d="M338 176 Q354 180 358 208 Q358 232 346 244 L340 230 Q348 204 338 176 Z" fill="#2C333C"/>
+  </g>
+</svg>
