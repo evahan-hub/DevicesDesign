@@ -1121,6 +1121,14 @@ bp_css_extra = "\n/* ===== Service Blueprint (Journey map) CSS ===== */\n" + bp_
 .bp-fade-r{right:0;background:linear-gradient(to left,#ffffff 15%,rgba(255,255,255,0))}
 .bp-canvas-frame.sc-left .bp-fade-l{opacity:1}
 .bp-canvas-frame.sc-right .bp-fade-r{opacity:1}
+/* Data source: smaller table radius + edge fade scroll hint */
+.jtbdwrap{border-radius:6px}
+.tbl-frame{position:relative}
+.tbl-fade{position:absolute;top:0;bottom:14px;width:52px;pointer-events:none;z-index:5;opacity:0;transition:opacity .18s ease}
+.tbl-fade-l{left:0;background:linear-gradient(to right,#ffffff 15%,rgba(255,255,255,0))}
+.tbl-fade-r{right:0;background:linear-gradient(to left,#ffffff 15%,rgba(255,255,255,0))}
+.tbl-frame.sc-left .tbl-fade-l{opacity:1}
+.tbl-frame.sc-right .tbl-fade-r{opacity:1}
 /* transparent canvas, no outline box, left-aligned with the View control */
 .bp-canvas,.journey-canvas{background:transparent;border:none;border-radius:0;padding-left:0;padding-right:0}
 /* Journey map summary — Bento summary-block style: one container, divided cells */
@@ -1521,6 +1529,30 @@ COMMENTS_JS = r'''
 </script>
 '''
 
+TBL_FADE_JS = r'''
+<script>
+(function(){
+  function fades(f){var w=f.querySelector('.jtbdwrap');if(!w)return;var can=w.scrollWidth>w.clientWidth+2;
+    f.classList.toggle('sc-left',can&&w.scrollLeft>2);f.classList.toggle('sc-right',can&&(w.scrollLeft+w.clientWidth<w.scrollWidth-2));}
+  function all(){document.querySelectorAll('.tbl-frame').forEach(fades);}
+  function setup(){
+    document.querySelectorAll('.jtbdwrap').forEach(function(w){
+      if(w.parentNode&&w.parentNode.classList.contains('tbl-frame'))return;
+      var f=document.createElement('div');f.className='tbl-frame';
+      w.parentNode.insertBefore(f,w);f.appendChild(w);
+      f.insertAdjacentHTML('afterbegin','<span class="tbl-fade tbl-fade-l"></span><span class="tbl-fade tbl-fade-r"></span>');
+      w.addEventListener('scroll',function(){fades(f);},{passive:true});
+      if(window.ResizeObserver){var ro=new ResizeObserver(function(){fades(f);});ro.observe(w);var tb=w.querySelector('table');if(tb)ro.observe(tb);}
+      fades(f);
+    });
+    window.addEventListener('resize',all);
+    var tabs=document.getElementById('srcTabs');if(tabs)tabs.addEventListener('click',function(){setTimeout(all,80);});
+  }
+  if(document.readyState!=='loading')setup();else document.addEventListener('DOMContentLoaded',setup);
+})();
+</script>
+'''
+
 # ---- shared-comments backend (Supabase). Leave blank for local-only (localStorage) mode. ----
 CX_SUPABASE_URL = "https://icnwiwchwdzzsknbxduf.supabase.co"   # shared comments backend
 CX_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imljbndpd2Nod2R6enNrbmJ4ZHVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMzIyNzcsImV4cCI6MjEwNTgwODI3N30._c_4T5YdZdpuTjvojrqcExVkPClOxTx52QHSC6745Wo"   # anon public key (safe to embed)
@@ -1626,7 +1658,7 @@ _insights_js = [{'n': r, 'sev': s, 'sevlbl': sl, 'title': t, 'short': INSIGHT_SH
 bp_script = "var IPP_INSIGHTS = " + json.dumps(_insights_js) + ";\n" + bp_script
 BP_WRAPPED = "\n<script>\n(function(){\n" + bp_script + "\n})();\n</script>\n"
 
-html = head + GATE + SIDEBAR + main + journey_script + BP_WRAPPED + DS_WRAPPED + COMMENTS_HTML + COMMENTS_CONFIG + COMMENTS_JS + "\n</body>\n</html>\n"
+html = head + GATE + SIDEBAR + main + journey_script + BP_WRAPPED + DS_WRAPPED + TBL_FADE_JS + COMMENTS_HTML + COMMENTS_CONFIG + COMMENTS_JS + "\n</body>\n</html>\n"
 # canonicalize persona names everywhere (incl. legacy JTBD_OPPS) so no stale names linger
 for _old, _new in _ACTOR_RENAMES:
     html = html.replace('"' + _old + '"', '"' + _new + '"').replace("'" + _old + "'", "'" + _new + "'")
