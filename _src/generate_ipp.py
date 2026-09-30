@@ -426,12 +426,15 @@ GATE = r'''
   var ACCESS_PASSWORD = 'IPP2026';
   var KEY = 'ipp-access-until', TTL = 24*60*60*1000;
   var gate = document.getElementById('ipp-gate');
-  var until = parseInt(localStorage.getItem(KEY) || '0', 10);
+  if(!gate) return;
+  function lsGet(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function lsSet(v){try{localStorage.setItem(KEY,v);}catch(e){}}
+  var until = parseInt(lsGet() || '0', 10);
   if (until && Date.now() < until) { gate.style.display='none'; return; }
   var form=document.getElementById('ipp-gate-form'), input=document.getElementById('ipp-gate-input'), err=document.getElementById('ipp-gate-err');
-  input.focus();
+  if(input) input.focus();
   form.addEventListener('submit', function(e){ e.preventDefault();
-    if(input.value===ACCESS_PASSWORD){ localStorage.setItem(KEY,String(Date.now()+TTL)); gate.style.display='none'; }
+    if((input.value||'').trim()===ACCESS_PASSWORD){ lsSet(String(Date.now()+TTL)); gate.style.display='none'; }
     else { err.style.display='block'; input.value=''; input.focus(); }
   });
 })();
