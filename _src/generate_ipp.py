@@ -423,7 +423,7 @@ GATE = r'''
 </div>
 <script>
 (function () {
-  var ACCESS_PASSWORD = 'IPP2026';
+  var ACCESS_PASSWORD = 'IPPjourney';
   var KEY = 'ipp-access-until', TTL = 24*60*60*1000;
   var gate = document.getElementById('ipp-gate');
   if(!gate) return;
