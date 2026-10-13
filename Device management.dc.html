@@ -644,9 +644,12 @@
         <h1 style="margin: 0 0 4px; font-family: var(--b-text-title-font-family); font-size: 30px; font-weight: 600; margin-top: 20px; margin-bottom: 20px">Soft POS software</h1>
         <p style="margin:0 0 18px;font-size:14px;color:var(--b-color-label-secondary)">Set up and manage your mobile devices</p>
         <div style="border-bottom:1px solid var(--b-color-separator-primary);margin-bottom:24px;display:flex;gap:24px">
-          <div style="padding:10px 2px;font-size:14px;font-weight:600;color:var(--b-color-label-primary);border-bottom:2px solid var(--b-color-label-primary);margin-bottom:-1px">SDK &amp; OS versions</div>
+          <button type="button" onClick="{{ selTtpTabSdk }}" style="{{ ttpTabSdkStyle }}">SDK &amp; OS versions</button>
+          <button type="button" onClick="{{ selTtpTabApple }}" style="{{ ttpTabAppleStyle }}">Apple Tap to Pay T&amp;Cs</button>
+          <button type="button" onClick="{{ selTtpTabAndroid }}" style="{{ ttpTabAndroidStyle }}">Registered Android apps</button>
         </div>
 
+        <sc-if value="{{ ttpTabSdk }}" hint-placeholder-val="{{ true }}">
         <!-- SDK versions -->
         <h2 style="margin:0 0 14px;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">SDK versions</h2>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--b-spacer-060);margin-bottom:var(--b-spacer-070)">
@@ -728,6 +731,42 @@
           </div>
           </sc-for>
         </div>
+        </sc-if>
+
+        <sc-if value="{{ ttpTabApple }}" hint-placeholder-val="{{ false }}">
+        <h2 style="margin:0 0 8px;font-family:var(--b-text-title-font-family);font-size:16px;font-weight:600;color:var(--b-color-label-primary)">Accept Apple's Terms of Use</h2>
+        <p style="margin:0 0 20px;max-width:900px;font-size:14px;line-height:1.5;color:var(--b-color-label-secondary)">Your company needs to accept Apple's Terms of Use, using an Apple ID associated with the business email. By clicking on the Accept button(s) below, you will be redirected to Apple Business Register to accept the Terms of Use. This way, it won't be necessary to accept the Terms of Use individually on each iPhone.</p>
+        <div style="position:relative;max-width:360px;margin-bottom:20px"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--b-color-label-secondary);display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><input type="text" placeholder="Search merchant account" style="width:100%;height:40px;border:1px solid var(--b-color-outline-tertiary);border-radius:var(--b-border-radius-m);padding:0 12px 0 36px;font-family:var(--b-text-body-font-family);font-size:14px;background:var(--b-color-background-primary);color:var(--b-color-label-primary);box-sizing:border-box"></div>
+        <div style="border-top:1px solid var(--b-color-separator-primary)">
+          <div style="display:flex;align-items:center;gap:16px;padding:12px 4px;font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--b-color-label-secondary);border-bottom:1px solid var(--b-color-separator-primary)">
+            <div style="flex:1;min-width:0">Merchant account</div>
+            <div style="width:120px">MID</div>
+            <div style="width:140px">Status</div>
+            <div style="width:120px;text-align:right">Action</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;padding:16px 4px;font-size:14px;border-bottom:1px solid var(--b-color-separator-primary)">
+            <div style="flex:1;min-width:0;font-weight:500;color:var(--b-color-label-primary)">AdyenTechSupportTest</div>
+            <div style="width:120px;color:var(--b-color-label-secondary)">&ndash;</div>
+            <div style="width:140px">
+              <sc-if value="{{ appleTncNotLinked }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px;color:var(--b-color-label-primary)"><span style="width:8px;height:8px;border-radius:50%;background:#F5A623"></span>Not linked</span></sc-if>
+              <sc-if value="{{ appleTncLinked }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:8px;color:var(--b-color-label-primary)"><span style="width:8px;height:8px;border-radius:50%;background:var(--b-color-background-success-strong)"></span>Linked</span></sc-if>
+            </div>
+            <div style="width:120px;display:flex;justify-content:flex-end">
+              <sc-if value="{{ appleTncNotLinked }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ acceptAppleTnc }}" style="height:36px;padding:0 16px;border:1px solid var(--b-color-outline-secondary);border-radius:var(--b-border-radius-m);background:var(--b-color-background-primary);color:var(--b-color-label-primary);font-family:var(--b-text-body-font-family);font-size:14px;font-weight:600;cursor:pointer">Accept</button></sc-if>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:13px;color:var(--b-color-label-secondary)">
+          <span style="display:inline-flex;align-items:center;gap:10px"><select style="height:32px;border:1px solid var(--b-color-outline-tertiary);border-radius:var(--b-border-radius-m);padding:0 8px;font-size:13px;background:var(--b-color-background-primary);color:var(--b-color-label-primary)"><option>10</option><option>25</option><option>50</option></select><span>of 1 Items</span></span>
+          <span>Page 1 of 1</span>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ ttpTabAndroid }}" hint-placeholder-val="{{ false }}">
+        <h2 style="margin:0 0 8px;font-family:var(--b-text-title-font-family);font-size:16px;font-weight:600;color:var(--b-color-label-primary)">Registered Android apps</h2>
+        <p style="margin:0 0 20px;max-width:900px;font-size:14px;line-height:1.5;color:var(--b-color-label-secondary)">Register your Android app's package name and signing certificate so Adyen can verify its integrity.</p>
+        <div style="border:1px dashed var(--b-color-outline-secondary);border-radius:var(--b-border-radius-l);padding:28px;text-align:center;color:var(--b-color-label-secondary);font-size:14px">No Android apps registered yet.</div>
+        </sc-if>
       </div>
       </sc-if>
 
@@ -1281,6 +1320,7 @@
                 <div style="min-width:0">
                   <div style="font-size:14px;font-weight:500;color:var(--b-color-label-primary)">Apple Tap to Pay</div>
                   <div style="font-size:13px;color:var(--b-color-label-secondary);margin-top:4px">Accept contactless payments on Apple (iOS) Soft POS installations.</div>
+                  <div style="font-size:13px;color:var(--b-color-label-secondary);margin-top:8px">To enable Apple Tap to Pay, your company must first <a href="#" onClick="{{ goAppleTnc }}" style="color:var(--b-color-label-primary);text-decoration:underline;cursor:pointer">accept Apple's Terms of Use</a>.</div>
                 </div>
                 <span style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:10px"><a href="https://docs.adyen.com/point-of-sale/mobile-ios/checklists" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--b-text-body-font-family);font-size:13px;font-weight:600;color:var(--b-color-label-primary);text-decoration:underline;white-space:nowrap">View docs<span style="width:14px;height:14px;display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3.5h7v7M12.5 3.5l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><x-import component-from-global-scope="PXDesignSystem_25da7e.Toggle" checked="{{ appleTTP }}" onChange="{{ toggleAppleTTP }}" hint-size="36px,20px"></x-import></span>
               </div>
@@ -4800,7 +4840,20 @@ class Component extends DCLogic {
       navOpen: s.navOpen !== false,
       toggleNav: () => this.setState(st => ({ navOpen: st.navOpen === false })),
       goSettings: () => setV({ view:'settings', navMisc: null, settingsSection: null }),
-      goTTP: () => setV({ view:'ttp', navMisc: null }),
+      goTTP: () => setV({ view:'ttp', navMisc: null, ttpTab: 'sdk' }),
+      goAppleTnc: () => setV({ view:'ttp', navMisc: null, ttpTab: 'apple' }),
+      ttpTabSdk: (s.ttpTab || 'sdk') === 'sdk',
+      ttpTabApple: s.ttpTab === 'apple',
+      ttpTabAndroid: s.ttpTab === 'android',
+      selTtpTabSdk: (e) => { if (e) e.preventDefault(); setV({ ttpTab: 'sdk' }); },
+      selTtpTabApple: (e) => { if (e) e.preventDefault(); setV({ ttpTab: 'apple' }); },
+      selTtpTabAndroid: (e) => { if (e) e.preventDefault(); setV({ ttpTab: 'android' }); },
+      ttpTabSdkStyle: (function(a){var b='padding:10px 2px;font-size:14px;margin-bottom:-1px;background:none;border:0;border-bottom:2px solid ';return a?b+'var(--b-color-label-primary);font-weight:600;color:var(--b-color-label-primary);cursor:pointer':b+'transparent;font-weight:500;color:var(--b-color-label-secondary);cursor:pointer';})((s.ttpTab||'sdk')==='sdk'),
+      ttpTabAppleStyle: (function(a){var b='padding:10px 2px;font-size:14px;margin-bottom:-1px;background:none;border:0;border-bottom:2px solid ';return a?b+'var(--b-color-label-primary);font-weight:600;color:var(--b-color-label-primary);cursor:pointer':b+'transparent;font-weight:500;color:var(--b-color-label-secondary);cursor:pointer';})(s.ttpTab==='apple'),
+      ttpTabAndroidStyle: (function(a){var b='padding:10px 2px;font-size:14px;margin-bottom:-1px;background:none;border:0;border-bottom:2px solid ';return a?b+'var(--b-color-label-primary);font-weight:600;color:var(--b-color-label-primary);cursor:pointer':b+'transparent;font-weight:500;color:var(--b-color-label-secondary);cursor:pointer';})(s.ttpTab==='android'),
+      appleTncLinked: !!s.appleTncLinked,
+      appleTncNotLinked: !s.appleTncLinked,
+      acceptAppleTnc: (e) => { if (e) e.preventDefault(); setV({ appleTncLinked: true }); },
       goSoftware: () => setV({ view:'landing', navMisc: null }),
       navWidthVal: (this.props.navWidth ?? 248) + 'px',
       navBg: (this.props.navSurface ?? 'grey') === 'white' ? 'var(--b-color-background-primary)' : 'var(--b-color-background-secondary)',
