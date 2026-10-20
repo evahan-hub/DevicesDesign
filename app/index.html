@@ -1281,6 +1281,10 @@
               <a href="#" class="b-nav-item" onClick="{{ openKioskMode }}" style="padding:9px 12px;border-radius:8px;color:var(--b-color-label-primary);text-decoration:none;background:{{ kioskModeNavBg }};font-weight:{{ kioskModeNavWeight }}">Terminal kiosk mode</a>
               <a href="#" class="b-nav-item" onClick="{{ openSound }}" style="padding:9px 12px;border-radius:8px;color:var(--b-color-label-primary);text-decoration:none;background:{{ soundNavBg }};font-weight:{{ soundNavWeight }}">Terminal sounds</a>
             </div>
+            <sc-if value="{{ showConnNav }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--b-color-label-tertiary);padding:0 12px;margin-bottom:6px">Device connectivity</div>
+            <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:20px">
+              <a href="#" class="b-nav-item" onClick="{{ openConnectivity }}" style="padding:9px 12px;border-radius:8px;color:var(--b-color-label-primary);text-decoration:none;background:{{ connNavBg }};font-weight:{{ connNavWeight }}">Static IP configuration</a>
+            </div></sc-if>
             <sc-if value="{{ showTtpNav }}" hint-placeholder-val="{{ true }}">
             <a href="#" onClick="{{ openTapToPay }}" style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--b-color-label-tertiary);padding:0 12px;margin-bottom:6px;text-decoration:none;cursor:pointer">Integration</a>
             <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:20px">
@@ -1288,6 +1292,124 @@
             </div>
             </sc-if></sc-if>
           </nav>
+
+          <!-- ===== DEVICE CONNECTIVITY: REMOTE STATIC IP CONFIGURATION ===== -->
+          <sc-if value="{{ showConnPanel }}" hint-placeholder-val="{{ false }}">
+          <div style="grid-column:4 / -1;max-width:640px">
+            <h2 style="margin:0 0 6px;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">Static IP configuration</h2>
+            <p style="margin:0 0 18px;font-size:14px;color:var(--b-color-label-secondary);max-width:620px">Set a fixed (static) IP address for this terminal&rsquo;s Ethernet or Wi-Fi connection, or keep it on automatic (DHCP).</p>
+            <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" variant="tip" type="highlight" hint-size="100%,72px"><div>The terminal tests the new settings before saving them. If it can&rsquo;t get online, it automatically restores the last working configuration &mdash; so it never loses connection.</div></x-import></div>
+
+            <!-- Ethernet -->
+            <div style="margin-bottom:24px">
+              <div style="font-size:15px;font-weight:600;color:var(--b-color-label-primary)">Ethernet</div>
+              <div style="font-size:13px;color:var(--b-color-label-secondary);margin:2px 0 12px">Wired interface</div>
+              <div style="max-width:600px;border:1px solid var(--b-color-outline-tertiary);border-radius:var(--b-border-radius-l);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box"><div style="min-width:0"><div style="font-size:15px;font-weight:600;color:var(--b-color-label-primary)">eth0</div><div style="font-size:13px;color:var(--b-color-label-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ ethSummary }}</div></div><a href="#" onClick="{{ openEthEdit }}" aria-label="Edit" style="display:inline-flex;line-height:0;cursor:pointer;color:var(--b-color-label-secondary);flex-shrink:0"><span style="width:18px;height:18px;display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><path d="M11.4 2.6a1.4 1.4 0 0 1 2 2L5.5 12.5l-2.7.7.7-2.7 7.9-7.9z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
+            </div>
+
+            <!-- Wi-Fi -->
+            <div style="margin-bottom:24px">
+              <div style="font-size:15px;font-weight:600;color:var(--b-color-label-primary)">Wi-Fi</div>
+              <div style="font-size:13px;color:var(--b-color-label-secondary);margin:2px 0 12px">Per-SSID networks</div>
+              <sc-for list="{{ wifiRows }}" as="r" hint-placeholder-count="1">
+              <div style="max-width:600px;border:1px solid var(--b-color-outline-tertiary);border-radius:var(--b-border-radius-l);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;box-sizing:border-box"><div style="min-width:0"><div style="font-size:15px;font-weight:600;color:var(--b-color-label-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.ssid }}</div><div style="font-size:13px;color:var(--b-color-label-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.summary }}</div></div><span style="display:inline-flex;align-items:center;gap:14px;flex-shrink:0"><a href="#" onClick="{{ r.onEdit }}" aria-label="Edit" style="display:inline-flex;line-height:0;cursor:pointer;color:var(--b-color-label-secondary)"><span style="width:18px;height:18px;display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><path d="M11.4 2.6a1.4 1.4 0 0 1 2 2L5.5 12.5l-2.7.7.7-2.7 7.9-7.9z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a href="#" onClick="{{ r.onRemove }}" aria-label="Remove" style="display:inline-flex;line-height:0;cursor:pointer;color:var(--b-color-label-secondary)"><span style="width:18px;height:18px;display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><path d="M6 2.5h4M2.5 4.5h11M4 4.5l.5 8.5a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1L12 4.5M6.5 7v4M9.5 7v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span></a></span></div>
+              </sc-for>
+              <a href="#" onClick="{{ openWifiAdd }}" style="display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-family:var(--b-text-body-font-family);font-size:14px;font-weight:600;color:var(--b-color-label-primary);text-decoration:none;cursor:pointer"><span style="width:16px;height:16px;display:inline-flex;line-height:0"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span style="text-decoration:underline">Add network</span></a>
+            </div>
+
+            <sc-if value="{{ netHasErrors }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--b-color-label-secondary);margin-bottom:12px">Add a static IP configuration for each interface set to Static before you can apply.</div></sc-if>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" disabled="{{ netApplyDisabled }}" onClick="{{ askApplyNet }}" hint-size="150px,40px">Save &amp; apply</x-import>
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="tertiary" onClick="{{ resetNetConfig }}" hint-size="90px,40px">Reset</x-import>
+            </div>
+
+            <!-- Prototype: simulate the terminal verification outcome -->
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--b-color-separator-primary)">
+              <span style="font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--b-color-label-tertiary)">Preview result</span>
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.SegmentedControl" condensed="{{ true }}" value="{{ netScenario }}" onChange="{{ setNetScenario }}" options="{{ netScenarioOpts }}" hint-size="360px,32px"></x-import>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ETHERNET SIDE PANEL -->
+          <sc-if value="{{ ethDraftOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:fixed;inset:0;z-index:9998;display:flex;justify-content:flex-end;background:rgba(0,18,34,0.5);font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
+            <div onClick="{{ cancelEthDraft }}" style="flex:1"></div>
+            <div style="width:480px;max-width:100%;height:100%;display:flex;flex-direction:column;background:var(--b-color-background-primary);box-shadow:var(--b-shadow-high)">
+              <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid var(--b-color-separator-primary)"><div style="font-family:var(--b-text-title-font-family);font-size:18px;font-weight:600">Ethernet &middot; eth0</div><x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ cancelEthDraft }}" aria-label="Close" hint-size="32px,32px"></x-import></div>
+              <div style="flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">IP assignment</label><select value="{{ edMode }}" onChange="{{ setEdMode }}" style="{{ connSelStyle }}"><option value="dhcp">DHCP (automatic)</option><option value="static">Static IP</option></select></div>
+                <sc-if value="{{ edStatic }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">IP address</label><input type="text" value="{{ edIp }}" onChange="{{ setEdIp }}" placeholder="192.168.1.50" style="{{ edIpStyle }}"><sc-if value="{{ edIpBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ edIpErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">Subnet mask</label><input type="text" value="{{ edMask }}" onChange="{{ setEdMask }}" placeholder="255.255.255.0" style="{{ edMaskStyle }}"><sc-if value="{{ edMaskBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ edMaskErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">Gateway</label><input type="text" value="{{ edGw }}" onChange="{{ setEdGw }}" placeholder="192.168.1.1" style="{{ edGwStyle }}"><sc-if value="{{ edGwBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ edGwErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">DNS 1</label><input type="text" value="{{ edDns1 }}" onChange="{{ setEdDns1 }}" placeholder="192.168.1.1" style="{{ edDns1Style }}"><sc-if value="{{ edDns1Bad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ edDns1Err }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">DNS 2</label><input type="text" value="{{ edDns2 }}" onChange="{{ setEdDns2 }}" placeholder="8.8.8.8" style="{{ edDns2Style }}"><sc-if value="{{ edDns2Bad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ edDns2Err }}</span></sc-if></div>
+                </sc-if>
+              </div>
+              <div style="flex-shrink:0;display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid var(--b-color-separator-primary)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="secondary" onClick="{{ cancelEthDraft }}" hint-size="90px,40px">Cancel</x-import><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" disabled="{{ edSaveDisabled }}" onClick="{{ saveEthDraft }}" hint-size="90px,40px">Save</x-import></div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- WI-FI NETWORK SIDE PANEL -->
+          <sc-if value="{{ wifiDraftOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:fixed;inset:0;z-index:9998;display:flex;justify-content:flex-end;background:rgba(0,18,34,0.5);font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
+            <div onClick="{{ cancelWifiDraft }}" style="flex:1"></div>
+            <div style="width:480px;max-width:100%;height:100%;display:flex;flex-direction:column;background:var(--b-color-background-primary);box-shadow:var(--b-shadow-high)">
+              <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px;border-bottom:1px solid var(--b-color-separator-primary)"><div style="font-family:var(--b-text-title-font-family);font-size:18px;font-weight:600">{{ wifiDraftTitle }}</div><x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ cancelWifiDraft }}" aria-label="Close" hint-size="32px,32px"></x-import></div>
+              <div style="flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">SSID</label><input type="text" value="{{ draftSsid }}" onChange="{{ setDraftSsid }}" placeholder="Network name" style="{{ draftSsidStyle }}"><sc-if value="{{ draftSsidBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftSsidErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">IP assignment</label><select value="{{ draftMode }}" onChange="{{ setDraftMode }}" style="{{ connSelStyle }}"><option value="dhcp">DHCP (automatic)</option><option value="static">Static IP</option></select></div>
+                <sc-if value="{{ draftStatic }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">IP address</label><input type="text" value="{{ draftIp }}" onChange="{{ setDraftIp }}" placeholder="192.168.5.11" style="{{ draftIpStyle }}"><sc-if value="{{ draftIpBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftIpErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">Subnet mask</label><input type="text" value="{{ draftMask }}" onChange="{{ setDraftMask }}" placeholder="255.255.255.0" style="{{ draftMaskStyle }}"><sc-if value="{{ draftMaskBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftMaskErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">Gateway</label><input type="text" value="{{ draftGw }}" onChange="{{ setDraftGw }}" placeholder="192.168.5.1" style="{{ draftGwStyle }}"><sc-if value="{{ draftGwBad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftGwErr }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">DNS 1</label><input type="text" value="{{ draftDns1 }}" onChange="{{ setDraftDns1 }}" placeholder="192.168.5.1" style="{{ draftDns1Style }}"><sc-if value="{{ draftDns1Bad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftDns1Err }}</span></sc-if></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:500;color:var(--b-color-label-primary)">DNS 2</label><input type="text" value="{{ draftDns2 }}" onChange="{{ setDraftDns2 }}" placeholder="8.8.8.8" style="{{ draftDns2Style }}"><sc-if value="{{ draftDns2Bad }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#D7153A">{{ draftDns2Err }}</span></sc-if></div>
+                </sc-if>
+              </div>
+              <div style="flex-shrink:0;display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid var(--b-color-separator-primary)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="secondary" onClick="{{ cancelWifiDraft }}" hint-size="90px,40px">Cancel</x-import><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" disabled="{{ draftSaveDisabled }}" onClick="{{ saveWifiDraft }}" hint-size="90px,40px">Save</x-import></div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- STATIC IP CONFIRM-CHANGES MODAL -->
+          <sc-if value="{{ netConfirmOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,18,34,0.5);padding:24px;font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
+            <div style="width:100%;max-width:520px;background:var(--b-color-background-primary);border-radius:12px;box-shadow:0 32px 80px rgba(0,18,34,0.28);padding:24px;box-sizing:border-box">
+              <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px"><div style="flex:1;min-width:0;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">Confirm changes?</div><x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ closeNetConfirm }}" aria-label="Close" hint-size="32px,32px"></x-import></div>
+              <div style="font-size:14px;color:var(--b-color-label-primary);margin-bottom:18px">These changes will apply to:</div>
+              <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px"><span style="width:18px;height:18px;flex-shrink:0;margin-top:1px;display:inline-flex;line-height:0;color:var(--b-color-label-primary)"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="currentColor"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--b-color-label-primary)">{{ connScopeAccount }}</div><div style="font-size:14px;color:var(--b-color-label-secondary)">{{ connScopeAccountSub }}</div></div></div>
+              <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px"><span style="width:18px;height:18px;flex-shrink:0;margin-top:1px;display:inline-flex;line-height:0;color:var(--b-color-label-primary)"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><rect x="4" y="1.5" width="8" height="13" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="6.5" y1="12" x2="9.5" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--b-color-label-primary)">{{ connScopeTerminals }}</div><div style="font-size:14px;color:var(--b-color-label-secondary)">{{ connScopeTerminalsSub }}</div></div></div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="secondary" onClick="{{ closeNetConfirm }}" hint-size="90px,40px">Cancel</x-import><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" onClick="{{ confirmApplyNet }}" hint-size="100px,40px">Confirm</x-import></div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- STATIC IP APPLY RESULT MODAL -->
+          <sc-if value="{{ netHasStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,18,34,0.5);padding:24px;font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
+            <div style="width:100%;max-width:480px;display:flex;flex-direction:column;background:var(--b-color-background-primary);border-radius:12px;overflow:hidden;box-shadow:0 32px 80px rgba(0,18,34,0.28)">
+              <div style="flex-shrink:0;display:flex;align-items:center;gap:14px;padding:18px 24px;border-bottom:1px solid var(--b-color-separator-primary)">
+                <div style="font-family:var(--b-text-title-font-family);font-size:19px;font-weight:600">{{ netStatusTitle }}</div>
+                <span style="margin-left:auto"><x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ closeNetStatus }}" aria-label="Close" hint-size="36px,36px"></x-import></span>
+              </div>
+              <div style="padding:24px">
+                <sc-if value="{{ netApplying }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--b-color-label-secondary);line-height:1.5">Sending the configuration to the terminal. It is applied and verified at the next terminal startup, then the result is reported back here.</div></sc-if>
+                <sc-if value="{{ netSuccess }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--b-color-label-primary)"><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 1 &middot; Interface UP / READY</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 2/3 &middot; Gateway reachable</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 7 &middot; PSP diagnostic call to Adyen succeeded</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Recovery snapshot purged &middot; flash/ip_settings.cfg updated</span></div></sc-if>
+                <sc-if value="{{ netRollGateway }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--b-color-label-primary)"><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 1 &middot; Interface UP / READY</span><span style="display:flex;gap:8px"><span style="color:#D7153A;font-weight:700">&#10007;</span>Layer 2/3 &middot; Gateway ping timed out</span><span style="color:var(--b-color-label-secondary);line-height:1.5">The terminal restored its previous configuration from flash/ip_settings.cfg. No connectivity was lost, and an analytics event was emitted.</span></div></sc-if>
+                <sc-if value="{{ netRollCollision }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--b-color-label-primary);line-height:1.5">The pre-apply ping received a response from the assigned IP, so the configuration was not applied. The terminal kept its current settings and an analytics event was emitted.</div></sc-if>
+              </div>
+              <sc-if value="{{ netSettled }}" hint-placeholder-val="{{ false }}">
+              <div style="flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 24px;border-top:1px solid var(--b-color-separator-primary)">
+                <x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" onClick="{{ closeNetStatus }}" hint-size="90px,40px">Done</x-import>
+              </div>
+              </sc-if>
+            </div>
+          </div>
+          </sc-if>
 
           <!-- ===== TAP TO PAY (Integrations > Soft POS) ===== -->
           <sc-if value="{{ isTapToPay }}" hint-placeholder-val="{{ false }}">
@@ -4298,6 +4420,121 @@ class Component extends DCLogic {
     };
   }
 
+  connectivityVals() {
+    const s = this.state;
+    const isDeviceView = s.view === 'settings';
+    const section = s.settingsSection || (isDeviceView ? 'ui' : s.settingsSection);
+    const showConnPanel = isDeviceView && section === 'connectivity';
+    const g = (k, d) => (s[k] !== undefined ? s[k] : d);
+    const ethMode = g('netEthMode', 'dhcp');
+    const ethIp = g('netEthIp', '192.168.1.50'), ethMask = g('netEthMask', '255.255.255.0'), ethGw = g('netEthGw', '192.168.1.1'), ethDns1 = g('netEthDns1', '192.168.1.1'), ethDns2 = g('netEthDns2', '8.8.8.8');
+    const scenario = g('netScenario', 'success');
+    const status = s.netApplyStatus || null;
+    const parseIp = (v) => { if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(v || '')) return null; const p = (v || '').split('.').map(Number); return p.some(n => n > 255) ? null : p; };
+    const isPriv = (v) => { const p = parseIp(v); if (!p) return false; return p[0] === 10 || (p[0] === 172 && p[1] >= 16 && p[1] <= 31) || (p[0] === 192 && p[1] === 168); };
+    const isMask = (v) => { const p = parseIp(v); if (!p) return false; const b = p.map(n => ('00000000' + n.toString(2)).slice(-8)).join(''); return /^1+0*$/.test(b); };
+    const errIp = (v) => v === '' ? 'Required' : (!parseIp(v) ? 'Enter a valid IPv4 address' : (!isPriv(v) ? 'Use a private address (RFC 1918)' : ''));
+    const errMask = (v) => v === '' ? 'Required' : (!isMask(v) ? 'Enter a valid subnet mask' : '');
+    const errDns = (v) => v === '' ? 'Required' : (!parseIp(v) ? 'Enter a valid IPv4 address' : '');
+    const inBase = 'height:36px;width:100%;border-radius:var(--b-border-radius-m);padding:0 12px;font-family:var(--b-text-body-font-family);font-size:14px;background:var(--b-color-background-primary);color:var(--b-color-label-primary);box-sizing:border-box;border:1px solid ';
+    const inStyle = (err) => inBase + (err ? '#D7153A' : 'var(--b-color-outline-tertiary)');
+    const set = (k) => (e) => this.setState({ [k]: (e && e.target) ? e.target.value : e, netApplyStatus: null });
+    // Ethernet (single interface, eth0) — configured via side panel, shown as a card
+    const ethErrs = ethMode === 'static' ? { ip: errIp(ethIp), mask: errMask(ethMask), gw: errIp(ethGw), dns1: errDns(ethDns1), dns2: errDns(ethDns2) } : {};
+    const ethValid = ethMode === 'dhcp' || !Object.keys(ethErrs).some(k => ethErrs[k]);
+    const ethReady = ethValid;
+    const ethSummary = ethMode === 'static' ? ('Static \u00b7 IP ' + ethIp + ' \u00b7 GW ' + ethGw) : 'DHCP (automatic)';
+    const edraft = s.ethDraft || null;
+    const ed = edraft || { mode: ethMode, ip: ethIp, netmask: ethMask, gateway: ethGw, dns1: ethDns1, dns2: ethDns2 };
+    const edStatic = ed.mode === 'static';
+    const edErrs = edStatic ? { ip: errIp(ed.ip || ''), mask: errMask(ed.netmask || ''), gw: errIp(ed.gateway || ''), dns1: errDns(ed.dns1 || ''), dns2: errDns(ed.dns2 || '') } : {};
+    const edValid = ed.mode === 'dhcp' || !Object.keys(edErrs).some(k => edErrs[k]);
+    const setED = (k) => (e) => { const v = (e && e.target) ? e.target.value : e; this.setState(st => ({ ethDraft: Object.assign({ mode: ethMode, ip: ethIp, netmask: ethMask, gateway: ethGw, dns1: ethDns1, dns2: ethDns2 }, st.ethDraft, { [k]: v }) })); };
+    const disp = (v, err) => (String(v || '') === '' ? '' : err);
+    // Wi-Fi: list of per-SSID networks (PRD: wifi is an array, each static or dhcp)
+    const DEF_WIFI = [{ ssid: 'Store-WiFi', mode: 'dhcp' }];
+    const wifiList = Array.isArray(s.wifiList) ? s.wifiList : DEF_WIFI;
+    const netValid = (n) => n.mode === 'dhcp' ? true : (!errIp(n.ip || '') && !errMask(n.netmask || '') && !errIp(n.gateway || '') && !errDns(n.dns1 || '') && !errDns(n.dns2 || ''));
+    const summarize = (n) => n.mode === 'static' ? ('Static \u00b7 IP ' + (n.ip || '') + ' \u00b7 GW ' + (n.gateway || '')) : 'DHCP (automatic)';
+    const wifiRows = wifiList.map((n, i) => ({
+      ssid: n.ssid || '(no SSID)',
+      modeLabel: n.mode === 'static' ? 'Static IP' : 'DHCP',
+      summary: summarize(n),
+      onEdit: (e) => { if (e) e.preventDefault(); this.setState({ wifiDraft: Object.assign({ idx: i, ssid: '', mode: 'dhcp', ip: '', netmask: '', gateway: '', dns1: '', dns2: '' }, n, { idx: i }), netApplyStatus: null }); },
+      onRemove: (e) => { if (e) e.preventDefault(); this.setState({ wifiList: wifiList.filter((x, j) => j !== i), netApplyStatus: null }); }
+    }));
+    const wifiListValid = wifiList.every(netValid);
+    const wifiReady = wifiListValid;
+    const draft = s.wifiDraft || null;
+    const d = draft || { mode: 'dhcp', ssid: '', ip: '', netmask: '', gateway: '', dns1: '', dns2: '' };
+    const dStatic = d.mode === 'static';
+    const dIdx = (draft && typeof draft.idx === 'number') ? draft.idx : -1;
+    const dDupe = !!String(d.ssid || '').trim() && wifiList.some((n, i) => i !== dIdx && String(n.ssid || '').trim().toLowerCase() === String(d.ssid || '').trim().toLowerCase());
+    const dSsidErr = !String(d.ssid || '').trim() ? 'Required' : (dDupe ? 'A network with this SSID already exists' : '');
+    const dErrs = dStatic ? { ip: errIp(d.ip || ''), mask: errMask(d.netmask || ''), gw: errIp(d.gateway || ''), dns1: errDns(d.dns1 || ''), dns2: errDns(d.dns2 || '') } : {};
+    const draftValid = !dSsidErr && (d.mode === 'dhcp' || !Object.keys(dErrs).some(k => dErrs[k]));
+    const setD = (k) => (e) => { const v = (e && e.target) ? e.target.value : e; this.setState(st => ({ wifiDraft: Object.assign({}, st.wifiDraft, { [k]: v }) })); };
+    const canApply = ethReady && wifiReady && status !== 'applying';
+    return {
+      showConnPanel,
+      showConnNav: isDeviceView,
+      openConnectivity: (e) => { if (e) e.preventDefault(); this.setState({ settingsSection: 'connectivity' }); },
+      connNavBg: section === 'connectivity' ? 'var(--b-color-background-secondary)' : 'transparent',
+      connNavWeight: section === 'connectivity' ? '500' : '400',
+      connSelStyle: 'width:100%;max-width:600px;height:44px;border:1px solid var(--b-color-outline-tertiary);border-radius:var(--b-border-radius-m);padding:0 40px 0 14px;font-family:var(--b-text-body-font-family);font-size:14px;color:var(--b-color-label-primary);box-sizing:border-box;cursor:pointer;-webkit-appearance:none;appearance:none;background-color:var(--b-color-background-primary);background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2216%22%20height=%2216%22%20fill=%22none%22%3E%3Cpath%20fill=%22%235C6670%22%20d=%22M2.99988%204.43923L7.99988%209.43923L12.9999%204.43923L14.0605%205.49989L7.99988%2011.5605L1.93922%205.49989L2.99988%204.43923Z%22/%3E%3C/svg%3E);background-repeat:no-repeat;background-position:right 14px center',
+      ethSummary: ethSummary,
+      openEthEdit: (e) => { if (e) e.preventDefault(); this.setState({ ethDraft: { mode: ethMode, ip: ethIp, netmask: ethMask, gateway: ethGw, dns1: ethDns1, dns2: ethDns2 }, netApplyStatus: null }); },
+      ethDraftOpen: !!edraft,
+      edMode: ed.mode || 'dhcp', setEdMode: setED('mode'), edStatic: edStatic,
+      edIp: ed.ip || '', edMask: ed.netmask || '', edGw: ed.gateway || '', edDns1: ed.dns1 || '', edDns2: ed.dns2 || '',
+      setEdIp: setED('ip'), setEdMask: setED('netmask'), setEdGw: setED('gateway'), setEdDns1: setED('dns1'), setEdDns2: setED('dns2'),
+      edIpErr: disp(ed.ip, edErrs.ip), edMaskErr: disp(ed.netmask, edErrs.mask), edGwErr: disp(ed.gateway, edErrs.gw), edDns1Err: disp(ed.dns1, edErrs.dns1), edDns2Err: disp(ed.dns2, edErrs.dns2),
+      edIpBad: !!disp(ed.ip, edErrs.ip), edMaskBad: !!disp(ed.netmask, edErrs.mask), edGwBad: !!disp(ed.gateway, edErrs.gw), edDns1Bad: !!disp(ed.dns1, edErrs.dns1), edDns2Bad: !!disp(ed.dns2, edErrs.dns2),
+      edIpStyle: inStyle(disp(ed.ip, edErrs.ip)), edMaskStyle: inStyle(disp(ed.netmask, edErrs.mask)), edGwStyle: inStyle(disp(ed.gateway, edErrs.gw)), edDns1Style: inStyle(disp(ed.dns1, edErrs.dns1)), edDns2Style: inStyle(disp(ed.dns2, edErrs.dns2)),
+      edSaveDisabled: !edValid,
+      cancelEthDraft: (e) => { if (e) e.preventDefault(); this.setState({ ethDraft: null }); },
+      saveEthDraft: (e) => { if (e) e.preventDefault(); const dr = this.state.ethDraft; if (!dr) return; const ok = dr.mode === 'dhcp' || (!errIp(dr.ip || '') && !errMask(dr.netmask || '') && !errIp(dr.gateway || '') && !errDns(dr.dns1 || '') && !errDns(dr.dns2 || '')); if (!ok) return; this.setState({ netEthMode: dr.mode, netEthIp: dr.ip, netEthMask: dr.netmask, netEthGw: dr.gateway, netEthDns1: dr.dns1, netEthDns2: dr.dns2, ethDraft: null, netApplyStatus: null }); },
+      wifiRows: wifiRows,
+      openWifiAdd: (e) => { if (e) e.preventDefault(); const taken = wifiList.map(n => String(n.ssid || '').toLowerCase()); let base = 'Store-WiFi', name = base, k = 2; while (taken.indexOf(name.toLowerCase()) !== -1) { name = base + '-' + k; k++; } this.setState({ wifiDraft: { idx: -1, ssid: name, mode: 'static', ip: '192.168.5.11', netmask: '255.255.255.0', gateway: '192.168.5.1', dns1: '192.168.5.1', dns2: '8.8.8.8' }, netApplyStatus: null }); },
+      wifiDraftOpen: !!draft,
+      wifiDraftTitle: (draft && draft.idx >= 0) ? 'Edit Wi-Fi network' : 'Add Wi-Fi network',
+      draftSsid: d.ssid || '', setDraftSsid: setD('ssid'), draftSsidErr: disp(d.ssid, dSsidErr), draftSsidBad: !!disp(d.ssid, dSsidErr), draftSsidStyle: inStyle(disp(d.ssid, dSsidErr)),
+      draftMode: d.mode || 'dhcp', setDraftMode: setD('mode'), draftStatic: dStatic,
+      draftIp: d.ip || '', draftMask: d.netmask || '', draftGw: d.gateway || '', draftDns1: d.dns1 || '', draftDns2: d.dns2 || '',
+      setDraftIp: setD('ip'), setDraftMask: setD('netmask'), setDraftGw: setD('gateway'), setDraftDns1: setD('dns1'), setDraftDns2: setD('dns2'),
+      draftIpErr: disp(d.ip, dErrs.ip), draftMaskErr: disp(d.netmask, dErrs.mask), draftGwErr: disp(d.gateway, dErrs.gw), draftDns1Err: disp(d.dns1, dErrs.dns1), draftDns2Err: disp(d.dns2, dErrs.dns2),
+      draftIpBad: !!disp(d.ip, dErrs.ip), draftMaskBad: !!disp(d.netmask, dErrs.mask), draftGwBad: !!disp(d.gateway, dErrs.gw), draftDns1Bad: !!disp(d.dns1, dErrs.dns1), draftDns2Bad: !!disp(d.dns2, dErrs.dns2),
+      draftIpStyle: inStyle(disp(d.ip, dErrs.ip)), draftMaskStyle: inStyle(disp(d.netmask, dErrs.mask)), draftGwStyle: inStyle(disp(d.gateway, dErrs.gw)), draftDns1Style: inStyle(disp(d.dns1, dErrs.dns1)), draftDns2Style: inStyle(disp(d.dns2, dErrs.dns2)),
+      draftSaveDisabled: !draftValid,
+      cancelWifiDraft: (e) => { if (e) e.preventDefault(); this.setState({ wifiDraft: null }); },
+      saveWifiDraft: (e) => { if (e) e.preventDefault(); const dr = this.state.wifiDraft; if (!dr) return; const base = Array.isArray(this.state.wifiList) ? this.state.wifiList.slice() : DEF_WIFI.slice(); const nm = String(dr.ssid || '').trim().toLowerCase(); const dupe = base.some((n, i) => i !== dr.idx && String(n.ssid || '').trim().toLowerCase() === nm); const ok = String(dr.ssid || '').trim() && !dupe && (dr.mode === 'dhcp' || (!errIp(dr.ip || '') && !errMask(dr.netmask || '') && !errIp(dr.gateway || '') && !errDns(dr.dns1 || '') && !errDns(dr.dns2 || ''))); if (!ok) return; const entry = dr.mode === 'static' ? { ssid: dr.ssid, mode: 'static', ip: dr.ip, netmask: dr.netmask, gateway: dr.gateway, dns1: dr.dns1, dns2: dr.dns2 } : { ssid: dr.ssid, mode: 'dhcp' }; if (dr.idx >= 0) base[dr.idx] = entry; else base.push(entry); this.setState({ wifiList: base, wifiDraft: null, netApplyStatus: null }); },
+      netScenario: scenario,
+      netScenarioOpts: [{ value: 'success', label: 'Success' }, { value: 'gateway', label: 'Gateway unreachable' }, { value: 'collision', label: 'IP already in use' }],
+      setNetScenario: (v) => this.setState({ netScenario: v, netApplyStatus: null }),
+      netApplyDisabled: !canApply,
+      netHasErrors: !ethReady || !wifiListValid,
+      askApplyNet: (e) => { if (e) e.preventDefault(); if (!(ethReady && wifiReady)) return; this.setState({ netConfirmOpen: true }); },
+      netConfirmOpen: !!s.netConfirmOpen,
+      closeNetConfirm: (e) => { if (e) e.preventDefault(); this.setState({ netConfirmOpen: false }); },
+      confirmApplyNet: (e) => { if (e) e.preventDefault(); this.setState({ netConfirmOpen: false, netApplyStatus: 'applying' }); clearTimeout(this._netT); this._netT = setTimeout(() => { const sc = this.state.netScenario || 'success'; this.setState({ netApplyStatus: sc }); }, 1400); },
+      connScopeAccount: 'AdyenTechSupportTest', connScopeAccountSub: 'Merchant account',
+      connScopeTerminals: 'Up to 1 terminal', connScopeTerminalsSub: 'This is the active terminal assigned to this account',
+      resetNetConfig: (e) => { if (e) e.preventDefault(); this.setState({ netEthMode: undefined, netEthIp: undefined, netEthMask: undefined, netEthGw: undefined, netEthDns1: undefined, netEthDns2: undefined, ethDraft: null, wifiList: undefined, wifiDraft: null, netApplyStatus: null }); },
+      netApplying: status === 'applying',
+      netSuccess: status === 'success',
+      netRollGateway: status === 'gateway',
+      netRollCollision: status === 'collision',
+      netRolledBack: status === 'gateway' || status === 'collision',
+      netHasStatus: !!status,
+      netSettled: !!status && status !== 'applying',
+      netStatusTitle: status === 'applying' ? 'Applying configuration\u2026' : (status === 'success' ? 'Configuration applied and saved' : (status === 'gateway' ? 'Rolled back \u2014 gateway unreachable' : (status === 'collision' ? 'Rejected \u2014 IP already in use' : ''))),
+      closeNetStatus: (e) => { if (e) e.preventDefault(); clearTimeout(this._netT); this.setState({ netApplyStatus: null }); },
+      netStepIfaceOk: status === 'success' || status === 'gateway',
+      netStepGatewayOk: status === 'success',
+      netStepPspOk: status === 'success'
+    };
+  }
+
   accountVals() {
     const s = this.state;
     const FAVS = [
@@ -4836,6 +5073,7 @@ class Component extends DCLogic {
       ...this.addStoreVals(),
       ...this.storeActionVals(),
       ...this.tapToPayVals(),
+      ...this.connectivityVals(),
       ...this.deviceListVals(),
       navOpen: s.navOpen !== false,
       toggleNav: () => this.setState(st => ({ navOpen: st.navOpen === false })),
