@@ -1393,8 +1393,6 @@
           <div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,18,34,0.5);padding:24px;font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
             <div style="width:100%;max-width:520px;background:var(--b-color-background-primary);border-radius:12px;box-shadow:0 32px 80px rgba(0,18,34,0.28);padding:24px;box-sizing:border-box">
               <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
-                <sc-if value="{{ netRollGateway }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;margin-top:1px;color:var(--b-color-background-warning-strong)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Icon" name="warning-filled" size="24" hint-size="24px,24px"></x-import></span></sc-if>
-                <sc-if value="{{ netRollCollision }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;margin-top:1px;color:var(--b-color-background-critical-strong)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Icon" name="cross-circle-fill" size="24" hint-size="24px,24px"></x-import></span></sc-if>
                 <div style="flex:1;min-width:0;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">{{ netStatusTitle }}</div>
                 <x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ closeNetStatus }}" aria-label="Close" hint-size="32px,32px"></x-import>
               </div>
