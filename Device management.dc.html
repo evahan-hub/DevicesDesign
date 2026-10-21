@@ -1383,30 +1383,40 @@
               <div style="font-size:14px;color:var(--b-color-label-primary);margin-bottom:18px">These changes will apply to:</div>
               <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px"><span style="width:18px;height:18px;flex-shrink:0;margin-top:1px;display:inline-flex;line-height:0;color:var(--b-color-label-primary)"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="currentColor"><rect x="1.5" y="1.5" width="5" height="5" rx="1"/><rect x="9.5" y="1.5" width="5" height="5" rx="1"/><rect x="1.5" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/></svg></span><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--b-color-label-primary)">{{ connScopeAccount }}</div><div style="font-size:14px;color:var(--b-color-label-secondary)">{{ connScopeAccountSub }}</div></div></div>
               <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px"><span style="width:18px;height:18px;flex-shrink:0;margin-top:1px;display:inline-flex;line-height:0;color:var(--b-color-label-primary)"><svg viewBox="0 0 16 16" width="100%" height="100%" fill="none"><rect x="4" y="1.5" width="8" height="13" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="6.5" y1="12" x2="9.5" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><div style="min-width:0"><div style="font-size:14px;font-weight:600;color:var(--b-color-label-primary)">{{ connScopeTerminals }}</div><div style="font-size:14px;color:var(--b-color-label-secondary)">{{ connScopeTerminalsSub }}</div></div></div>
-              <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="secondary" onClick="{{ closeNetConfirm }}" hint-size="90px,40px">Cancel</x-import><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" onClick="{{ confirmApplyNet }}" hint-size="100px,40px">Confirm</x-import></div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="secondary" disabled="{{ netConfirmBusy }}" onClick="{{ closeNetConfirm }}" hint-size="90px,40px">Cancel</x-import><x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" disabled="{{ netConfirmBusy }}" onClick="{{ confirmApplyNet }}" hint-size="130px,40px">{{ netConfirmCtaLabel }}</x-import></div>
             </div>
           </div>
           </sc-if>
 
           <!-- STATIC IP APPLY RESULT MODAL -->
-          <sc-if value="{{ netHasStatus }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ netSettled }}" hint-placeholder-val="{{ false }}">
           <div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,18,34,0.5);padding:24px;font-family:var(--b-text-body-font-family);color:var(--b-color-label-primary)">
-            <div style="width:100%;max-width:480px;display:flex;flex-direction:column;background:var(--b-color-background-primary);border-radius:12px;overflow:hidden;box-shadow:0 32px 80px rgba(0,18,34,0.28)">
-              <div style="flex-shrink:0;display:flex;align-items:center;gap:14px;padding:18px 24px;border-bottom:1px solid var(--b-color-separator-primary)">
-                <div style="font-family:var(--b-text-title-font-family);font-size:19px;font-weight:600">{{ netStatusTitle }}</div>
-                <span style="margin-left:auto"><x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ closeNetStatus }}" aria-label="Close" hint-size="36px,36px"></x-import></span>
+            <div style="width:100%;max-width:520px;background:var(--b-color-background-primary);border-radius:12px;box-shadow:0 32px 80px rgba(0,18,34,0.28);padding:24px;box-sizing:border-box">
+              <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
+                <sc-if value="{{ netRollGateway }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;margin-top:1px;color:var(--b-color-background-warning-strong)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Icon" name="warning-filled" size="24" hint-size="24px,24px"></x-import></span></sc-if>
+                <sc-if value="{{ netRollCollision }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;margin-top:1px;color:var(--b-color-background-critical-strong)"><x-import component-from-global-scope="PXDesignSystem_25da7e.Icon" name="cross-circle-fill" size="24" hint-size="24px,24px"></x-import></span></sc-if>
+                <div style="flex:1;min-width:0;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">{{ netStatusTitle }}</div>
+                <x-import component-from-global-scope="PXDesignSystem_25da7e.IconButton" icon="cross" variant="tertiary" onClick="{{ closeNetStatus }}" aria-label="Close" hint-size="32px,32px"></x-import>
               </div>
-              <div style="padding:24px">
-                <sc-if value="{{ netApplying }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--b-color-label-secondary);line-height:1.5">Sending the configuration to the terminal. It is applied and verified at the next terminal startup, then the result is reported back here.</div></sc-if>
-                <sc-if value="{{ netSuccess }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--b-color-label-primary)"><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 1 &middot; Interface UP / READY</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 2/3 &middot; Gateway reachable</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 7 &middot; PSP diagnostic call to Adyen succeeded</span><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Recovery snapshot purged &middot; flash/ip_settings.cfg updated</span></div></sc-if>
-                <sc-if value="{{ netRollGateway }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--b-color-label-primary)"><span style="display:flex;gap:8px"><span style="color:var(--b-color-background-success-strong);font-weight:700">&#10003;</span>Layer 1 &middot; Interface UP / READY</span><span style="display:flex;gap:8px"><span style="color:#D7153A;font-weight:700">&#10007;</span>Layer 2/3 &middot; Gateway ping timed out</span><span style="color:var(--b-color-label-secondary);line-height:1.5">The terminal restored its previous configuration from flash/ip_settings.cfg. No connectivity was lost, and an analytics event was emitted.</span></div></sc-if>
-                <sc-if value="{{ netRollCollision }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--b-color-label-primary);line-height:1.5">The pre-apply ping received a response from the assigned IP, so the configuration was not applied. The terminal kept its current settings and an analytics event was emitted.</div></sc-if>
-              </div>
-              <sc-if value="{{ netSettled }}" hint-placeholder-val="{{ false }}">
-              <div style="flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 24px;border-top:1px solid var(--b-color-separator-primary)">
-                <x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" onClick="{{ closeNetStatus }}" hint-size="90px,40px">Done</x-import>
+              <sc-if value="{{ netSuccess }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:var(--b-color-label-primary);line-height:1.5;margin-bottom:16px">Your new network settings are live on the terminal and saved as its working configuration.</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--b-color-label-primary)">
+                <span>Network interface online</span>
+                <span>Gateway reachable</span>
+                <span>Connection to Adyen verified</span>
               </div>
               </sc-if>
+              <sc-if value="{{ netRollGateway }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:var(--b-color-label-primary);line-height:1.5;margin-bottom:12px">The terminal couldn&rsquo;t reach the gateway with the new settings, so it automatically restored the previous working configuration. <b>Your terminal stayed online &mdash; nothing was lost.</b></div>
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" type="warning" hint-size="100%,72px"><div>Check that the <b>gateway IP address</b> is correct and reachable from this network, then try applying again.</div></x-import>
+              </sc-if>
+              <sc-if value="{{ netRollCollision }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px;color:var(--b-color-label-primary);line-height:1.5;margin-bottom:12px">Another device on the network is already using this IP address, so the new settings were <b>not applied</b>. The terminal kept its current configuration.</div>
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" type="critical" hint-size="100%,72px"><div>Assign a <b>different IP address</b> that isn&rsquo;t in use, then try applying again.</div></x-import>
+              </sc-if>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:24px">
+                <x-import component-from-global-scope="PXDesignSystem_25da7e.Button" variant="primary" critical="{{ netOutcomeCritical }}" onClick="{{ closeNetStatus }}" hint-size="130px,40px">{{ netOutcomeCta }}</x-import>
+              </div>
             </div>
           </div>
           </sc-if>
@@ -4516,7 +4526,7 @@ class Component extends DCLogic {
       askApplyNet: (e) => { if (e) e.preventDefault(); if (!(ethReady && wifiReady)) return; this.setState({ netConfirmOpen: true }); },
       netConfirmOpen: !!s.netConfirmOpen,
       closeNetConfirm: (e) => { if (e) e.preventDefault(); this.setState({ netConfirmOpen: false }); },
-      confirmApplyNet: (e) => { if (e) e.preventDefault(); this.setState({ netConfirmOpen: false, netApplyStatus: 'applying' }); clearTimeout(this._netT); this._netT = setTimeout(() => { const sc = this.state.netScenario || 'success'; this.setState({ netApplyStatus: sc }); }, 1400); },
+      confirmApplyNet: (e) => { if (e) e.preventDefault(); if (this.state.netApplyStatus === 'applying') return; this.setState({ netApplyStatus: 'applying' }); clearTimeout(this._netT); this._netT = setTimeout(() => { const sc = this.state.netScenario || 'success'; this.setState({ netConfirmOpen: false, netApplyStatus: sc }); }, 1400); },
       connScopeAccount: 'AdyenTechSupportTest', connScopeAccountSub: 'Merchant account',
       connScopeTerminals: 'Up to 1 terminal', connScopeTerminalsSub: 'This is the active terminal assigned to this account',
       resetNetConfig: (e) => { if (e) e.preventDefault(); this.setState({ netEthMode: undefined, netEthIp: undefined, netEthMask: undefined, netEthGw: undefined, netEthDns1: undefined, netEthDns2: undefined, ethDraft: null, wifiList: undefined, wifiDraft: null, netApplyStatus: null }); },
@@ -4527,7 +4537,11 @@ class Component extends DCLogic {
       netRolledBack: status === 'gateway' || status === 'collision',
       netHasStatus: !!status,
       netSettled: !!status && status !== 'applying',
-      netStatusTitle: status === 'applying' ? 'Applying configuration\u2026' : (status === 'success' ? 'Configuration applied and saved' : (status === 'gateway' ? 'Rolled back \u2014 gateway unreachable' : (status === 'collision' ? 'Rejected \u2014 IP already in use' : ''))),
+      netConfirmBusy: status === 'applying',
+      netConfirmCtaLabel: status === 'applying' ? 'Applying\u2026' : 'Confirm',
+      netOutcomeCritical: status === 'gateway' || status === 'collision',
+      netOutcomeCta: status === 'success' ? 'Done' : 'Review settings',
+      netStatusTitle: status === 'success' ? 'Configuration applied and saved' : (status === 'gateway' ? 'Gateway unreachable \u2014 changes rolled back' : (status === 'collision' ? 'IP address already in use' : '')),
       closeNetStatus: (e) => { if (e) e.preventDefault(); clearTimeout(this._netT); this.setState({ netApplyStatus: null }); },
       netStepIfaceOk: status === 'success' || status === 'gateway',
       netStepGatewayOk: status === 'success',
