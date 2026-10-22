@@ -1295,9 +1295,12 @@
 
           <!-- ===== DEVICE CONNECTIVITY: REMOTE STATIC IP CONFIGURATION ===== -->
           <sc-if value="{{ showConnPanel }}" hint-placeholder-val="{{ false }}">
-          <div style="grid-column:4 / -1;max-width:640px">
+          <div style="grid-column:4 / -1;max-width:600px">
             <h2 style="margin:0 0 6px;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">Static IP configuration</h2>
             <p style="margin:0 0 18px;font-size:14px;color:var(--b-color-label-secondary);max-width:620px">Set a fixed (static) IP address for this terminal&rsquo;s Ethernet or Wi-Fi connection, or keep it on automatic (DHCP).</p>
+            <sc-if value="{{ netLocalConfig }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" type="warning" title="This terminal was last configured on the device" hint-size="100%,96px"><div>This terminal&rsquo;s network settings were last changed directly on the device. Applying changes from here will <b>override the current on-device configuration</b>.</div></x-import></div>
+            </sc-if>
             <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" variant="tip" type="highlight" hint-size="100%,72px"><div>The terminal tests the new settings before saving them. If it can&rsquo;t get online, it automatically restores the last working configuration, so it never loses connection.</div></x-import></div>
 
             <!-- Ethernet -->
@@ -1324,6 +1327,11 @@
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--b-color-separator-primary)">
               <span style="font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--b-color-label-tertiary)">Preview result</span>
               <x-import component-from-global-scope="PXDesignSystem_25da7e.SegmentedControl" condensed="{{ true }}" value="{{ netScenario }}" onChange="{{ setNetScenario }}" options="{{ netScenarioOpts }}" hint-size="360px,32px"></x-import>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px">
+              <span style="font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--b-color-label-tertiary)">Configured locally</span>
+              <x-import component-from-global-scope="PXDesignSystem_25da7e.Toggle" checked="{{ netLocalConfig }}" onChange="{{ toggleNetLocalConfig }}" hint-size="36px,20px"></x-import>
+              <span style="font-size:12px;color:var(--b-color-label-tertiary)">Show the on-device override warning</span>
             </div>
           </div>
           </sc-if>
@@ -4542,6 +4550,8 @@ class Component extends DCLogic {
       netScenario: scenario,
       netScenarioOpts: [{ value: 'success', label: 'Success' }, { value: 'gateway', label: 'Gateway unreachable' }, { value: 'collision', label: 'IP already in use' }],
       setNetScenario: (v) => this.setState({ netScenario: v, netApplyStatus: null }),
+      netLocalConfig: !!s.netLocalConfig,
+      toggleNetLocalConfig: (v) => this.setState({ netLocalConfig: (typeof v === 'boolean' ? v : !this.state.netLocalConfig) }),
       netApplyDisabled: !canApply,
       netHasErrors: !ethReady || !wifiListValid,
       askApplyNet: (e) => { if (e) e.preventDefault(); if (!(ethReady && wifiReady)) return; this.setState({ netConfirmOpen: true }); },
