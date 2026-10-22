@@ -1299,7 +1299,7 @@
             <h2 style="margin:0 0 6px;font-family:var(--b-text-title-font-family);font-size:20px;font-weight:600">Static IP configuration</h2>
             <p style="margin:0 0 18px;font-size:14px;color:var(--b-color-label-secondary);max-width:620px">Set a fixed (static) IP address for this terminal&rsquo;s Ethernet or Wi-Fi connection, or keep it on automatic (DHCP).</p>
             <sc-if value="{{ netLocalConfig }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" type="warning" title="This terminal was last configured on the device" hint-size="100%,96px"><div>This terminal&rsquo;s network settings were last changed directly on the device. Applying changes from here will <b>override the current on-device configuration</b>.</div></x-import></div>
+            <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" variant="tip" type="warning" title="This terminal was last configured on the device" hint-size="100%,96px"><div>This terminal&rsquo;s network settings were last changed directly on the device. Applying changes from here will <b>override the current on-device configuration</b>.</div></x-import></div>
             </sc-if>
             <div style="margin-bottom:20px"><x-import component-from-global-scope="PXDesignSystem_25da7e.Alert" variant="tip" type="highlight" hint-size="100%,72px"><div>The terminal tests the new settings before saving them. If it can&rsquo;t get online, it automatically restores the last working configuration, so it never loses connection.</div></x-import></div>
 
